@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kinsenas Design System & Interactive Prototype</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+    
+    :root {
+      --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    
+    body {
+      font-family: var(--font-sans);
+      background-color: #0c0d10;
+      color: #e6e8ec;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .tnum {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum";
+    }
+
+    /* Emil Kowalski fluid spring transitions */
+    .spring-bounce {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-press:active {
+      transform: scale(0.97);
+    }
+
+    /* Cal Day Cell Animation */
+    .day-cell {
+      transition: background-color 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
+                  transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+                  color 0.18s ease;
+    }
+    .day-cell.active-kinsenas {
+      background-color: #f43f5e;
+      color: #ffffff;
+      transform: scale(1.08);
+      font-weight: 600;
+      box-shadow: 0 0 12px rgba(244, 63, 94, 0.35);
+    }
+  </style>
+</head>
+<body class="min-h-screen p-4 md:p-8 flex flex-col items-center">
+
+  <!-- Header & Navigation Bar -->
+  <header class="w-full max-w-4xl mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 font-bold text-sm">₱</span>
+        <h1 class="text-xl font-bold tracking-tight text-white">Kinsenas</h1>
+        <span class="text-xs px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-zinc-400">Emil Kowalski Design Spec</span>
+      </div>
+      <p class="text-xs text-zinc-400 mt-1">Tactile micro-interactions, Philippine payroll logic & offline-first data model</p>
+    </div>
+
+    <!-- Screen Switcher Tabs -->
+    <nav class="flex items-center gap-1.5 p-1 bg-zinc-900/90 border border-white/10 rounded-xl overflow-x-auto text-xs w-full sm:w-auto">
+      <button onclick="switchTab('loader')" id="tab-loader" class="tab-btn px-3 py-1.5 rounded-lg font-medium text-white bg-white/10 spring-bounce">
+        🗓️ Calendar Loader
+      </button>
+      <button onclick="switchTab('login')" id="tab-login" class="tab-btn px-3 py-1.5 rounded-lg font-medium text-zinc-400 hover:text-white spring-bounce">
+        🔒 Google Auth
+      </button>
+      <button onclick="switchTab('salary')" id="tab-salary" class="tab-btn px-3 py-1.5 rounded-lg font-medium text-zinc-400 hover:text-white spring-bounce">
+        💸 Salary Splitter
+      </button>
+      <button onclick="switchTab('goals')" id="tab-goals" class="tab-btn px-3 py-1.5 rounded-lg font-medium text-zinc-400 hover:text-white spring-bounce">
+        🎯 Goals Card
+      </button>
+      <button onclick="switchTab('debt')" id="tab-debt" class="tab-btn px-3 py-1.5 rounded-lg font-medium text-zinc-400 hover:text-white spring-bounce">
+        📅 Backdated Debt
+      </button>
+    </nav>
+  </header>
+
+  <!-- MAIN CONTAINER (Mobile Frame Centerpiece) -->
+  <main class="w-full max-w-md">
+
+    <!-- ========================================== -->
+    <!-- SCREEN 1: CALENDAR LOADING ANIMATION -->
+    <!-- ========================================== -->
+    <section id="screen-loader" class="screen-view block">
+      <div class="bg-[#14151b] border border-white/10 rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+        
+        <!-- Top bar badge -->
+        <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-xs font-mono uppercase tracking-widest text-zinc-400">DECEMBER 2026</span>
+          </div>
+          <span id="cycle-tag" class="text-xs px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 font-semibold tnum spring-bounce">
+            1st Kinsenas (Dec 1 – 15)
+          </span>
+        </div>
+
+        <!-- 31-Day Calendar Grid -->
+        <div class="bg-[#0b0c0f] border border-white/5 rounded-2xl p-4 shadow-inner">
+          <!-- Day headers -->
+          <div class="grid grid-cols-7 gap-1 text-center mb-2">
+            <span class="text-[11px] font-medium text-zinc-500">S</span>
+            <span class="text-[11px] font-medium text-zinc-500">M</span>
+            <span class="text-[11px] font-medium text-zinc-500">T</span>
+            <span class="text-[11px] font-medium text-zinc-500">W</span>
+            <span class="text-[11px] font-medium text-zinc-500">T</span>
+            <span class="text-[11px] font-medium text-zinc-500">F</span>
+            <span class="text-[11px] font-medium text-zinc-500">S</span>
+          </div>
+          
+          <!-- Calendar Days Grid (Dec 2026 starts on Tuesday = 2 blank days) -->
+          <div id="calendar-days" class="grid grid-cols-7 gap-1.5 text-center">
+            <!-- Empty offset days -->
+            <div class="h-9"></div>
+            <div class="h-9"></div>
+            <!-- Days 1 to 31 populated by JS -->
+          </div>
+        </div>
+
+        <!-- Status Message & Subtitle -->
+        <div class="mt-6 text-center space-y-1">
+          <p id="loader-status" class="text-sm font-semibold text-white tracking-tight">Syncing your offline ledger...</p>
+          <p class="text-xs text-zinc-400">Patience pays off. Calculating every centavo.</p>
+        </div>
+
+        <!-- Controls for testing speed/animation -->
+        <div class="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
+          <span class="text-xs text-zinc-500">Cycle Speed:</span>
+          <div class="flex gap-1.5">
+            <button onclick="setSpeed(90)" class="speed-btn px-2.5 py-1 text-xs rounded-md bg-white/10 text-white font-mono">Fast</button>
+            <button onclick="setSpeed(160)" class="speed-btn px-2.5 py-1 text-xs rounded-md bg-white/5 text-zinc-400 font-mono">Normal</button>
+            <button onclick="restartCalendarLoop()" class="btn-press px-2.5 py-1 text-xs rounded-md bg-rose-500/20 text-rose-300 border border-rose-500/30">Replay</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 2: GOOGLE AUTH & PERMISSION MODAL -->
+    <!-- ========================================== -->
+    <section id="screen-login" class="screen-view hidden">
+      <div class="bg-[#14151b] border border-white/10 rounded-3xl p-6 shadow-2xl relative">
+        
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-500/20 to-amber-500/20 border border-white/10 flex items-center justify-center mx-auto mb-4">
+          <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z" />
+          </svg>
+        </div>
+
+        <h2 class="text-lg font-bold text-center text-white tracking-tight">Keep Your Money Safe</h2>
+        <p class="text-xs text-center text-zinc-400 mt-1 max-w-xs mx-auto">
+          Connect your Google Account to back up your expenses, debts, and savings goals securely.
+        </p>
+
+        <!-- Transparency Box (Emil Kowalski style honest disclosure) -->
+        <div class="my-5 p-4 rounded-2xl bg-zinc-900/80 border border-white/5 space-y-3">
+          <div class="flex items-start gap-3">
+            <div class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 text-xs">✓</div>
+            <div>
+              <p class="text-xs font-semibold text-zinc-200">100% Private to You</p>
+              <p class="text-[11px] text-zinc-400">Data is saved only in your private Google Drive <code class="text-zinc-300">appDataFolder</code>. We have zero servers.</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-5 h-5 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0 mt-0.5 text-xs">✓</div>
+            <div>
+              <p class="text-xs font-semibold text-zinc-200">Zero Intrusive Access</p>
+              <p class="text-[11px] text-zinc-400">Kinsenas cannot view your personal files, emails, or Google Photos.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="space-y-2.5">
+          <button onclick="handleAuthChoice(true)" class="btn-press w-full py-3 px-4 rounded-xl bg-white text-zinc-900 font-semibold text-xs flex items-center justify-center gap-2 shadow-sm hover:bg-zinc-100 transition">
+            <svg class="w-4 h-4" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+            </svg>
+            Sign in with Google & Enable Backup
+          </button>
+
+          <button onclick="handleAuthChoice(false)" class="btn-press w-full py-2.5 px-4 rounded-xl bg-transparent hover:bg-white/5 border border-white/10 text-zinc-400 hover:text-white font-medium text-xs transition">
+            Continue Offline (Save on device only)
+          </button>
+        </div>
+
+        <p id="auth-status-msg" class="text-[11px] text-center text-zinc-500 mt-4"></p>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 3: SALARY & DEDUCTION SPLITTER -->
+    <!-- ========================================== -->
+    <section id="screen-salary" class="screen-view hidden">
+      <div class="bg-[#14151b] border border-white/10 rounded-3xl p-6 shadow-2xl space-y-5">
+        
+        <div>
+          <h2 class="text-base font-bold text-white tracking-tight">Kinsenas Paycheck Splitter</h2>
+          <p class="text-xs text-zinc-400">Philippines TRAIN Law & statutory deductions engine</p>
+        </div>
+
+        <!-- 1. Monthly Gross Income -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-medium text-zinc-300">Monthly Gross Salary</label>
+          <div class="relative flex items-center">
+            <span class="absolute left-3.5 text-zinc-400 font-semibold text-sm">₱</span>
+            <input type="number" id="input-salary" value="35000" oninput="calculatePayroll()" 
+              class="w-full bg-[#0b0c0f] border border-white/10 rounded-xl py-2.5 pl-8 pr-4 text-white font-mono text-sm focus:outline-none focus:border-rose-500 tnum" />
+          </div>
+        </div>
+
+        <!-- 2. Savings Allocation (% or Fixed) -->
+        <div class="space-y-1.5">
+          <div class="flex justify-between items-center text-xs">
+            <span class="font-medium text-zinc-300">Target Monthly Ipon (Savings)</span>
+            <span id="savings-percent-label" class="font-mono text-emerald-400 font-semibold tnum">20% (₱7,000)</span>
+          </div>
+          <input type="range" id="input-savings-rate" min="0" max="60" value="20" step="5" oninput="calculatePayroll()"
+            class="w-full accent-emerald-500 cursor-pointer" />
+          <div class="flex justify-between text-[10px] text-zinc-500 font-mono">
+            <span>0%</span>
+            <span>20% (Recommended)</span>
+            <span>50%</span>
+          </div>
+        </div>
+
+        <!-- 3. Deduction Timing -->
+        <div class="space-y-2">
+          <label class="text-xs font-medium text-zinc-300">When does employer deduct taxes & SSS?</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="setDeductionTiming('split')" id="btn-timing-split" class="timing-btn p-2.5 rounded-xl border border-rose-500/40 bg-rose-500/10 text-white text-center spring-bounce">
+              <p class="text-xs font-bold">Both (50/50)</p>
+              <p class="text-[10px] text-zinc-400">Even split</p>
+            </button>
+            <button onclick="setDeductionTiming('15th')" id="btn-timing-15th" class="timing-btn p-2.5 rounded-xl border border-white/10 bg-white/5 text-zinc-400 text-center spring-bounce hover:text-white">
+              <p class="text-xs font-bold">15th Only</p>
+              <p class="text-[10px] text-zinc-400">1st cutoff</p>
+            </button>
+            <button onclick="setDeductionTiming('30th')" id="btn-timing-30th" class="timing-btn p-2.5 rounded-xl border border-white/10 bg-white/5 text-zinc-400 text-center spring-bounce hover:text-white">
+              <p class="text-xs font-bold">30th Only</p>
+              <p class="text-[10px] text-zinc-400">Month-end</p>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. Result Breakdown Cards -->
+        <div class="bg-[#0b0c0f] border border-white/5 rounded-2xl p-4 space-y-3">
+          
+          <div class="flex justify-between items-center pb-2 border-b border-white/5">
+            <span class="text-xs text-zinc-400">Total Statutory Deductions</span>
+            <span id="res-total-deductions" class="text-xs font-mono font-bold text-rose-400 tnum">-₱3,354.17</span>
+          </div>
+
+          <!-- Micro breakdown -->
+          <div class="grid grid-cols-2 gap-2 text-[11px] font-mono text-zinc-400">
+            <div>SSS: <span id="res-sss" class="text-zinc-200">₱1,350.00</span></div>
+            <div>PhilHealth: <span id="res-philhealth" class="text-zinc-200">₱875.00</span></div>
+            <div>Pag-IBIG: <span id="res-pagibig" class="text-zinc-200">₱200.00</span></div>
+            <div>TRAIN Tax: <span id="res-tax" class="text-zinc-200">₱929.17</span></div>
+          </div>
+
+          <!-- Kinsenas Payout Split -->
+          <div class="pt-2 border-t border-white/5 grid grid-cols-2 gap-3">
+            <div class="p-2.5 rounded-xl bg-zinc-900/90 border border-white/5">
+              <p class="text-[10px] font-mono uppercase text-zinc-400">15th Payout (Net)</p>
+              <p id="res-net-15" class="text-sm font-bold text-emerald-400 font-mono tnum">₱15,822.92</p>
+              <p id="res-ipon-15" class="text-[10px] text-zinc-400 mt-1">Ipon: ₱3,500</p>
+            </div>
+            <div class="p-2.5 rounded-xl bg-zinc-900/90 border border-white/5">
+              <p class="text-[10px] font-mono uppercase text-zinc-400">30th Payout (Net)</p>
+              <p id="res-net-30" class="text-sm font-bold text-emerald-400 font-mono tnum">₱15,822.92</p>
+              <p id="res-ipon-30" class="text-[10px] text-zinc-400 mt-1">Ipon: ₱3,500</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 4: EDITABLE GOAL ("IPON") CARD -->
+    <!-- Recreating User's Sketch in Emil Kowalski Style -->
+    <!-- ========================================== -->
+    <section id="screen-goals" class="screen-view hidden">
+      <div class="space-y-4">
+        
+        <!-- The Main Olive/Forest Card from User Sketch -->
+        <div class="rounded-3xl p-6 relative overflow-hidden shadow-2xl transition-all"
+             style="background: linear-gradient(145deg, #3d4a36, #2d3827); border: 1px solid rgba(255,255,255,0.12);">
+          
+          <!-- Top Row: Editable Goal Title + Date -->
+          <div class="flex items-center justify-between mb-6">
+            <!-- Inline Editable Goal Name -->
+            <div class="flex items-center gap-1.5 group cursor-pointer" onclick="enableGoalEdit()">
+              <input type="text" id="goal-title-input" value="FOR MOTOR" 
+                class="bg-transparent text-white font-bold tracking-wider text-sm uppercase focus:outline-none focus:border-b-2 border-white/50 w-36 transition"
+                onblur="saveGoalName()" onkeydown="if(event.key==='Enter') this.blur()" />
+              <button class="text-white/60 hover:text-white transition">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Target Date Badge -->
+            <div class="text-right">
+              <span class="text-[10px] uppercase font-mono tracking-widest text-emerald-300 font-semibold">TARGET</span>
+              <p class="text-xs font-bold text-white tracking-tight">JAN 2, 2027</p>
+            </div>
+          </div>
+
+          <!-- Centerpiece: Tactile Split Progress Coin -->
+          <div class="flex flex-col items-center justify-center my-6">
+            <div class="relative w-36 h-36 flex items-center justify-center">
+              <!-- Glow ring -->
+              <div class="absolute inset-0 rounded-full bg-amber-400/20 blur-xl"></div>
+              
+              <!-- SVG Coin with dynamic progress fill -->
+              <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+                <!-- Outer Track -->
+                <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,0.15)" stroke-width="8" fill="none" />
+                <!-- Progress Arc -->
+                <circle id="coin-progress-circle" cx="60" cy="60" r="50" stroke="#f59e0b" stroke-width="8" 
+                  stroke-dasharray="314.15" stroke-dashoffset="125" stroke-linecap="round" fill="none" 
+                  class="transition-all duration-700 ease-out" />
+              </svg>
+
+              <!-- Inner Coin Face with Embossed C / ₱ -->
+              <div class="absolute w-20 h-20 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center shadow-lg border-2 border-amber-200/50">
+                <span class="text-zinc-900 font-black text-3xl font-mono">₱</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom: Numerator / Denominator & Progress Bar -->
+          <div class="space-y-2 mt-4">
+            <div class="flex justify-between items-baseline">
+              <span class="text-xs text-white/70">Current Progress</span>
+              <p class="text-sm font-bold font-mono text-white tnum tracking-tight">
+                <span id="goal-current" class="text-amber-300">₱35,000</span> / <span id="goal-target">₱60,000</span>
+              </p>
+            </div>
+
+            <!-- Smooth progress bar -->
+            <div class="w-full h-2 rounded-full bg-black/30 overflow-hidden p-0.5 border border-white/10">
+              <div id="goal-bar" class="h-full rounded-full bg-amber-400 transition-all duration-700 ease-out" style="width: 58.3%;"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Quick actions to simulate deposits into this Goal -->
+        <div class="flex gap-2">
+          <button onclick="depositGoal(500)" class="btn-press flex-1 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-medium text-white transition">
+            + ₱500 (Tipid)
+          </button>
+          <button onclick="depositGoal(2500)" class="btn-press flex-1 py-2.5 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-300 hover:bg-amber-500/30 text-xs font-semibold transition">
+            + ₱2,500 (Payday)
+          </button>
+          <button onclick="resetGoal()" class="btn-press px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs text-zinc-400 hover:text-white transition">
+            Reset
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- SCREEN 5: BACKDATED DEBT PAYMENT MODAL -->
+    <!-- ========================================== -->
+    <section id="screen-debt" class="screen-view hidden">
+      <div class="bg-[#14151b] border border-white/10 rounded-3xl p-6 shadow-2xl space-y-4">
+        
+        <div class="flex justify-between items-start">
+          <div>
+            <h2 class="text-base font-bold text-white tracking-tight">Log Utang Payment</h2>
+            <p class="text-xs text-zinc-400">Forgot to log on time? Select any past date.</p>
+          </div>
+          <span class="px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 text-[10px] font-semibold">
+            Payable
+          </span>
+        </div>
+
+        <!-- Loan summary card -->
+        <div class="p-3.5 rounded-2xl bg-[#0b0c0f] border border-white/5 flex justify-between items-center">
+          <div>
+            <p class="text-xs font-bold text-white">SPayLater (Phone Installment)</p>
+            <p class="text-[11px] text-zinc-400">Month 3 of 6 • Due every 15th</p>
+          </div>
+          <p class="text-sm font-mono font-bold text-rose-400 tnum">₱1,250.00</p>
+        </div>
+
+        <!-- Form Fields -->
+        <div class="space-y-3">
+          
+          <!-- Amount -->
+          <div>
+            <label class="text-xs font-medium text-zinc-300">Amount Paid</label>
+            <div class="relative flex items-center mt-1">
+              <span class="absolute left-3.5 text-zinc-400 font-semibold text-sm">₱</span>
+              <input type="number" id="debt-amount" value="1250" class="w-full bg-[#0b0c0f] border border-white/10 rounded-xl py-2 pl-8 pr-4 text-white font-mono text-sm focus:outline-none focus:border-rose-500 tnum" />
+            </div>
+          </div>
+
+          <!-- Date Picker (The backdating feature) -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-xs font-medium text-zinc-300">When did you actually pay?</label>
+              <button onclick="setPastDate(0)" class="text-[10px] text-rose-400 hover:underline">Set to Today</button>
+            </div>
+            <input type="date" id="debt-payment-date" class="w-full bg-[#0b0c0f] border border-white/10 rounded-xl py-2 px-3 text-white font-mono text-xs focus:outline-none focus:border-rose-500" />
+            <p class="text-[10px] text-zinc-500 mt-1">This correctly attributes the payment to that day's cashflow ledger.</p>
+          </div>
+
+          <!-- Quick presets for backdating -->
+          <div class="flex gap-1.5 pt-1">
+            <button onclick="setPastDate(0)" class="btn-press px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-zinc-300 hover:text-white">Today</button>
+            <button onclick="setPastDate(1)" class="btn-press px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-zinc-300 hover:text-white">Yesterday</button>
+            <button onclick="setPastDate(3)" class="btn-press px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-zinc-300 hover:text-white">3 Days Ago</button>
+            <button onclick="setPastDate(5)" class="btn-press px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-[11px] text-zinc-300 hover:text-white">Last Cutoff</button>
+          </div>
+
+        </div>
+
+        <!-- Submit button -->
+        <button onclick="confirmDebtPayment()" class="btn-press w-full py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-semibold text-xs tracking-wide shadow-lg shadow-rose-500/20 transition mt-2">
+          Confirm Payment & Update Balance
+        </button>
+
+        <p id="debt-toast" class="text-[11px] text-center text-emerald-400 min-h-[16px]"></p>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // Tab switching
+    function switchTab(screenId) {
+      document.querySelectorAll('.screen-view').forEach(s => s.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.remove('bg-white/10', 'text-white');
+        b.classList.add('text-zinc-400');
+      });
+
+      document.getElementById('screen-' + screenId).classList.remove('hidden');
+      const activeBtn = document.getElementById('tab-' + screenId);
+      activeBtn.classList.add('bg-white/10', 'text-white');
+      activeBtn.classList.remove('text-zinc-400');
+
+      if (screenId === 'loader') {
+        restartCalendarLoop();
+      }
+    }
+
+    // ==========================================
+    // 1. KINSENAS CALENDAR ANIMATION ENGINE
+    // ==========================================
+    let calendarTimer = null;
+    let stepDelay = 110; // ms per day
+    let currentDayIndex = 0;
+    let cyclePhase = 1; // 1 = 1-15 (1st kinsenas), 2 = 16-31 (2nd kinsenas)
+
+    function buildCalendarGrid() {
+      const container = document.getElementById('calendar-days');
+      // Keep offset 2 divs (Dec 1 is Tuesday)
+      container.innerHTML = '<div class="h-9"></div><div class="h-9"></div>';
+      
+      for (let day = 1; day <= 31; day++) {
+        const cell = document.createElement('div');
+        cell.id = 'cal-day-' + day;
+        cell.className = 'day-cell h-9 rounded-xl flex items-center justify-center text-xs font-mono font-medium text-zinc-400 bg-white/[0.03] border border-white/[0.04] select-none';
+        cell.innerText = day;
+        container.appendChild(cell);
+      }
+    }
+
+    function runCalendarAnimation() {
+      clearTimeout(calendarTimer);
+
+      if (cyclePhase === 1) {
+        // Phase 1: fill 1 to 15
+        if (currentDayIndex < 15) {
+          currentDayIndex++;
+          const cell = document.getElementById('cal-day-' + currentDayIndex);
+          if (cell) cell.classList.add('active-kinsenas');
+          document.getElementById('cycle-tag').innerText = `1st Kinsenas (Dec 1 – 15)`;
+          document.getElementById('cycle-tag').className = 'text-xs px-2.5 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 font-semibold tnum spring-bounce';
+          document.getElementById('loader-status').innerText = `Processing Cutoff 1 (Dec ${currentDayIndex})...`;
+          calendarTimer = setTimeout(runCalendarAnimation, stepDelay);
+        } else {
+          // Pause at 15, then clear red and move to phase 2
+          calendarTimer = setTimeout(() => {
+            // wipe red
+            for (let d = 1; d <= 15; d++) {
+              const cell = document.getElementById('cal-day-' + d);
+              if (cell) cell.classList.remove('active-kinsenas');
+            }
+            cyclePhase = 2;
+            currentDayIndex = 15;
+            runCalendarAnimation();
+          }, 600);
+        }
+      } else {
+        // Phase 2: fill 16 to 31
+        if (currentDayIndex < 31) {
+          currentDayIndex++;
+          const cell = document.getElementById('cal-day-' + currentDayIndex);
+          if (cell) cell.classList.add('active-kinsenas');
+          document.getElementById('cycle-tag').innerText = `2nd Kinsenas (Dec 16 – 31)`;
+          document.getElementById('cycle-tag').className = 'text-xs px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-semibold tnum spring-bounce';
+          document.getElementById('loader-status').innerText = `Processing Cutoff 2 (Dec ${currentDayIndex})...`;
+          calendarTimer = setTimeout(runCalendarAnimation, stepDelay);
+        } else {
+          // Pause at 31, wipe and repeat
+          calendarTimer = setTimeout(() => {
+            for (let d = 16; d <= 31; d++) {
+              const cell = document.getElementById('cal-day-' + d);
+              if (cell) cell.classList.remove('active-kinsenas');
+            }
+            cyclePhase = 1;
+            currentDayIndex = 0;
+            runCalendarAnimation();
+          }, 800);
+        }
+      }
+    }
+
+    function setSpeed(ms) {
+      stepDelay = ms;
+    }
+
+    function restartCalendarLoop() {
+      clearTimeout(calendarTimer);
+      for (let d = 1; d <= 31; d++) {
+        const cell = document.getElementById('cal-day-' + d);
+        if (cell) cell.classList.remove('active-kinsenas');
+      }
+      cyclePhase = 1;
+      currentDayIndex = 0;
+      runCalendarAnimation();
+    }
+
+    // ==========================================
+    // 2. GOOGLE AUTH MOCK
+    // ==========================================
+    function handleAuthChoice(useGoogle) {
+      const msg = document.getElementById('auth-status-msg');
+      if (useGoogle) {
+        msg.innerHTML = '<span class="text-emerald-400">✓ Signed in as user@gmail.com</span>. Backup synced to Google Drive appData.';
+      } else {
+        msg.innerHTML = '<span class="text-zinc-300">Offline mode enabled</span>. Data will reside only in local SQLite DB.';
+      }
+    }
+
+    // ==========================================
+    // 3. PHILIPPINES PAYROLL & TAX CALCULATOR
+    // ==========================================
+    let deductionSchedule = 'split'; // 'split', '15th', '30th'
+
+    function setDeductionTiming(timing) {
+      deductionSchedule = timing;
+      ['split', '15th', '30th'].forEach(t => {
+        const btn = document.getElementById('btn-timing-' + t);
+        if (t === timing) {
+          btn.className = 'timing-btn p-2.5 rounded-xl border border-rose-500/40 bg-rose-500/10 text-white text-center spring-bounce';
+        } else {
+          btn.className = 'timing-btn p-2.5 rounded-xl border border-white/10 bg-white/5 text-zinc-400 text-center spring-bounce hover:text-white';
+        }
+      });
+      calculatePayroll();
+    }
+
+    function calculatePayroll() {
+      const gross = parseFloat(document.getElementById('input-salary').value) || 0;
+      const savingsRate = parseFloat(document.getElementById('input-savings-rate').value) || 0;
+
+      // 1. SSS Calculation (2024/2025/2026 Table: 4.5% up to ₱30,000 MSC max = ₱1,350)
+      let msc = Math.min(Math.max(gross, 4000), 30000);
+      let sss = msc * 0.045;
+
+      // 2. PhilHealth (5% total, 2.5% employee, ceiling at ₱100,000, floor at ₱10,000)
+      let philhealthBasis = Math.min(Math.max(gross, 10000), 100000);
+      let philhealth = philhealthBasis * 0.025;
+
+      // 3. Pag-IBIG (₱200 flat max)
+      let pagibig = gross > 1500 ? 200 : 100;
+
+      // 4. TRAIN Law Withholding Tax
+      let taxableIncome = Math.max(0, gross - (sss + philhealth + pagibig));
+      let tax = 0;
+      if (taxableIncome <= 20833.33) {
+        tax = 0;
+      } else if (taxableIncome <= 33333.33) {
+        tax = (taxableIncome - 20833.33) * 0.15;
+      } else if (taxableIncome <= 66666.67) {
+        tax = 1875 + (taxableIncome - 33333.33) * 0.20;
+      } else if (taxableIncome <= 166666.67) {
+        tax = 8541.67 + (taxableIncome - 66666.67) * 0.25;
+      } else {
+        tax = 33541.67 + (taxableIncome - 166666.67) * 0.30;
+      }
+
+      const totalDeductions = sss + philhealth + pagibig + tax;
+      const monthlyNet = Math.max(0, gross - totalDeductions);
+      const monthlyIpon = gross * (savingsRate / 100);
+
+      // Distribute to 15th & 30th
+      const halfGross = gross / 2;
+      let net15 = 0;
+      let net30 = 0;
+
+      if (deductionSchedule === 'split') {
+        net15 = halfGross - (totalDeductions / 2);
+        net30 = halfGross - (totalDeductions / 2);
+      } else if (deductionSchedule === '15th') {
+        net15 = halfGross - totalDeductions;
+        net30 = halfGross;
+      } else { // 30th
+        net15 = halfGross;
+        net30 = halfGross - totalDeductions;
+      }
+
+      // Update UI
+      const formatP = (n) => '₱' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      
+      document.getElementById('savings-percent-label').innerText = `${savingsRate}% (${formatP(monthlyIpon)})`;
+      document.getElementById('res-total-deductions').innerText = `-${formatP(totalDeductions)}`;
+      document.getElementById('res-sss').innerText = formatP(sss);
+      document.getElementById('res-philhealth').innerText = formatP(philhealth);
+      document.getElementById('res-pagibig').innerText = formatP(pagibig);
+      document.getElementById('res-tax').innerText = formatP(tax);
+
+      document.getElementById('res-net-15').innerText = formatP(net15);
+      document.getElementById('res-net-30').innerText = formatP(net30);
+      document.getElementById('res-ipon-15').innerText = `Ipon: ${formatP(monthlyIpon / 2)}`;
+      document.getElementById('res-ipon-30').innerText = `Ipon: ${formatP(monthlyIpon / 2)}`;
+    }
+
+    // ==========================================
+    // 4. EDITABLE GOAL CARD LOGIC
+    // ==========================================
+    let goalSaved = 35000;
+    let goalTarget = 60000;
+
+    function enableGoalEdit() {
+      const input = document.getElementById('goal-title-input');
+      input.focus();
+      input.select();
+    }
+
+    function saveGoalName() {
+      const input = document.getElementById('goal-title-input');
+      if (!input.value.trim()) input.value = "UNTITLED GOAL";
+    }
+
+    function updateGoalUI() {
+      const ratio = Math.min(1, goalSaved / goalTarget);
+      const pct = (ratio * 100).toFixed(1);
+      
+      document.getElementById('goal-current').innerText = '₱' + goalSaved.toLocaleString();
+      document.getElementById('goal-bar').style.width = pct + '%';
+      
+      // Update SVG arc (circumference = 314.15)
+      const circumference = 314.15;
+      const offset = circumference - (circumference * ratio);
+      document.getElementById('coin-progress-circle').style.strokeDashoffset = offset;
+    }
+
+    function depositGoal(amount) {
+      goalSaved = Math.min(goalTarget, goalSaved + amount);
+      updateGoalUI();
+    }
+
+    function resetGoal() {
+      goalSaved = 15000;
+      updateGoalUI();
+    }
+
+    // ==========================================
+    // 5. DEBT BACKDATED PAYMENT
+    // ==========================================
+    function initDatePicker() {
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('debt-payment-date').value = today;
+    }
+
+    function setPastDate(daysAgo) {
+      const d = new Date();
+      d.setDate(d.getDate() - daysAgo);
+      document.getElementById('debt-payment-date').value = d.toISOString().split('T')[0];
+    }
+
+    function confirmDebtPayment() {
+      const amt = document.getElementById('debt-amount').value;
+      const date = document.getElementById('debt-payment-date').value;
+      const toast = document.getElementById('debt-toast');
+      toast.innerText = `✓ Logged ₱${parseFloat(amt).toLocaleString()} paid on ${date}. Remaining debt decreased!`;
+      setTimeout(() => toast.innerText = '', 4000);
+    }
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      buildCalendarGrid();
+      runCalendarAnimation();
+      calculatePayroll();
+      initDatePicker();
+      updateGoalUI();
+    });
+  </script>
+</body>
+</html>

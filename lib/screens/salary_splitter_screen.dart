@@ -1,0 +1,292 @@
+import 'package:flutter/material.dart';
+import '../services/payroll_engine.dart';
+
+class SalarySplitterScreen extends StatefulWidget {
+  const SalarySplitterScreen({super.key});
+
+  @override
+  State<SalarySplitterScreen> createState() => _SalarySplitterScreenState();
+}
+
+class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
+  WageType _wageType = WageType.monthly;
+  final TextEditingController _amountController = TextEditingController(text: '35000');
+  double _savingsRate = 20.0;
+  DeductionTiming _timing = DeductionTiming.bothSplit;
+
+  @override
+  Widget build(BuildContext context) {
+    final double baseAmount = double.tryParse(_amountController.text) ?? 0.0;
+    final result = PayrollEngine.calculate(
+      wageType: _wageType,
+      baseAmount: baseAmount,
+      savingsRatePct: _savingsRate,
+      timing: _timing,
+    );
+
+    return Scaffold(
+      backgroundColor: const Color(0xFF0C0D10),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text('Sahod Splitter', style: TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        children: [
+          // Wage Mode Switcher (Monthly vs Daily/Arawan)
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: const Color(0xFF14151B),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white10),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _wageType = WageType.monthly;
+                        _amountController.text = '35000';
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 9),
+                      decoration: BoxDecoration(
+                        color: _wageType == WageType.monthly ? const Color(0xFFF43F5E) : Colors.transparent,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'Monthly Salary',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: _wageType == WageType.monthly ? Colors.white : Colors.white60,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _wageType = WageType.daily;
+                        _amountController.text = '610'; // Metro Manila minimum wage standard
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(vertical: 9),
+                      decoration: BoxDecoration(
+                        color: _wageType == WageType.daily ? const Color(0xFFF43F5E) : Colors.transparent,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        'Daily (Arawan)',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: _wageType == WageType.daily ? Colors.white : Colors.white60,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 18),
+
+          // Income Field
+          Text(
+            _wageType == WageType.monthly ? 'Monthly Gross Pay' : 'Daily Wage (Rate per day)',
+            style: const TextStyle(color: Colors.white70, fontSize: 12),
+          ),
+          const SizedBox(height: 6),
+          TextField(
+            controller: _amountController,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            onChanged: (_) => setState(() {}),
+            decoration: InputDecoration(
+              prefixText: '₱ ',
+              prefixStyle: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
+              filled: true,
+              fillColor: const Color(0xFF14151B),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: Colors.white10),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 18),
+
+          // Savings Slider
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Target Ipon (Savings)', style: TextStyle(color: Colors.white70, fontSize: 12)),
+              Text(
+                '${_savingsRate.toInt()}% (₱${result.monthlyIpon.toStringAsFixed(0)})',
+                style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 13),
+              ),
+            ],
+          ),
+          Slider(
+            value: _savingsRate,
+            min: 0,
+            max: 50,
+            divisions: 10,
+            activeColor: const Color(0xFF10B981),
+            inactiveColor: Colors.white12,
+            onChanged: (val) => setState(() => _savingsRate = val),
+          ),
+
+          const SizedBox(height: 14),
+
+          // Deduction Timing Selector
+          const Text('When does employer deduct taxes & contributions?', style: TextStyle(color: Colors.white70, fontSize: 12)),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              _buildTimingBtn('Both (50/50)', DeductionTiming.bothSplit),
+              const SizedBox(width: 8),
+              _buildTimingBtn('15th Only', DeductionTiming.fifteenthOnly),
+              const SizedBox(width: 8),
+              _buildTimingBtn('30th Only', DeductionTiming.thirtiethOnly),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          // Deduction Breakdown Card
+          Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: const Color(0xFF14151B),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(color: Colors.white10),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Total Deductions', style: TextStyle(color: Colors.white60, fontSize: 12)),
+                    Text(
+                      '-₱${result.totalDeductions.toStringAsFixed(2)}',
+                      style: const TextStyle(color: Color(0xFFF43F5E), fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                  ],
+                ),
+                const Divider(color: Colors.white10, height: 20),
+                _buildDeductionRow('SSS Contribution', result.sss),
+                _buildDeductionRow('PhilHealth (2.5%)', result.philhealth),
+                _buildDeductionRow('Pag-IBIG Fund', result.pagibig),
+                _buildDeductionRow(
+                  result.isTaxExempt ? 'TRAIN Tax (Minimum Wage Exempt)' : 'TRAIN Withholding Tax',
+                  result.tax,
+                ),
+                const SizedBox(height: 16),
+
+                // Kinsenas Split Box
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0B0C0F),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('15th Net Payout', style: TextStyle(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 4),
+                            Text(
+                              '₱${result.net15.toStringAsFixed(2)}',
+                              style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 14),
+                            ),
+                            Text('Ipon: ₱${(result.monthlyIpon / 2).toStringAsFixed(0)}', style: const TextStyle(color: Colors.white54, fontSize: 10)),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0B0C0F),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('30th Net Payout', style: TextStyle(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 4),
+                            Text(
+                              '₱${result.net30.toStringAsFixed(2)}',
+                              style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 14),
+                            ),
+                            Text('Ipon: ₱${(result.monthlyIpon / 2).toStringAsFixed(0)}', style: const TextStyle(color: Colors.white54, fontSize: 10)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTimingBtn(String label, DeductionTiming timing) {
+    final isSelected = _timing == timing;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => setState(() => _timing = timing),
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: isSelected ? const Color(0x20F43F5E) : const Color(0xFF14151B),
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: isSelected ? const Color(0xFFF43F5E) : Colors.white10),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.white60,
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDeductionRow(String label, double val) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+          Text('₱${val.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
+        ],
+      ),
+    );
+  }
+}
