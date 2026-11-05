@@ -348,8 +348,8 @@
           <div class="space-y-2 mt-4">
             <div class="flex justify-between items-baseline">
               <span class="text-xs text-white/70">Current Progress</span>
-              <p class="text-sm font-bold font-mono text-white tnum tracking-tight">
-                <span id="goal-current" class="text-amber-300">₱35,000</span> / <span id="goal-target">₱60,000</span>
+              <p class="text-sm font-bold font-mono text-white tnum tracking-tight cursor-pointer" onclick="changeGoalTarget()">
+                <span id="goal-current" class="text-amber-300">₱35,000</span> / <span id="goal-target" class="hover:underline">₱60,000</span> ✏️
               </p>
             </div>
 
@@ -363,13 +363,16 @@
 
         <!-- Quick actions to simulate deposits into this Goal -->
         <div class="flex gap-2">
+          <button onclick="promptCustomDeposit()" class="btn-press flex-1 py-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/30 text-xs font-semibold transition">
+            + Mag-ipon (Add)
+          </button>
           <button onclick="depositGoal(500)" class="btn-press flex-1 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-medium text-white transition">
             + ₱500 (Tipid)
           </button>
           <button onclick="depositGoal(2500)" class="btn-press flex-1 py-2.5 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-300 hover:bg-amber-500/30 text-xs font-semibold transition">
-            + ₱2,500 (Payday)
+            + ₱2,500 (Sahod)
           </button>
-          <button onclick="resetGoal()" class="btn-press px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs text-zinc-400 hover:text-white transition">
+          <button onclick="resetGoalToZero()" class="btn-press px-3 py-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-400 hover:bg-rose-500/20 transition font-semibold">
             Reset
           </button>
         </div>
@@ -683,6 +686,28 @@
     function depositGoal(amount) {
       goalSaved = Math.min(goalTarget, goalSaved + amount);
       updateGoalUI();
+    }
+
+    function promptCustomDeposit() {
+      const val = prompt('Magkano ang idadagdag sa ipon?', '1000');
+      if (val && !isNaN(val) && parseFloat(val) > 0) {
+        depositGoal(parseFloat(val));
+      }
+    }
+
+    function changeGoalTarget() {
+      const val = prompt('Bagong target amount (Goal):', goalTarget);
+      if (val && !isNaN(val) && parseFloat(val) > 0) {
+        goalTarget = parseFloat(val);
+        updateGoalUI();
+      }
+    }
+
+    function resetGoalToZero() {
+      if (confirm('Sigurado ka bang gusto mong i-reset sa ₱0 ang iyong naipon?')) {
+        goalSaved = 0;
+        updateGoalUI();
+      }
     }
 
     function resetGoal() {
