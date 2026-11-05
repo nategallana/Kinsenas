@@ -131,6 +131,11 @@ class DatabaseService {
     return await db.update('goals', goal.toMap(), where: 'id = ?', whereArgs: [goal.id]);
   }
 
+  Future<int> insertGoal(Goal goal) async {
+    final db = await instance.database;
+    return await db.insert('goals', goal.toMap());
+  }
+
   // Debt operations
   Future<List<Debt>> getDebts({DebtType? filterType}) async {
     final db = await instance.database;
@@ -138,6 +143,16 @@ class DatabaseService {
         ? await db.query('debts', where: 'type = ?', whereArgs: [filterType.name])
         : await db.query('debts');
     return maps.map((m) => Debt.fromMap(m)).toList();
+  }
+
+  Future<int> insertDebt(Debt debt) async {
+    final db = await instance.database;
+    return await db.insert('debts', debt.toMap());
+  }
+
+  Future<int> deleteDebt(String id) async {
+    final db = await instance.database;
+    return await db.delete('debts', where: 'id = ?', whereArgs: [id]);
   }
 
   Future<void> recordDebtPayment(DebtPayment payment) async {
