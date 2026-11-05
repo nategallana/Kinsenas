@@ -73,11 +73,11 @@ class _SplashScreenState extends State<SplashScreen> {
               color: const Color(0xFF14151B),
               borderRadius: BorderRadius.circular(32),
               border: Border.all(color: Colors.white10),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.5),
+                  color: Color(0x80000000),
                   blurRadius: 30,
-                  offset: const Offset(0, 15),
+                  offset: Offset(0, 15),
                 ),
               ],
             ),
@@ -132,7 +132,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   decoration: BoxDecoration(
                     color: const Color(0xFF0B0C0F),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withOpacity(0.05)),
+                    border: Border.all(color: const Color(0x0DFFFFFF)),
                   ),
                   child: Column(
                     children: [
@@ -176,17 +176,17 @@ class _SplashScreenState extends State<SplashScreen> {
                             decoration: BoxDecoration(
                               color: isActive
                                   ? const Color(0xFFF43F5E)
-                                  : Colors.white.withOpacity(0.03),
+                                  : const Color(0x08FFFFFF),
                               borderRadius: BorderRadius.circular(10),
                               border: Border.all(
                                 color: isActive
                                     ? const Color(0xFFF43F5E)
-                                    : Colors.white.withOpacity(0.04),
+                                    : const Color(0x0AFFFFFF),
                               ),
                               boxShadow: isActive
-                                  ? [
+                                  ? const [
                                       BoxShadow(
-                                        color: const Color(0xFFF43F5E).withOpacity(0.4),
+                                        color: Color(0x66F43F5E),
                                         blurRadius: 8,
                                         spreadRadius: 1,
                                       )

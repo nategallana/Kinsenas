@@ -1,7 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/account.dart';
-import '../models/transaction.dart';
 import '../models/goal.dart';
 import '../models/debt.dart';
 

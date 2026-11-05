@@ -44,12 +44,12 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
       decoration: BoxDecoration(
         color: const Color(0xFF2E3929), // Refined forest/olive from sketch
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: Colors.white.withOpacity(0.12)),
-        boxShadow: [
+        border: Border.all(color: const Color(0x1FFFFFFF)),
+        boxShadow: const [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Color(0x4D000000),
             blurRadius: 20,
-            offset: const Offset(0, 10),
+            offset: Offset(0, 10),
           ),
         ],
       ),

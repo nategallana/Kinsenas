@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
-import '../models/account.dart';
 import '../models/debt.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -121,14 +120,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       colors: [Color(0xFF1E222B), Color(0xFF14151B)],
                     ),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withOpacity(0.08)),
+                    border: Border.all(color: Colors.white10),
                   ),
                   child: Row(
                     children: [
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFF43F5E).withOpacity(0.15),
+                          color: const Color(0x26F43F5E),
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: const Icon(Icons.calendar_today_rounded, color: Color(0xFFF43F5E), size: 20),
@@ -157,7 +156,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF0B0C0F),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withOpacity(0.04)),
+        border: Border.all(color: Colors.white10),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
