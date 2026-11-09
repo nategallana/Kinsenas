@@ -448,9 +448,9 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
         backgroundColor: isUtangKo ? const Color(0xFFF43F5E) : const Color(0xFF10B981),
         foregroundColor: Colors.white,
         elevation: 4,
-        icon: const Icon(Icons.add_rounded, size: 22),
+        icon: const Icon(Icons.add_rounded, size: 20),
         label: Text(
-          isUtangKo ? '+ Utang Ko' : '+ Pautang',
+          isUtangKo ? 'Utang Ko' : 'Pautang',
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
         ),
         onPressed: _showAddDebtModal,
