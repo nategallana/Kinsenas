@@ -362,18 +362,31 @@
         </div>
 
         <!-- Quick actions to simulate deposits into this Goal -->
-        <div class="flex gap-2">
-          <button onclick="promptCustomDeposit()" class="btn-press flex-1 py-2.5 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/30 text-xs font-semibold transition">
-            + Mag-ipon (Add)
-          </button>
-          <button onclick="depositGoal(500)" class="btn-press flex-1 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-xs font-medium text-white transition">
-            + ₱500 (Tipid)
-          </button>
-          <button onclick="depositGoal(2500)" class="btn-press flex-1 py-2.5 rounded-xl bg-amber-500/20 border border-amber-500/30 text-amber-300 hover:bg-amber-500/30 text-xs font-semibold transition">
-            + ₱2,500 (Sahod)
-          </button>
-          <button onclick="resetGoalToZero()" class="btn-press px-3 py-2.5 rounded-xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-400 hover:bg-rose-500/20 transition font-semibold">
-            Reset
+        <div class="space-y-2 mt-4">
+          <div class="flex gap-2">
+            <button onclick="promptCustomDeposit()" class="btn-press flex-1 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/20">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+              Mag-ipon
+            </button>
+            <button onclick="resetGoalToZero()" class="btn-press px-4 py-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-400 hover:bg-rose-500/20 transition font-bold flex items-center justify-center gap-1.5">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+              Reset
+            </button>
+          </div>
+
+          <div class="flex gap-2">
+            <button onclick="depositGoal(500)" class="btn-press flex-1 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-[11px] font-medium text-white/80 transition">
+              + ₱500 (Tipid)
+            </button>
+            <button onclick="depositGoal(2500)" class="btn-press flex-1 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 hover:bg-amber-500/20 text-[11px] font-semibold transition">
+              + ₱2,500 (Sahod)
+            </button>
+          </div>
+
+          <!-- Add Another Ipon Button -->
+          <button onclick="addNewGoalPrompt()" class="btn-press w-full py-3.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-amber-500/30 text-xs font-bold text-amber-300 transition flex items-center justify-center gap-2 mt-2">
+            <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Add another ipon
           </button>
         </div>
 
@@ -681,6 +694,19 @@
       const circumference = 314.15;
       const offset = circumference - (circumference * ratio);
       document.getElementById('coin-progress-circle').style.strokeDashoffset = offset;
+    }
+
+    function addNewGoalPrompt() {
+      const name = prompt('Pangalan ng bagong ipon goal (Hal. Emergency Fund, Laptop):');
+      if (!name) return;
+      const target = prompt(`Magkano ang target amount para sa "${name}"?`, '50000');
+      if (target && !isNaN(target) && parseFloat(target) > 0) {
+        document.getElementById('goal-title-input').value = name.toUpperCase();
+        goalTarget = parseFloat(target);
+        goalSaved = 0;
+        updateGoalUI();
+        alert(`✓ Naidagdag na ang bagong goal na "${name}"!`);
+      }
     }
 
     function depositGoal(amount) {
