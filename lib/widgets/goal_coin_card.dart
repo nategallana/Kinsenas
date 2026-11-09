@@ -73,15 +73,16 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
             child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: const Color(0xFFF59E0B)),
+            style: FilledButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
             onPressed: () {
-              final newTarget = double.tryParse(controller.text) ?? widget.goal.targetAmount;
+              final clean = controller.text.replaceAll(',', '').replaceAll(' ', '').trim();
+              final newTarget = double.tryParse(clean) ?? widget.goal.targetAmount;
               if (newTarget > 0) {
                 widget.onTargetChanged(newTarget);
               }
               Navigator.pop(ctx);
             },
-            child: const Text('Save', style: TextStyle(color: Color(0xFF1C1917), fontWeight: FontWeight.bold)),
+            child: const Text('Save', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -95,7 +96,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: const Color(0xFF2E3929), // Refined forest/olive from sketch
+        color: const Color(0xFF1A2219), // Refined deep forest sage
         borderRadius: BorderRadius.circular(28),
         border: Border.all(color: const Color(0x1FFFFFFF)),
         boxShadow: const [
@@ -127,7 +128,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                           isDense: true,
                           contentPadding: EdgeInsets.symmetric(vertical: 4),
                           border: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Color(0xFFF59E0B)),
+                            borderSide: BorderSide(color: Color(0xFF34D399)),
                           ),
                         ),
                         onSubmitted: (val) {
@@ -157,7 +158,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
               Text(
                 '${(progress * 100).toStringAsFixed(0)}%',
                 style: const TextStyle(
-                  color: Color(0xFFFBBF24),
+                  color: Color(0xFF34D399),
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -167,7 +168,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
 
           const SizedBox(height: 28),
 
-          // Centerpiece: Tactile Coin Graphic with Radial Fill
+          // Centerpiece: Tactile Coin Graphic with Radial Fill (Champagne gold & mint)
           SizedBox(
             width: 130,
             height: 130,
@@ -178,7 +179,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                   value: progress,
                   strokeWidth: 8,
                   backgroundColor: Colors.white12,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFF59E0B)),
+                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF34D399)),
                 ),
                 Container(
                   width: 86,
@@ -186,7 +187,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
-                      colors: [Color(0xFFF59E0B), Color(0xFFFCD34D)],
+                      colors: [Color(0xFFD4AF37), Color(0xFFE8D08D)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -208,7 +209,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
 
           const SizedBox(height: 28),
 
-          // Bottom: Progress Numbers and Bar (Tap target to edit target amount!)
+          // Bottom: Progress Numbers and Bar (Tap target to edit target amount)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -226,7 +227,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                       ),
                     ),
                     const SizedBox(width: 5),
-                    const Icon(Icons.edit_outlined, color: Colors.amber, size: 14),
+                    const Icon(Icons.edit_outlined, color: Color(0xFF34D399), size: 14),
                   ],
                 ),
               ),
@@ -236,7 +237,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
           LinearProgressIndicator(
             value: progress,
             backgroundColor: Colors.black26,
-            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFF59E0B)),
+            valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF34D399)),
             minHeight: 6,
             borderRadius: BorderRadius.circular(4),
           ),

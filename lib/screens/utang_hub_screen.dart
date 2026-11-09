@@ -272,7 +272,8 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                       ),
                       onPressed: () async {
                         final title = titleController.text.trim();
-                        final total = double.tryParse(amountController.text) ?? 0.0;
+                        final cleanTotal = amountController.text.replaceAll(',', '').replaceAll(' ', '').trim();
+                        final total = double.tryParse(cleanTotal) ?? 0.0;
                         if (title.isEmpty || total <= 0) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text('Mangyaring ilagay ang pangalan at tamang halaga.')),
@@ -280,13 +281,14 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                           return;
                         }
 
+                        final cleanMonthly = monthlyController.text.replaceAll(',', '').replaceAll(' ', '').trim();
                         final newDebt = Debt(
                           id: 'debt_${DateTime.now().millisecondsSinceEpoch}',
                           title: title,
                           type: selectedType,
                           totalAmount: total,
                           remainingAmount: total,
-                          monthlyPayment: double.tryParse(monthlyController.text),
+                          monthlyPayment: double.tryParse(cleanMonthly),
                           dueDayOfMonth: int.tryParse(dueDayController.text),
                           createdAt: borrowedDate,
                         );

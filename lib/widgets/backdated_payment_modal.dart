@@ -169,7 +169,8 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             ),
             onPressed: () {
-              final amt = double.tryParse(_amountController.text) ?? widget.remainingAmount;
+              final cleanAmt = _amountController.text.replaceAll(',', '').replaceAll(' ', '').trim();
+              final amt = double.tryParse(cleanAmt) ?? widget.remainingAmount;
               widget.onConfirm(amt, _selectedDate);
               Navigator.pop(context);
             },

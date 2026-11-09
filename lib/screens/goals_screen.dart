@@ -32,7 +32,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                 Goal(
                   id: 'goal_motor',
                   title: 'FOR MOTOR',
-                  targetAmount: 60000.0,
+                  targetAmount: 50000.0,
                   currentAmount: 0.0,
                 ),
               ];
@@ -157,7 +157,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
             const SizedBox(height: 14),
 
-            // Target Amount
+            // Target Amount (Handles commas and dots)
             const Text('Target Amount', style: TextStyle(color: Colors.white70, fontSize: 12)),
             const SizedBox(height: 6),
             TextField(
@@ -167,7 +167,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
               decoration: InputDecoration(
                 prefixText: '₱ ',
                 prefixStyle: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
-                hintText: 'Hal. 20000',
+                hintText: '20,000',
                 hintStyle: const TextStyle(color: Colors.white30, fontSize: 13),
                 filled: true,
                 fillColor: const Color(0xFF0B0C0F),
@@ -180,16 +180,17 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
             const SizedBox(height: 22),
 
-            // Create Button
+            // Create Button (Refined emerald)
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFFF59E0B),
+                backgroundColor: const Color(0xFF10B981),
                 minimumSize: const Size.fromHeight(50),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
               onPressed: () async {
                 final title = titleController.text.trim();
-                final target = double.tryParse(targetController.text) ?? 0.0;
+                final clean = targetController.text.replaceAll(',', '').replaceAll(' ', '').trim();
+                final target = double.tryParse(clean) ?? 0.0;
                 if (title.isEmpty || target <= 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Mangyaring ilagay ang pangalan at target amount.')),
@@ -222,7 +223,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
               },
               child: const Text(
                 'I-save ang Bagong Goal',
-                style: TextStyle(color: Color(0xFF1C1917), fontWeight: FontWeight.bold, fontSize: 14),
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
               ),
             ),
           ],
@@ -253,6 +254,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
               decoration: InputDecoration(
                 prefixText: '₱ ',
                 prefixStyle: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
+                hintText: '1,000',
+                hintStyle: const TextStyle(color: Colors.white30),
                 filled: true,
                 fillColor: const Color(0xFF0B0C0F),
                 border: OutlineInputBorder(
@@ -260,21 +263,6 @@ class _GoalsScreenState extends State<GoalsScreen> {
                   borderSide: const BorderSide(color: Colors.white10),
                 ),
               ),
-            ),
-            const SizedBox(height: 12),
-            Wrap(
-              spacing: 6,
-              runSpacing: 6,
-              children: [100, 200, 500, 1000].map((amt) {
-                return ActionChip(
-                  backgroundColor: const Color(0xFF1E2028),
-                  side: const BorderSide(color: Colors.white10),
-                  label: Text('+₱$amt', style: const TextStyle(color: Colors.amber, fontSize: 11)),
-                  onPressed: () {
-                    controller.text = amt.toString();
-                  },
-                );
-              }).toList(),
             ),
           ],
         ),
@@ -286,13 +274,14 @@ class _GoalsScreenState extends State<GoalsScreen> {
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
             onPressed: () {
-              final amt = double.tryParse(controller.text) ?? 0.0;
+              final clean = controller.text.replaceAll(',', '').replaceAll(' ', '').trim();
+              final amt = double.tryParse(clean) ?? 0.0;
               if (amt > 0) {
                 _deposit(amt);
               }
               Navigator.pop(ctx);
             },
-            child: const Text('Idagdag', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text('Idagdag', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -326,11 +315,10 @@ class _GoalsScreenState extends State<GoalsScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text('Ipon & Goals', style: TextStyle(fontWeight: FontWeight.bold)),
-        // Reset button removed from top right! Replaced with clean "+ Add Goal"
         actions: [
           TextButton.icon(
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFFF59E0B),
+              foregroundColor: const Color(0xFF34D399),
               padding: const EdgeInsets.symmetric(horizontal: 14),
             ),
             icon: const Icon(Icons.add_circle_outline_rounded, size: 18),
@@ -356,11 +344,11 @@ class _GoalsScreenState extends State<GoalsScreen> {
                     child: ChoiceChip(
                       label: Text(g.title),
                       selected: isSelected,
-                      selectedColor: const Color(0xFFF59E0B),
+                      selectedColor: const Color(0xFF10B981),
                       backgroundColor: const Color(0xFF14151B),
-                      side: BorderSide(color: isSelected ? const Color(0xFFF59E0B) : Colors.white10),
+                      side: BorderSide(color: isSelected ? const Color(0xFF10B981) : Colors.white10),
                       labelStyle: TextStyle(
-                        color: isSelected ? const Color(0xFF1C1917) : Colors.white70,
+                        color: isSelected ? Colors.white : Colors.white70,
                         fontWeight: FontWeight.bold,
                         fontSize: 11,
                       ),
@@ -384,7 +372,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
           const SizedBox(height: 18),
 
-          // Action Buttons: Mag-ipon (fixed double + bug!) and Reset
+          // Action Buttons: Clean Mag-ipon and Reset
           Row(
             children: [
               Expanded(
@@ -396,7 +384,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   icon: const Icon(Icons.add_rounded, size: 20, color: Colors.white),
-                  label: const Text('Mag-ipon', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                  label: const Text('Mag-ipon', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
                   onPressed: _showCustomDepositDialog,
                 ),
               ),
@@ -418,49 +406,18 @@ class _GoalsScreenState extends State<GoalsScreen> {
             ],
           ),
 
-          const SizedBox(height: 14),
+          const SizedBox(height: 18),
 
-          // Quick Preset Deposit Chips
-          Row(
-            children: [
-              Expanded(
-                child: FilledButton.tonal(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF14151B),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                  ),
-                  onPressed: () => _deposit(500),
-                  child: const Text('+ ₱500 (Tipid)', style: TextStyle(color: Colors.white70, fontSize: 12)),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: FilledButton(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFFF59E0B),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                  ),
-                  onPressed: () => _deposit(2500),
-                  child: const Text('+ ₱2,500 (Sahod)', style: TextStyle(color: Color(0xFF1C1917), fontWeight: FontWeight.bold, fontSize: 12)),
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          // "Add another ipon" Card Button
+          // "Add another ipon" Card Button (Clean refined outline, no orange)
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
               foregroundColor: Colors.white,
-              backgroundColor: const Color(0x08FFFFFF),
-              side: const BorderSide(color: Color(0x20F59E0B)),
-              padding: const EdgeInsets.symmetric(vertical: 16),
+              backgroundColor: const Color(0x06FFFFFF),
+              side: const BorderSide(color: Color(0x3010B981)),
+              padding: const EdgeInsets.symmetric(vertical: 15),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
             ),
-            icon: const Icon(Icons.add_circle_outline_rounded, color: Color(0xFFF59E0B), size: 20),
+            icon: const Icon(Icons.add_circle_outline_rounded, color: Color(0xFF34D399), size: 20),
             label: const Text(
               'Add another ipon',
               style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
