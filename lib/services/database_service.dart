@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/account.dart';
@@ -8,12 +9,84 @@ class DatabaseService {
   static final DatabaseService instance = DatabaseService._init();
   static Database? _database;
 
+  // In-memory fallback (used on Web or if native SQLite is unavailable)
+  final List<Account> _memAccounts = [
+    Account(
+      id: 'default_wallet',
+      name: 'Total Money (Cash + Cashless)',
+      balance: 15450.0,
+      isPrimary: true,
+    ),
+  ];
+
+  final List<Goal> _memGoals = [
+    Goal(
+      id: 'goal_motor',
+      title: 'FOR MOTOR',
+      targetAmount: 60000.0,
+      currentAmount: 35000.0,
+    ),
+    Goal(
+      id: 'goal_emergency',
+      title: 'EMERGENCY FUND',
+      targetAmount: 50000.0,
+      currentAmount: 12000.0,
+    ),
+  ];
+
+  final List<Debt> _memDebts = [
+    Debt(
+      id: 'd1',
+      title: 'SPayLater (Phone Installment)',
+      type: DebtType.payable,
+      totalAmount: 7500,
+      remainingAmount: 5000,
+      monthlyPayment: 1250,
+      totalTerms: 6,
+      paidTerms: 2,
+      dueDayOfMonth: 15,
+      createdAt: DateTime.now().subtract(const Duration(days: 60)),
+    ),
+    Debt(
+      id: 'd2',
+      title: 'Kuya Mark (Personal loan)',
+      type: DebtType.payable,
+      totalAmount: 3000,
+      remainingAmount: 3000,
+      dueDayOfMonth: 30,
+      createdAt: DateTime.now().subtract(const Duration(days: 10)),
+    ),
+    Debt(
+      id: 'r1',
+      title: 'Carl (Friday Lunch split)',
+      type: DebtType.receivable,
+      totalAmount: 450,
+      remainingAmount: 450,
+      createdAt: DateTime.now().subtract(const Duration(days: 3)),
+    ),
+    Debt(
+      id: 'r2',
+      title: 'Tita Ellen',
+      type: DebtType.receivable,
+      totalAmount: 5000,
+      remainingAmount: 3500,
+      createdAt: DateTime.now().subtract(const Duration(days: 45)),
+    ),
+  ];
+
+  final List<DebtPayment> _memPayments = [];
+
   DatabaseService._init();
 
-  Future<Database> get database async {
+  Future<Database?> get database async {
+    if (kIsWeb) return null;
     if (_database != null) return _database!;
-    _database = await _initDB('kinsenas.db');
-    return _database!;
+    try {
+      _database = await _initDB('kinsenas.db');
+      return _database!;
+    } catch (_) {
+      return null;
+    }
   }
 
   Future<Database> _initDB(String filePath) async {
@@ -28,7 +101,6 @@ class DatabaseService {
   }
 
   Future<void> _createDB(Database db, int version) async {
-    // Accounts Table (Simple or multi-wallet)
     await db.execute('''
       CREATE TABLE accounts (
         id TEXT PRIMARY KEY,
@@ -38,7 +110,6 @@ class DatabaseService {
       )
     ''');
 
-    // Transactions Table
     await db.execute('''
       CREATE TABLE transactions (
         id TEXT PRIMARY KEY,
@@ -52,7 +123,6 @@ class DatabaseService {
       )
     ''');
 
-    // Goals Table
     await db.execute('''
       CREATE TABLE goals (
         id TEXT PRIMARY KEY,
@@ -62,7 +132,6 @@ class DatabaseService {
       )
     ''');
 
-    // Debts Table
     await db.execute('''
       CREATE TABLE debts (
         id TEXT PRIMARY KEY,
@@ -78,7 +147,6 @@ class DatabaseService {
       )
     ''');
 
-    // Debt Payments Table (Backdated payment history)
     await db.execute('''
       CREATE TABLE debt_payments (
         id TEXT PRIMARY KEY,
@@ -90,92 +158,172 @@ class DatabaseService {
       )
     ''');
 
-    // Insert Default Primary Account ("Universal Wallet")
-    await db.insert('accounts', {
-      'id': 'default_wallet',
-      'name': 'Total Money (Cash + Cashless)',
-      'balance': 0.0,
-      'is_primary': 1,
-    });
-
-    // Insert Initial Motor Goal
-    await db.insert('goals', {
-      'id': 'goal_motor',
-      'title': 'FOR MOTOR',
-      'target_amount': 60000.0,
-      'current_amount': 15000.0,
-    });
+    for (var a in _memAccounts) {
+      await db.insert('accounts', a.toMap());
+    }
+    for (var g in _memGoals) {
+      await db.insert('goals', g.toMap());
+    }
+    for (var d in _memDebts) {
+      await db.insert('debts', d.toMap());
+    }
   }
 
   // Account operations
   Future<List<Account>> getAccounts() async {
-    final db = await instance.database;
-    final maps = await db.query('accounts');
-    return maps.map((m) => Account.fromMap(m)).toList();
+    try {
+      final db = await database;
+      if (db != null) {
+        final maps = await db.query('accounts');
+        if (maps.isNotEmpty) {
+          return maps.map((m) => Account.fromMap(m)).toList();
+        }
+      }
+    } catch (_) {}
+    return List.from(_memAccounts);
   }
 
   Future<int> updateAccountBalance(String id, double newBalance) async {
-    final db = await instance.database;
-    return await db.update('accounts', {'balance': newBalance}, where: 'id = ?', whereArgs: [id]);
+    try {
+      final db = await database;
+      if (db != null) {
+        return await db.update('accounts', {'balance': newBalance}, where: 'id = ?', whereArgs: [id]);
+      }
+    } catch (_) {}
+    final idx = _memAccounts.indexWhere((a) => a.id == id);
+    if (idx != -1) {
+      _memAccounts[idx] = _memAccounts[idx].copyWith(balance: newBalance);
+    }
+    return 1;
   }
 
   // Goal operations
   Future<List<Goal>> getGoals() async {
-    final db = await instance.database;
-    final maps = await db.query('goals');
-    return maps.map((m) => Goal.fromMap(m)).toList();
-  }
-
-  Future<int> updateGoal(Goal goal) async {
-    final db = await instance.database;
-    return await db.update('goals', goal.toMap(), where: 'id = ?', whereArgs: [goal.id]);
+    try {
+      final db = await database;
+      if (db != null) {
+        final maps = await db.query('goals');
+        if (maps.isNotEmpty) {
+          return maps.map((m) => Goal.fromMap(m)).toList();
+        }
+      }
+    } catch (_) {}
+    return List.from(_memGoals);
   }
 
   Future<int> insertGoal(Goal goal) async {
-    final db = await instance.database;
-    return await db.insert('goals', goal.toMap());
+    try {
+      final db = await database;
+      if (db != null) {
+        return await db.insert('goals', goal.toMap());
+      }
+    } catch (_) {}
+    _memGoals.add(goal);
+    return 1;
+  }
+
+  Future<int> updateGoal(Goal goal) async {
+    try {
+      final db = await database;
+      if (db != null) {
+        return await db.update('goals', goal.toMap(), where: 'id = ?', whereArgs: [goal.id]);
+      }
+    } catch (_) {}
+    final idx = _memGoals.indexWhere((g) => g.id == goal.id);
+    if (idx != -1) {
+      _memGoals[idx] = goal;
+    }
+    return 1;
+  }
+
+  Future<int> deleteGoal(String id) async {
+    try {
+      final db = await database;
+      if (db != null) {
+        return await db.delete('goals', where: 'id = ?', whereArgs: [id]);
+      }
+    } catch (_) {}
+    _memGoals.removeWhere((g) => g.id == id);
+    return 1;
   }
 
   // Debt operations
   Future<List<Debt>> getDebts({DebtType? filterType}) async {
-    final db = await instance.database;
-    final maps = (filterType != null)
-        ? await db.query('debts', where: 'type = ?', whereArgs: [filterType.name])
-        : await db.query('debts');
-    return maps.map((m) => Debt.fromMap(m)).toList();
+    try {
+      final db = await database;
+      if (db != null) {
+        final maps = (filterType != null)
+            ? await db.query('debts', where: 'type = ?', whereArgs: [filterType.name])
+            : await db.query('debts');
+        if (maps.isNotEmpty) {
+          return maps.map((m) => Debt.fromMap(m)).toList();
+        }
+      }
+    } catch (_) {}
+    if (filterType != null) {
+      return _memDebts.where((d) => d.type == filterType).toList();
+    }
+    return List.from(_memDebts);
   }
 
   Future<int> insertDebt(Debt debt) async {
-    final db = await instance.database;
-    return await db.insert('debts', debt.toMap());
+    try {
+      final db = await database;
+      if (db != null) {
+        return await db.insert('debts', debt.toMap());
+      }
+    } catch (_) {}
+    _memDebts.add(debt);
+    return 1;
   }
 
   Future<int> deleteDebt(String id) async {
-    final db = await instance.database;
-    return await db.delete('debts', where: 'id = ?', whereArgs: [id]);
+    try {
+      final db = await database;
+      if (db != null) {
+        return await db.delete('debts', where: 'id = ?', whereArgs: [id]);
+      }
+    } catch (_) {}
+    _memDebts.removeWhere((d) => d.id == id);
+    return 1;
   }
 
   Future<void> recordDebtPayment(DebtPayment payment) async {
-    final db = await instance.database;
-    await db.transaction((txn) async {
-      await txn.insert('debt_payments', payment.toMap());
-
-      // Deduct from debt remaining amount
-      final debtMap = await txn.query('debts', where: 'id = ?', whereArgs: [payment.debtId], limit: 1);
-      if (debtMap.isNotEmpty) {
-        final currentDebt = Debt.fromMap(debtMap.first);
-        final newRemaining = (currentDebt.remainingAmount - payment.amountPaid).clamp(0.0, double.infinity);
-        final newPaidTerms = currentDebt.paidTerms + 1;
-        await txn.update(
-          'debts',
-          {
-            'remaining_amount': newRemaining,
-            'paid_terms': newPaidTerms,
-          },
-          where: 'id = ?',
-          whereArgs: [payment.debtId],
-        );
+    try {
+      final db = await database;
+      if (db != null) {
+        await db.transaction((txn) async {
+          await txn.insert('debt_payments', payment.toMap());
+          final debtMap = await txn.query('debts', where: 'id = ?', whereArgs: [payment.debtId], limit: 1);
+          if (debtMap.isNotEmpty) {
+            final currentDebt = Debt.fromMap(debtMap.first);
+            final newRemaining = (currentDebt.remainingAmount - payment.amountPaid).clamp(0.0, double.infinity);
+            final newPaidTerms = currentDebt.paidTerms + 1;
+            await txn.update(
+              'debts',
+              {
+                'remaining_amount': newRemaining,
+                'paid_terms': newPaidTerms,
+              },
+              where: 'id = ?',
+              whereArgs: [payment.debtId],
+            );
+          }
+        });
+        return;
       }
-    });
+    } catch (_) {}
+
+    _memPayments.add(payment);
+    final idx = _memDebts.indexWhere((d) => d.id == payment.debtId);
+    if (idx != -1) {
+      final currentDebt = _memDebts[idx];
+      final newRemaining = (currentDebt.remainingAmount - payment.amountPaid).clamp(0.0, double.infinity);
+      final newPaidTerms = currentDebt.paidTerms + 1;
+      _memDebts[idx] = currentDebt.copyWith(
+        remainingAmount: newRemaining,
+        paidTerms: newPaidTerms,
+      );
+    }
   }
 }

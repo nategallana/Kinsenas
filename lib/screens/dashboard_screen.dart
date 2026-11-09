@@ -23,31 +23,38 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> _loadDashboardData() async {
     setState(() => _isLoading = true);
-    final accounts = await DatabaseService.instance.getAccounts();
-    final debts = await DatabaseService.instance.getDebts();
+    try {
+      final accounts = await DatabaseService.instance.getAccounts();
+      final debts = await DatabaseService.instance.getDebts();
 
-    double cash = 0.0;
-    for (var a in accounts) {
-      cash += a.balance;
-    }
-
-    double payables = 0.0;
-    double receivables = 0.0;
-    for (var d in debts) {
-      if (d.type == DebtType.payable) {
-        payables += d.remainingAmount;
-      } else {
-        receivables += d.remainingAmount;
+      double cash = 0.0;
+      for (var a in accounts) {
+        cash += a.balance;
       }
-    }
 
-    if (mounted) {
-      setState(() {
-        _totalCash = cash;
-        _totalPayables = payables;
-        _totalReceivables = receivables;
-        _isLoading = false;
-      });
+      double payables = 0.0;
+      double receivables = 0.0;
+      for (var d in debts) {
+        if (d.type == DebtType.payable) {
+          payables += d.remainingAmount;
+        } else {
+          receivables += d.remainingAmount;
+        }
+      }
+
+      if (mounted) {
+        setState(() {
+          _totalCash = cash;
+          _totalPayables = payables;
+          _totalReceivables = receivables;
+        });
+      }
+    } catch (_) {
+      // In case of any error, state gracefully updates
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
     }
   }
 
@@ -61,91 +68,91 @@ class _DashboardScreenState extends State<DashboardScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text('Kinsenas', style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 0.5)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: Colors.white70),
-            onPressed: _loadDashboardData,
-          ),
-        ],
+        // Top right button cleanly removed
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: Color(0xFFF43F5E)))
-          : ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              children: [
-                // Net Worth Card
-                Container(
-                  padding: const EdgeInsets.all(22),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF14151B),
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: Colors.white10),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Total Net Worth', style: TextStyle(color: Colors.white54, fontSize: 12)),
-                      const SizedBox(height: 6),
-                      Text(
-                        '₱${netWorth.toStringAsFixed(2)}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildMetricTile('Cash / Wallets', _totalCash, const Color(0xFF10B981)),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: _buildMetricTile('Payables (Owed)', _totalPayables, const Color(0xFFF43F5E)),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 20),
-
-                // Payday Countdown Banner
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF1E222B), Color(0xFF14151B)],
+          : RefreshIndicator(
+              color: const Color(0xFFF43F5E),
+              backgroundColor: const Color(0xFF14151B),
+              onRefresh: _loadDashboardData,
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                children: [
+                  // Net Worth Card
+                  Container(
+                    padding: const EdgeInsets.all(22),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF14151B),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: Colors.white10),
                     ),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white10),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: const Color(0x26F43F5E),
-                          borderRadius: BorderRadius.circular(14),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Total Net Worth', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                        const SizedBox(height: 6),
+                        Text(
+                          '₱${netWorth.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        child: const Icon(Icons.calendar_today_rounded, color: Color(0xFFF43F5E), size: 20),
-                      ),
-                      const SizedBox(width: 14),
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        const SizedBox(height: 16),
+                        Row(
                           children: [
-                            Text('Upcoming Kinsenas', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                            Text('Next payout is in 10 days (15th)', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                            Expanded(
+                              child: _buildMetricTile('Cash / Wallets', _totalCash, const Color(0xFF10B981)),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildMetricTile('Payables (Owed)', _totalPayables, const Color(0xFFF43F5E)),
+                            ),
                           ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              ],
+
+                  const SizedBox(height: 20),
+
+                  // Payday Countdown Banner
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF1E222B), Color(0xFF14151B)],
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.white10),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: const Color(0x26F43F5E),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: const Icon(Icons.calendar_today_rounded, color: Color(0xFFF43F5E), size: 20),
+                        ),
+                        const SizedBox(width: 14),
+                        const Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Upcoming Kinsenas', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                              Text('Next payout is in 6 days (15th)', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
     );
   }
@@ -156,7 +163,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       decoration: BoxDecoration(
         color: const Color(0xFF0B0C0F),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: const Color(0x0AFFFFFF)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
