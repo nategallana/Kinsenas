@@ -58,6 +58,44 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  void _confirmResetAll() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF14151B),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        title: const Text('Reset Everything to ₱0?', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+        content: const Text(
+          'This will reset your wallet balance to ₱0.00, clear all debts, and reset savings progress to ₱0.',
+          style: TextStyle(color: Colors.white70, fontSize: 13),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: const Color(0xFFF43F5E)),
+            onPressed: () async {
+              Navigator.pop(ctx);
+              await DatabaseService.instance.resetAllToZero();
+              await _loadDashboardData();
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Color(0xFF14151B),
+                    content: Text('✓ Everything reset back to ₱0.00!', style: TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold)),
+                  ),
+                );
+              }
+            },
+            child: const Text('Reset to ₱0', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final double netWorth = (_totalCash + _totalReceivables) - _totalPayables;
@@ -68,7 +106,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text('Kinsenas', style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 0.5)),
-        // Top right button cleanly removed
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert_rounded, color: Colors.white60),
+            color: const Color(0xFF14151B),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            onSelected: (val) {
+              if (val == 'reset') _confirmResetAll();
+            },
+            itemBuilder: (ctx) => [
+              const PopupMenuItem(
+                value: 'reset',
+                child: Row(
+                  children: [
+                    Icon(Icons.restart_alt_rounded, color: Color(0xFFF43F5E), size: 18),
+                    SizedBox(width: 10),
+                    Text('Reset all to ₱0', style: TextStyle(color: Color(0xFFF43F5E), fontWeight: FontWeight.bold, fontSize: 13)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: Color(0xFFF43F5E)))

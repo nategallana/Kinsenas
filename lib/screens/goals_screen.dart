@@ -33,7 +33,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                   id: 'goal_motor',
                   title: 'FOR MOTOR',
                   targetAmount: 60000.0,
-                  currentAmount: 35000.0,
+                  currentAmount: 0.0,
                 ),
               ];
         if (_selectedGoalIndex >= _goals.length) {

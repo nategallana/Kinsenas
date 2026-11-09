@@ -25,55 +25,7 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
 
   Future<void> _loadDebts() async {
     setState(() => _isLoading = true);
-    var debts = await DatabaseService.instance.getDebts();
-
-    // If database is empty on first run, seed initial records
-    if (debts.isEmpty) {
-      final initialDebts = [
-        Debt(
-          id: 'd1',
-          title: 'SPayLater (Phone Installment)',
-          type: DebtType.payable,
-          totalAmount: 7500,
-          remainingAmount: 5000,
-          monthlyPayment: 1250,
-          totalTerms: 6,
-          paidTerms: 2,
-          dueDayOfMonth: 15,
-          createdAt: DateTime.now().subtract(const Duration(days: 60)),
-        ),
-        Debt(
-          id: 'd2',
-          title: 'Kuya Mark (Personal loan)',
-          type: DebtType.payable,
-          totalAmount: 3000,
-          remainingAmount: 3000,
-          dueDayOfMonth: 30,
-          createdAt: DateTime.now().subtract(const Duration(days: 10)),
-        ),
-        Debt(
-          id: 'r1',
-          title: 'Carl (Friday Lunch split)',
-          type: DebtType.receivable,
-          totalAmount: 450,
-          remainingAmount: 450,
-          createdAt: DateTime.now().subtract(const Duration(days: 3)),
-        ),
-        Debt(
-          id: 'r2',
-          title: 'Tita Ellen',
-          type: DebtType.receivable,
-          totalAmount: 5000,
-          remainingAmount: 3500,
-          createdAt: DateTime.now().subtract(const Duration(days: 45)),
-        ),
-      ];
-
-      for (var d in initialDebts) {
-        await DatabaseService.instance.insertDebt(d);
-      }
-      debts = await DatabaseService.instance.getDebts();
-    }
+    final debts = await DatabaseService.instance.getDebts();
 
     if (mounted) {
       setState(() {

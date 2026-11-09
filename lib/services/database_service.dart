@@ -9,12 +9,12 @@ class DatabaseService {
   static final DatabaseService instance = DatabaseService._init();
   static Database? _database;
 
-  // In-memory fallback (used on Web or if native SQLite is unavailable)
+  // In-memory fallback (All starting clean at ZERO)
   final List<Account> _memAccounts = [
     Account(
       id: 'default_wallet',
       name: 'Total Money (Cash + Cashless)',
-      balance: 15450.0,
+      balance: 0.0,
       isPrimary: true,
     ),
   ];
@@ -23,57 +23,12 @@ class DatabaseService {
     Goal(
       id: 'goal_motor',
       title: 'FOR MOTOR',
-      targetAmount: 60000.0,
-      currentAmount: 35000.0,
-    ),
-    Goal(
-      id: 'goal_emergency',
-      title: 'EMERGENCY FUND',
       targetAmount: 50000.0,
-      currentAmount: 12000.0,
+      currentAmount: 0.0,
     ),
   ];
 
-  final List<Debt> _memDebts = [
-    Debt(
-      id: 'd1',
-      title: 'SPayLater (Phone Installment)',
-      type: DebtType.payable,
-      totalAmount: 7500,
-      remainingAmount: 5000,
-      monthlyPayment: 1250,
-      totalTerms: 6,
-      paidTerms: 2,
-      dueDayOfMonth: 15,
-      createdAt: DateTime.now().subtract(const Duration(days: 60)),
-    ),
-    Debt(
-      id: 'd2',
-      title: 'Kuya Mark (Personal loan)',
-      type: DebtType.payable,
-      totalAmount: 3000,
-      remainingAmount: 3000,
-      dueDayOfMonth: 30,
-      createdAt: DateTime.now().subtract(const Duration(days: 10)),
-    ),
-    Debt(
-      id: 'r1',
-      title: 'Carl (Friday Lunch split)',
-      type: DebtType.receivable,
-      totalAmount: 450,
-      remainingAmount: 450,
-      createdAt: DateTime.now().subtract(const Duration(days: 3)),
-    ),
-    Debt(
-      id: 'r2',
-      title: 'Tita Ellen',
-      type: DebtType.receivable,
-      totalAmount: 5000,
-      remainingAmount: 3500,
-      createdAt: DateTime.now().subtract(const Duration(days: 45)),
-    ),
-  ];
-
+  final List<Debt> _memDebts = [];
   final List<DebtPayment> _memPayments = [];
 
   DatabaseService._init();
@@ -158,15 +113,49 @@ class DatabaseService {
       )
     ''');
 
-    for (var a in _memAccounts) {
-      await db.insert('accounts', a.toMap());
+    // Insert initial clean account with balance 0.0
+    await db.insert('accounts', {
+      'id': 'default_wallet',
+      'name': 'Total Money (Cash + Cashless)',
+      'balance': 0.0,
+      'is_primary': 1,
+    });
+
+    await db.insert('goals', {
+      'id': 'goal_motor',
+      'title': 'FOR MOTOR',
+      'target_amount': 50000.0,
+      'current_amount': 0.0,
+    });
+  }
+
+  /// Wipes all data back to clean ZERO
+  Future<void> resetAllToZero() async {
+    try {
+      final db = await database;
+      if (db != null) {
+        await db.update('accounts', {'balance': 0.0});
+        await db.delete('debts');
+        await db.delete('debt_payments');
+        await db.delete('transactions');
+        await db.update('goals', {'current_amount': 0.0});
+      }
+    } catch (_) {}
+
+    _memAccounts.clear();
+    _memAccounts.add(Account(
+      id: 'default_wallet',
+      name: 'Total Money (Cash + Cashless)',
+      balance: 0.0,
+      isPrimary: true,
+    ));
+
+    for (int i = 0; i < _memGoals.length; i++) {
+      _memGoals[i] = _memGoals[i].copyWith(currentAmount: 0.0);
     }
-    for (var g in _memGoals) {
-      await db.insert('goals', g.toMap());
-    }
-    for (var d in _memDebts) {
-      await db.insert('debts', d.toMap());
-    }
+
+    _memDebts.clear();
+    _memPayments.clear();
   }
 
   // Account operations
