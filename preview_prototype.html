@@ -15,8 +15,8 @@
     
     body {
       font-family: var(--font-sans);
-      background-color: #0c0d10;
-      color: #e6e8ec;
+      background-color: #11140E;
+      color: #EFF1ED;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -41,11 +41,18 @@
                   color 0.18s ease;
     }
     .day-cell.active-kinsenas {
-      background-color: #f43f5e;
-      color: #ffffff;
+      background-color: #717744;
+      color: #EFF1ED;
       transform: scale(1.08);
       font-weight: 600;
-      box-shadow: 0 0 12px rgba(244, 63, 94, 0.35);
+      box-shadow: 0 0 12px rgba(113, 119, 68, 0.4);
+    }
+    .day-cell.active-kinsenas-2 {
+      background-color: #BCBD8B;
+      color: #11140E;
+      transform: scale(1.08);
+      font-weight: 600;
+      box-shadow: 0 0 12px rgba(188, 189, 139, 0.4);
     }
   </style>
 </head>
@@ -298,16 +305,16 @@
         
         <!-- The Main Olive/Forest Card from User Sketch -->
         <div class="rounded-3xl p-6 relative overflow-hidden shadow-2xl transition-all"
-             style="background: linear-gradient(145deg, #3d4a36, #2d3827); border: 1px solid rgba(255,255,255,0.12);">
+             style="background: #373D20; border: 1px solid rgba(188, 189, 139, 0.2);">
           
           <!-- Top Row: Editable Goal Title + Date -->
           <div class="flex items-center justify-between mb-6">
             <!-- Inline Editable Goal Name -->
             <div class="flex items-center gap-1.5 group cursor-pointer" onclick="enableGoalEdit()">
               <input type="text" id="goal-title-input" value="FOR MOTOR" 
-                class="bg-transparent text-white font-bold tracking-wider text-sm uppercase focus:outline-none focus:border-b-2 border-white/50 w-36 transition"
+                class="bg-transparent text-[#EFF1ED] font-bold tracking-wider text-sm uppercase focus:outline-none focus:border-b-2 border-white/50 w-36 transition"
                 onblur="saveGoalName()" onkeydown="if(event.key==='Enter') this.blur()" />
-              <button class="text-white/60 hover:text-white transition">
+              <button class="text-[#BCBD8B] hover:text-[#EFF1ED] transition">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                 </svg>
@@ -316,8 +323,8 @@
 
             <!-- Target Date Badge -->
             <div class="text-right">
-              <span class="text-[10px] uppercase font-mono tracking-widest text-emerald-300 font-semibold">TARGET</span>
-              <p class="text-xs font-bold text-white tracking-tight">JAN 2, 2027</p>
+              <span class="text-[10px] uppercase font-mono tracking-widest text-[#BCBD8B] font-semibold">TARGET</span>
+              <p class="text-xs font-bold text-[#EFF1ED] tracking-tight">JAN 2, 2027</p>
             </div>
           </div>
 
@@ -325,21 +332,21 @@
           <div class="flex flex-col items-center justify-center my-6">
             <div class="relative w-36 h-36 flex items-center justify-center">
               <!-- Glow ring -->
-              <div class="absolute inset-0 rounded-full bg-amber-400/20 blur-xl"></div>
+              <div class="absolute inset-0 rounded-full bg-[#BCBD8B]/15 blur-xl"></div>
               
               <!-- SVG Coin with dynamic progress fill -->
               <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
                 <!-- Outer Track -->
-                <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,0.15)" stroke-width="8" fill="none" />
+                <circle cx="60" cy="60" r="50" stroke="rgba(239,241,237,0.12)" stroke-width="8" fill="none" />
                 <!-- Progress Arc -->
-                <circle id="coin-progress-circle" cx="60" cy="60" r="50" stroke="#f59e0b" stroke-width="8" 
+                <circle id="coin-progress-circle" cx="60" cy="60" r="50" stroke="#BCBD8B" stroke-width="8" 
                   stroke-dasharray="314.15" stroke-dashoffset="125" stroke-linecap="round" fill="none" 
                   class="transition-all duration-700 ease-out" />
               </svg>
 
               <!-- Inner Coin Face with Embossed C / ₱ -->
-              <div class="absolute w-20 h-20 rounded-full bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center shadow-lg border-2 border-amber-200/50">
-                <span class="text-zinc-900 font-black text-3xl font-mono">₱</span>
+              <div class="absolute w-20 h-20 rounded-full bg-gradient-to-tr from-[#717744] to-[#BCBD8B] flex items-center justify-center shadow-lg border-2 border-[#BCBD8B]/40">
+                <span class="text-[#11140E] font-black text-3xl font-mono">₱</span>
               </div>
             </div>
           </div>
@@ -347,45 +354,36 @@
           <!-- Bottom: Numerator / Denominator & Progress Bar -->
           <div class="space-y-2 mt-4">
             <div class="flex justify-between items-baseline">
-              <span class="text-xs text-white/70">Current Progress</span>
-              <p class="text-sm font-bold font-mono text-white tnum tracking-tight cursor-pointer" onclick="changeGoalTarget()">
-                <span id="goal-current" class="text-amber-300">₱35,000</span> / <span id="goal-target" class="hover:underline">₱60,000</span> ✏️
+              <span class="text-xs text-[#EFF1ED]/70">Current Progress</span>
+              <p class="text-sm font-bold font-mono text-[#EFF1ED] tnum tracking-tight cursor-pointer" onclick="changeGoalTarget()">
+                <span id="goal-current" class="text-[#BCBD8B]">₱35,000</span> / <span id="goal-target" class="hover:underline">₱60,000</span> ✏️
               </p>
             </div>
 
             <!-- Smooth progress bar -->
             <div class="w-full h-2 rounded-full bg-black/30 overflow-hidden p-0.5 border border-white/10">
-              <div id="goal-bar" class="h-full rounded-full bg-amber-400 transition-all duration-700 ease-out" style="width: 58.3%;"></div>
+              <div id="goal-bar" class="h-full rounded-full bg-[#BCBD8B] transition-all duration-700 ease-out" style="width: 58.3%;"></div>
             </div>
           </div>
 
         </div>
 
         <!-- Quick actions to simulate deposits into this Goal -->
-        <div class="space-y-2 mt-4">
+        <div class="space-y-3 mt-4">
           <div class="flex gap-2">
-            <button onclick="promptCustomDeposit()" class="btn-press flex-1 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md shadow-emerald-500/20">
+            <button onclick="promptCustomDeposit()" class="btn-press flex-1 py-3.5 rounded-2xl bg-[#717744] hover:bg-[#5c6136] text-[#EFF1ED] text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-md shadow-black/30">
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
               Mag-ipon
             </button>
-            <button onclick="resetGoalToZero()" class="btn-press px-4 py-3 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-xs text-rose-400 hover:bg-rose-500/20 transition font-bold flex items-center justify-center gap-1.5">
+            <button onclick="resetGoalToZero()" class="btn-press px-4 py-3.5 rounded-2xl bg-[#766153]/25 border border-[#766153]/40 text-xs text-[#EFF1ED] hover:bg-[#766153]/40 transition font-bold flex items-center justify-center gap-1.5">
               <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
               Reset
             </button>
           </div>
 
-          <div class="flex gap-2">
-            <button onclick="depositGoal(500)" class="btn-press flex-1 py-2 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 text-[11px] font-medium text-white/80 transition">
-              + ₱500 (Tipid)
-            </button>
-            <button onclick="depositGoal(2500)" class="btn-press flex-1 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 hover:bg-amber-500/20 text-[11px] font-semibold transition">
-              + ₱2,500 (Sahod)
-            </button>
-          </div>
-
           <!-- Add Another Ipon Button -->
-          <button onclick="addNewGoalPrompt()" class="btn-press w-full py-3.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.08] border border-amber-500/30 text-xs font-bold text-amber-300 transition flex items-center justify-center gap-2 mt-2">
-            <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <button onclick="addNewGoalPrompt()" class="btn-press w-full py-3.5 rounded-2xl bg-[#1B2117] hover:bg-[#252D20] border border-[#BCBD8B]/40 text-xs font-bold text-[#BCBD8B] transition flex items-center justify-center gap-2">
+            <svg class="w-4 h-4 text-[#BCBD8B]" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             Add another ipon
           </button>
         </div>

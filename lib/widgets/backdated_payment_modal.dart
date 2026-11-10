@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 
 class BackdatedPaymentModal extends StatefulWidget {
   final String title;
@@ -21,7 +22,7 @@ class BackdatedPaymentModal extends StatefulWidget {
     return showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF14151B),
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -66,13 +67,13 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
               Text(
                 'Log Payment: ${widget.title}',
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.whiteSmoke,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.close_rounded, color: Colors.white54, size: 20),
+                icon: const Icon(Icons.close_rounded, color: AppColors.textSecondary, size: 20),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
@@ -80,25 +81,29 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
           const SizedBox(height: 4),
           const Text(
             'Forgot to update on time? Pick the exact date the money changed hands.',
-            style: TextStyle(color: Colors.white54, fontSize: 12),
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
           ),
           const SizedBox(height: 18),
 
           // Amount Input
-          const Text('Amount Paid', style: TextStyle(color: Colors.white70, fontSize: 12)),
+          const Text('Amount Paid', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           const SizedBox(height: 6),
           TextField(
             controller: _amountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
             decoration: InputDecoration(
               prefixText: '₱ ',
-              prefixStyle: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
+              prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
               filled: true,
-              fillColor: const Color(0xFF0B0C0F),
+              fillColor: AppColors.inputFill,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Colors.white10),
+                borderSide: const BorderSide(color: AppColors.border),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: const BorderSide(color: AppColors.drySage),
               ),
             ),
           ),
@@ -107,16 +112,16 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
           // Date Picker Tile
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Payment Date', style: TextStyle(color: Colors.white70, fontSize: 12)),
+            title: const Text('Payment Date', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             subtitle: Text(
               '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}',
               style: const TextStyle(
-                color: Color(0xFFF43F5E),
+                color: AppColors.drySage,
                 fontWeight: FontWeight.bold,
                 fontSize: 15,
               ),
             ),
-            trailing: const Icon(Icons.calendar_month_rounded, color: Colors.white70),
+            trailing: const Icon(Icons.calendar_month_rounded, color: AppColors.drySage),
             onTap: () async {
               final picked = await showDatePicker(
                 context: context,
@@ -135,27 +140,27 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
             spacing: 8,
             children: [
               ActionChip(
-                backgroundColor: const Color(0xFF1E2028),
-                side: const BorderSide(color: Colors.white10),
-                label: const Text('Today', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                backgroundColor: AppColors.surfaceElevated,
+                side: const BorderSide(color: AppColors.border),
+                label: const Text('Today', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                 onPressed: () => setState(() => _selectedDate = DateTime.now()),
               ),
               ActionChip(
-                backgroundColor: const Color(0xFF1E2028),
-                side: const BorderSide(color: Colors.white10),
-                label: const Text('Yesterday', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                backgroundColor: AppColors.surfaceElevated,
+                side: const BorderSide(color: AppColors.border),
+                label: const Text('Yesterday', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                 onPressed: () => setState(() => _selectedDate = DateTime.now().subtract(const Duration(days: 1))),
               ),
               ActionChip(
-                backgroundColor: const Color(0xFF1E2028),
-                side: const BorderSide(color: Colors.white10),
-                label: const Text('3 Days Ago', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                backgroundColor: AppColors.surfaceElevated,
+                side: const BorderSide(color: AppColors.border),
+                label: const Text('3 Days Ago', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                 onPressed: () => setState(() => _selectedDate = DateTime.now().subtract(const Duration(days: 3))),
               ),
               ActionChip(
-                backgroundColor: const Color(0xFF1E2028),
-                side: const BorderSide(color: Colors.white10),
-                label: const Text('Last Kinsenas', style: TextStyle(color: Colors.white70, fontSize: 11)),
+                backgroundColor: AppColors.surfaceElevated,
+                side: const BorderSide(color: AppColors.border),
+                label: const Text('Last Kinsenas', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                 onPressed: () => setState(() => _selectedDate = DateTime.now().subtract(const Duration(days: 15))),
               ),
             ],
@@ -164,7 +169,7 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
           const SizedBox(height: 24),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFFF43F5E),
+              backgroundColor: AppColors.dustyOlive,
               minimumSize: const Size.fromHeight(48),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             ),
@@ -174,7 +179,7 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
               widget.onConfirm(amt, _selectedDate);
               Navigator.pop(context);
             },
-            child: const Text('Confirm & Update Balance', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text('Confirm & Update Balance', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold)),
           ),
         ],
       ),

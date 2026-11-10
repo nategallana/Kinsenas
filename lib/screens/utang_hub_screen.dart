@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 import '../models/debt.dart';
 import '../services/database_service.dart';
 import '../widgets/backdated_payment_modal.dart';
@@ -46,7 +47,7 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF14151B),
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -72,10 +73,10 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                       children: [
                         Text(
                           isPayable ? 'Magdagdag ng Utang Ko' : 'Magdagdag ng Pautang',
-                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                          style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.close_rounded, color: Colors.white54, size: 20),
+                          icon: const Icon(Icons.close_rounded, color: AppColors.textSecondary, size: 20),
                           onPressed: () => Navigator.pop(ctx),
                         ),
                       ],
@@ -86,8 +87,9 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                     Container(
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF0B0C0F),
+                        color: AppColors.inputFill,
                         borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: AppColors.border),
                       ),
                       child: Row(
                         children: [
@@ -97,14 +99,14 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                 decoration: BoxDecoration(
-                                  color: isPayable ? const Color(0xFFF43F5E) : Colors.transparent,
+                                  color: isPayable ? AppColors.ashBrown : Colors.transparent,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(
                                   'Utang Ko (I Owe)',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: isPayable ? Colors.white : Colors.white60,
+                                    color: isPayable ? AppColors.whiteSmoke : AppColors.textSecondary,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 11,
                                   ),
@@ -118,14 +120,14 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                               child: Container(
                                 padding: const EdgeInsets.symmetric(vertical: 8),
                                 decoration: BoxDecoration(
-                                  color: !isPayable ? const Color(0xFF10B981) : Colors.transparent,
+                                  color: !isPayable ? AppColors.dustyOlive : Colors.transparent,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Text(
                                   'May Utang Sakin',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: !isPayable ? Colors.white : Colors.white60,
+                                    color: !isPayable ? AppColors.whiteSmoke : AppColors.textSecondary,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 11,
                                   ),
@@ -140,19 +142,23 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                     const SizedBox(height: 16),
 
                     // Name / Entity
-                    const Text('Pangalan o Institusyon', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    const Text('Pangalan o Institusyon', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: titleController,
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
                       decoration: InputDecoration(
                         hintText: isPayable ? 'Hal. SPayLater, Kuya Mark, BPI' : 'Hal. Carl, Tita Ellen',
-                        hintStyle: const TextStyle(color: Colors.white30, fontSize: 13),
+                        hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 13),
                         filled: true,
-                        fillColor: const Color(0xFF0B0C0F),
+                        fillColor: AppColors.inputFill,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Colors.white10),
+                          borderSide: const BorderSide(color: AppColors.border),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(color: AppColors.drySage),
                         ),
                       ),
                     ),
@@ -160,20 +166,26 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                     const SizedBox(height: 14),
 
                     // Total Amount
-                    const Text('Kabuuang Halaga (Total Amount)', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    const Text('Kabuuang Halaga (Total Amount)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: amountController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                      style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
                       decoration: InputDecoration(
                         prefixText: '₱ ',
-                        prefixStyle: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
+                        prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
+                        hintText: '0.00',
+                        hintStyle: const TextStyle(color: AppColors.textMuted),
                         filled: true,
-                        fillColor: const Color(0xFF0B0C0F),
+                        fillColor: AppColors.inputFill,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(14),
-                          borderSide: const BorderSide(color: Colors.white10),
+                          borderSide: const BorderSide(color: AppColors.border),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          borderSide: const BorderSide(color: AppColors.drySage),
                         ),
                       ),
                     ),
@@ -187,20 +199,24 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Due Day (Araw ng Sahod)', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                              const Text('Due Day (Araw ng Sahod)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                               const SizedBox(height: 6),
                               TextField(
                                 controller: dueDayController,
                                 keyboardType: TextInputType.number,
-                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
                                 decoration: InputDecoration(
                                   hintText: 'Hal. 15 o 30',
-                                  hintStyle: const TextStyle(color: Colors.white30, fontSize: 12),
+                                  hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 12),
                                   filled: true,
-                                  fillColor: const Color(0xFF0B0C0F),
+                                  fillColor: AppColors.inputFill,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(14),
-                                    borderSide: const BorderSide(color: Colors.white10),
+                                    borderSide: const BorderSide(color: AppColors.border),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    borderSide: const BorderSide(color: AppColors.drySage),
                                   ),
                                 ),
                               ),
@@ -212,22 +228,26 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Monthly Bill (BNPL)', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                              const Text('Monthly Bill (BNPL)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                               const SizedBox(height: 6),
                               TextField(
                                 controller: monthlyController,
                                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
                                 decoration: InputDecoration(
                                   prefixText: '₱ ',
-                                  prefixStyle: const TextStyle(color: Colors.white70),
+                                  prefixStyle: const TextStyle(color: AppColors.textSecondary),
                                   hintText: 'Opsyonal',
-                                  hintStyle: const TextStyle(color: Colors.white30, fontSize: 12),
+                                  hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 12),
                                   filled: true,
-                                  fillColor: const Color(0xFF0B0C0F),
+                                  fillColor: AppColors.inputFill,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(14),
-                                    borderSide: const BorderSide(color: Colors.white10),
+                                    borderSide: const BorderSide(color: AppColors.border),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                    borderSide: const BorderSide(color: AppColors.drySage),
                                   ),
                                 ),
                               ),
@@ -242,12 +262,12 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                     // Borrowed Date Picker
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Petsa Hiniram (Date Borrowed)', style: TextStyle(color: Colors.white70, fontSize: 12)),
+                      title: const Text('Petsa Hiniram (Date Borrowed)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                       subtitle: Text(
                         '${borrowedDate.year}-${borrowedDate.month.toString().padLeft(2, '0')}-${borrowedDate.day.toString().padLeft(2, '0')}',
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                        style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 14),
                       ),
-                      trailing: const Icon(Icons.calendar_today_rounded, color: Colors.white70, size: 20),
+                      trailing: const Icon(Icons.calendar_today_rounded, color: AppColors.drySage, size: 20),
                       onTap: () async {
                         final picked = await showDatePicker(
                           context: context,
@@ -266,7 +286,7 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                     // Save Button
                     FilledButton(
                       style: FilledButton.styleFrom(
-                        backgroundColor: isPayable ? const Color(0xFFF43F5E) : const Color(0xFF10B981),
+                        backgroundColor: isPayable ? AppColors.ashBrown : AppColors.dustyOlive,
                         minimumSize: const Size.fromHeight(50),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
@@ -301,14 +321,14 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
 
                         messenger.showSnackBar(
                           SnackBar(
-                            backgroundColor: const Color(0xFF14151B),
-                            content: Text('✓ Naidagdag na si "$title"!', style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold)),
+                            backgroundColor: AppColors.surface,
+                            content: Text('✓ Naidagdag na si "$title"!', style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold)),
                           ),
                         );
                       },
                       child: Text(
                         isPayable ? 'I-save ang Utang Ko' : 'I-save ang Pautang',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                        style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 14),
                       ),
                     ),
                   ],
@@ -340,10 +360,10 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              backgroundColor: const Color(0xFF14151B),
+              backgroundColor: AppColors.surface,
               content: Text(
                 '✓ Logged ₱${amount.toStringAsFixed(2)} paid on ${paymentDate.year}-${paymentDate.month}-${paymentDate.day}',
-                style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold),
+                style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
               ),
             ),
           );
@@ -356,17 +376,17 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF14151B),
+        backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Burahin ang record?', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-        content: Text('Sigurado ka bang nais mong tanggalin si "${debt.title}"?', style: const TextStyle(color: Colors.white70, fontSize: 13)),
+        title: const Text('Burahin ang record?', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16)),
+        content: Text('Sigurado ka bang nais mong tanggalin si "${debt.title}"?', style: const TextStyle(color: AppColors.textSecondary, fontSize: 13)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: const Color(0xFFF43F5E)),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.warningRed),
             onPressed: () async {
               Navigator.pop(ctx);
               await DatabaseService.instance.deleteDebt(debt.id);
@@ -385,22 +405,22 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
     final debtsToShow = _debts.where((d) => isUtangKo ? d.type == DebtType.payable : d.type == DebtType.receivable).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Utang Tracker', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Utang Tracker', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.whiteSmoke)),
         actions: [
           IconButton(
-            icon: const Icon(Icons.add_rounded, color: Colors.white, size: 28),
+            icon: const Icon(Icons.add_rounded, color: AppColors.whiteSmoke, size: 28),
             tooltip: 'Magdagdag ng Utang',
             onPressed: _showAddDebtModal,
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: isUtangKo ? const Color(0xFFF43F5E) : const Color(0xFF10B981),
-        foregroundColor: Colors.white,
+        backgroundColor: isUtangKo ? AppColors.ashBrown : AppColors.dustyOlive,
+        foregroundColor: AppColors.whiteSmoke,
         elevation: 4,
         icon: const Icon(Icons.add_rounded, size: 20),
         label: Text(
@@ -417,9 +437,9 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
-                color: const Color(0xFF14151B),
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white10),
+                border: Border.all(color: AppColors.border),
               ),
               child: Row(
                 children: [
@@ -429,14 +449,14 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         decoration: BoxDecoration(
-                          color: isUtangKo ? const Color(0xFFF43F5E) : Colors.transparent,
+                          color: isUtangKo ? AppColors.ashBrown : Colors.transparent,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           'Utang Ko (I Owe)',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: isUtangKo ? Colors.white : Colors.white60,
+                            color: isUtangKo ? AppColors.whiteSmoke : AppColors.textSecondary,
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
                           ),
@@ -450,14 +470,14 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         decoration: BoxDecoration(
-                          color: !isUtangKo ? const Color(0xFF10B981) : Colors.transparent,
+                          color: !isUtangKo ? AppColors.dustyOlive : Colors.transparent,
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
                           'May Utang Sakin',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: !isUtangKo ? Colors.white : Colors.white60,
+                            color: !isUtangKo ? AppColors.whiteSmoke : AppColors.textSecondary,
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
                           ),
@@ -473,17 +493,17 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
           // Content List
           Expanded(
             child: _isLoading
-                ? const Center(child: CircularProgressIndicator(color: Color(0xFFF43F5E)))
+                ? const Center(child: CircularProgressIndicator(color: AppColors.drySage))
                 : debtsToShow.isEmpty
                     ? Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.check_circle_outline_rounded, size: 48, color: Colors.white24),
+                            const Icon(Icons.check_circle_outline_rounded, size: 48, color: AppColors.textMuted),
                             const SizedBox(height: 12),
                             Text(
                               isUtangKo ? 'Walang utang na nakalista! 🎉' : 'Walang may utang sa iyo.',
-                              style: const TextStyle(color: Colors.white54, fontSize: 13),
+                              style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
                             ),
                           ],
                         ),
@@ -497,9 +517,9 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                             margin: const EdgeInsets.only(bottom: 12),
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF14151B),
+                              color: AppColors.surface,
                               borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.white10),
+                              border: Border.all(color: AppColors.border),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -508,11 +528,11 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(debt.title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
+                                      Text(debt.title, style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13)),
                                       const SizedBox(height: 4),
                                       Text(
                                         debt.dueDayOfMonth != null ? 'Due every ${debt.dueDayOfMonth}th' : 'No fixed cutoff',
-                                        style: const TextStyle(color: Colors.white38, fontSize: 11),
+                                        style: const TextStyle(color: AppColors.textMuted, fontSize: 11),
                                       ),
                                     ],
                                   ),
@@ -522,19 +542,19 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                                     Text(
                                       '₱${debt.remainingAmount.toStringAsFixed(2)}',
                                       style: TextStyle(
-                                        color: isUtangKo ? const Color(0xFFF43F5E) : const Color(0xFF10B981),
+                                        color: isUtangKo ? AppColors.ashBrown : AppColors.drySage,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 13,
                                       ),
                                     ),
                                     const SizedBox(width: 4),
                                     IconButton(
-                                      icon: const Icon(Icons.check_circle_outline_rounded, color: Colors.white70, size: 22),
+                                      icon: const Icon(Icons.check_circle_outline_rounded, color: AppColors.drySage, size: 22),
                                       onPressed: () => _handlePayment(debt),
                                       tooltip: 'Log payment with date',
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.delete_outline_rounded, color: Colors.white30, size: 18),
+                                      icon: const Icon(Icons.delete_outline_rounded, color: AppColors.textMuted, size: 18),
                                       onPressed: () => _deleteDebt(debt),
                                       tooltip: 'Delete',
                                     ),

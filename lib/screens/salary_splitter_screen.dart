@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 import '../services/payroll_engine.dart';
 
 class SalarySplitterScreen extends StatefulWidget {
@@ -16,7 +17,6 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
 
   double _parseAmount(String text) {
     if (text.trim().isEmpty) return 0.0;
-    // Strip commas, spaces, currency symbols
     final clean = text.replaceAll(',', '').replaceAll('₱', '').replaceAll(' ', '').trim();
     return double.tryParse(clean) ?? 0.0;
   }
@@ -32,11 +32,11 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Sahod Splitter', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Sahod Splitter', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.whiteSmoke)),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -45,9 +45,9 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
           Container(
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: const Color(0xFF14151B),
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white10),
+              border: Border.all(color: AppColors.border),
             ),
             child: Row(
               children: [
@@ -62,14 +62,14 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 9),
                       decoration: BoxDecoration(
-                        color: _wageType == WageType.monthly ? const Color(0xFFF43F5E) : Colors.transparent,
+                        color: _wageType == WageType.monthly ? AppColors.dustyOlive : Colors.transparent,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         'Monthly Salary',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: _wageType == WageType.monthly ? Colors.white : Colors.white60,
+                          color: _wageType == WageType.monthly ? AppColors.whiteSmoke : AppColors.textSecondary,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -88,14 +88,14 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 9),
                       decoration: BoxDecoration(
-                        color: _wageType == WageType.daily ? const Color(0xFFF43F5E) : Colors.transparent,
+                        color: _wageType == WageType.daily ? AppColors.dustyOlive : Colors.transparent,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         'Daily (Arawan)',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: _wageType == WageType.daily ? Colors.white : Colors.white60,
+                          color: _wageType == WageType.daily ? AppColors.whiteSmoke : AppColors.textSecondary,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
                         ),
@@ -112,32 +112,32 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
           // Income Field (Supports commas and dots like 20,000 or 20,000.50)
           Text(
             _wageType == WageType.monthly ? 'Monthly Gross Pay' : 'Daily Wage (Rate per day)',
-            style: const TextStyle(color: Colors.white70, fontSize: 12),
+            style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
           ),
           const SizedBox(height: 6),
           TextField(
             controller: _amountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+            style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16),
             onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
               hintText: _wageType == WageType.monthly ? '35,000' : '610',
-              hintStyle: const TextStyle(color: Colors.white30, fontWeight: FontWeight.normal),
+              hintStyle: const TextStyle(color: AppColors.textMuted, fontWeight: FontWeight.normal),
               prefixText: '₱ ',
-              prefixStyle: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold, fontSize: 16),
+              prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 16),
               filled: true,
-              fillColor: const Color(0xFF14151B),
+              fillColor: AppColors.inputFill,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Colors.white10),
+                borderSide: const BorderSide(color: AppColors.border),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Colors.white10),
+                borderSide: const BorderSide(color: AppColors.border),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: Color(0xFFF43F5E)),
+                borderSide: const BorderSide(color: AppColors.drySage),
               ),
             ),
           ),
@@ -148,10 +148,10 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Target Ipon (Savings)', style: TextStyle(color: Colors.white70, fontSize: 12)),
+              const Text('Target Ipon (Savings)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
               Text(
                 '${_savingsRate.toInt()}% (₱${result.monthlyIpon.toStringAsFixed(2)})',
-                style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 13),
+                style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 13),
               ),
             ],
           ),
@@ -160,15 +160,15 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
             min: 0,
             max: 50,
             divisions: 10,
-            activeColor: const Color(0xFF10B981),
-            inactiveColor: Colors.white12,
+            activeColor: AppColors.drySage,
+            inactiveColor: AppColors.border,
             onChanged: (val) => setState(() => _savingsRate = val),
           ),
 
           const SizedBox(height: 14),
 
           // Deduction Timing Selector
-          const Text('When does employer deduct taxes & contributions?', style: TextStyle(color: Colors.white70, fontSize: 12)),
+          const Text('When does employer deduct taxes & contributions?', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           const SizedBox(height: 8),
           Row(
             children: [
@@ -186,23 +186,23 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
           Container(
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: const Color(0xFF14151B),
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: Colors.white10),
+              border: Border.all(color: AppColors.border),
             ),
             child: Column(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Total Deductions', style: TextStyle(color: Colors.white60, fontSize: 12)),
+                    const Text('Total Deductions', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                     Text(
                       '-₱${result.totalDeductions.toStringAsFixed(2)}',
-                      style: const TextStyle(color: Color(0xFFF43F5E), fontWeight: FontWeight.bold, fontSize: 14),
+                      style: const TextStyle(color: AppColors.ashBrown, fontWeight: FontWeight.bold, fontSize: 14),
                     ),
                   ],
                 ),
-                const Divider(color: Colors.white10, height: 20),
+                const Divider(color: AppColors.border, height: 20),
                 _buildDeductionRow('SSS Contribution', result.sss),
                 _buildDeductionRow('PhilHealth (2.5%)', result.philhealth),
                 _buildDeductionRow('Pag-IBIG Fund', result.pagibig),
@@ -219,19 +219,20 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0B0C0F),
+                          color: AppColors.inputFill,
                           borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: AppColors.borderMuted),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('15th Net Payout', style: TextStyle(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.bold)),
+                            const Text('15th Net Payout', style: TextStyle(color: AppColors.textMuted, fontSize: 10, fontWeight: FontWeight.bold)),
                             const SizedBox(height: 4),
                             Text(
                               '₱${result.net15.toStringAsFixed(2)}',
-                              style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 14),
+                              style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 14),
                             ),
-                            Text('Ipon: ₱${(result.monthlyIpon / 2).toStringAsFixed(2)}', style: const TextStyle(color: Colors.white54, fontSize: 10)),
+                            Text('Ipon: ₱${(result.monthlyIpon / 2).toStringAsFixed(2)}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
                           ],
                         ),
                       ),
@@ -241,19 +242,20 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF0B0C0F),
+                          color: AppColors.inputFill,
                           borderRadius: BorderRadius.circular(14),
+                          border: Border.all(color: AppColors.borderMuted),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('30th Net Payout', style: TextStyle(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.bold)),
+                            const Text('30th Net Payout', style: TextStyle(color: AppColors.textMuted, fontSize: 10, fontWeight: FontWeight.bold)),
                             const SizedBox(height: 4),
                             Text(
                               '₱${result.net30.toStringAsFixed(2)}',
-                              style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold, fontSize: 14),
+                              style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 14),
                             ),
-                            Text('Ipon: ₱${(result.monthlyIpon / 2).toStringAsFixed(2)}', style: const TextStyle(color: Colors.white54, fontSize: 10)),
+                            Text('Ipon: ₱${(result.monthlyIpon / 2).toStringAsFixed(2)}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
                           ],
                         ),
                       ),
@@ -276,15 +278,15 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0x20F43F5E) : const Color(0xFF14151B),
+            color: isSelected ? AppColors.dustyOlive : AppColors.surface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isSelected ? const Color(0xFFF43F5E) : Colors.white10),
+            border: Border.all(color: isSelected ? AppColors.drySage : AppColors.border),
           ),
           child: Text(
             label,
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.white60,
+              color: isSelected ? AppColors.whiteSmoke : AppColors.textSecondary,
               fontSize: 11,
               fontWeight: FontWeight.bold,
             ),
@@ -300,8 +302,8 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white54, fontSize: 11)),
-          Text('₱${val.toStringAsFixed(2)}', style: const TextStyle(color: Colors.white70, fontSize: 11)),
+          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+          Text('₱${val.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.whiteSmoke, fontSize: 11)),
         ],
       ),
     );

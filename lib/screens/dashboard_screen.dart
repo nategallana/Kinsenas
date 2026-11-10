@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 import '../services/database_service.dart';
 import '../models/debt.dart';
 
@@ -50,7 +51,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         });
       }
     } catch (_) {
-      // In case of any error, state gracefully updates
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -62,20 +62,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF14151B),
+        backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text('Reset Everything to ₱0?', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+        title: const Text('Reset Everything to ₱0?', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16)),
         content: const Text(
           'This will reset your wallet balance to ₱0.00, clear all debts, and reset savings progress to ₱0.',
-          style: TextStyle(color: Colors.white70, fontSize: 13),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: const Color(0xFFF43F5E)),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.warningRed),
             onPressed: () async {
               Navigator.pop(ctx);
               await DatabaseService.instance.resetAllToZero();
@@ -83,8 +83,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    backgroundColor: Color(0xFF14151B),
-                    content: Text('✓ Everything reset back to ₱0.00!', style: TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold)),
+                    backgroundColor: AppColors.surface,
+                    content: Text('✓ Everything reset back to ₱0.00!', style: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold)),
                   ),
                 );
               }
@@ -101,15 +101,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final double netWorth = (_totalCash + _totalReceivables) - _totalPayables;
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Kinsenas', style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 0.5)),
+        title: const Text('Kinsenas', style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 0.5, color: AppColors.whiteSmoke)),
         actions: [
           PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert_rounded, color: Colors.white60),
-            color: const Color(0xFF14151B),
+            icon: const Icon(Icons.more_vert_rounded, color: AppColors.textSecondary),
+            color: AppColors.surface,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             onSelected: (val) {
               if (val == 'reset') _confirmResetAll();
@@ -119,9 +119,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 value: 'reset',
                 child: Row(
                   children: [
-                    Icon(Icons.restart_alt_rounded, color: Color(0xFFF43F5E), size: 18),
+                    Icon(Icons.restart_alt_rounded, color: AppColors.warningRed, size: 18),
                     SizedBox(width: 10),
-                    Text('Reset all to ₱0', style: TextStyle(color: Color(0xFFF43F5E), fontWeight: FontWeight.bold, fontSize: 13)),
+                    Text('Reset all to ₱0', style: TextStyle(color: AppColors.warningRed, fontWeight: FontWeight.bold, fontSize: 13)),
                   ],
                 ),
               ),
@@ -130,10 +130,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFFF43F5E)))
+          ? const Center(child: CircularProgressIndicator(color: AppColors.drySage))
           : RefreshIndicator(
-              color: const Color(0xFFF43F5E),
-              backgroundColor: const Color(0xFF14151B),
+              color: AppColors.drySage,
+              backgroundColor: AppColors.surface,
               onRefresh: _loadDashboardData,
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -142,19 +142,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Container(
                     padding: const EdgeInsets.all(22),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF14151B),
+                      color: AppColors.surface,
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Colors.white10),
+                      border: Border.all(color: AppColors.border),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Total Net Worth', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                        const Text('Total Net Worth', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                         const SizedBox(height: 6),
                         Text(
                           '₱${netWorth.toStringAsFixed(2)}',
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppColors.whiteSmoke,
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
                           ),
@@ -163,11 +163,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Row(
                           children: [
                             Expanded(
-                              child: _buildMetricTile('Cash / Wallets', _totalCash, const Color(0xFF10B981)),
+                              child: _buildMetricTile('Cash / Wallets', _totalCash, AppColors.drySage),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
-                              child: _buildMetricTile('Payables (Owed)', _totalPayables, const Color(0xFFF43F5E)),
+                              child: _buildMetricTile('Payables (Owed)', _totalPayables, AppColors.ashBrown),
                             ),
                           ],
                         ),
@@ -182,28 +182,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [Color(0xFF1E222B), Color(0xFF14151B)],
+                        colors: [AppColors.surfaceElevated, AppColors.surface],
                       ),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.white10),
+                      border: Border.all(color: AppColors.border),
                     ),
                     child: Row(
                       children: [
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: const Color(0x26F43F5E),
+                            color: AppColors.dustyOlive.withValues(alpha: 0.25),
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          child: const Icon(Icons.calendar_today_rounded, color: Color(0xFFF43F5E), size: 20),
+                          child: const Icon(Icons.calendar_today_rounded, color: AppColors.drySage, size: 20),
                         ),
                         const SizedBox(width: 14),
                         const Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Upcoming Kinsenas', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13)),
-                              Text('Next payout is in 6 days (15th)', style: TextStyle(color: Colors.white54, fontSize: 11)),
+                              Text('Upcoming Kinsenas', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13)),
+                              Text('Next payout is in 5 days (15th)', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                             ],
                           ),
                         ),
@@ -220,14 +220,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF0B0C0F),
+        color: AppColors.inputFill,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0x0AFFFFFF)),
+        border: Border.all(color: AppColors.borderMuted),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Colors.white38, fontSize: 11)),
+          Text(label, style: const TextStyle(color: AppColors.textMuted, fontSize: 11)),
           const SizedBox(height: 4),
           Text(
             '₱${amount.toStringAsFixed(2)}',

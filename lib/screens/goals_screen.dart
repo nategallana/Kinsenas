@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/app_colors.dart';
 import '../models/goal.dart';
 import '../services/database_service.dart';
 import '../widgets/goal_coin_card.dart';
@@ -58,20 +59,20 @@ class _GoalsScreenState extends State<GoalsScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF14151B),
+        backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text('Reset "${_currentGoal.title}"?', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+        title: Text('Reset "${_currentGoal.title}"?', style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16)),
         content: const Text(
           'Sigurado ka bang gusto mong i-reset sa ₱0 ang naipon mo para sa goal na ito?',
-          style: TextStyle(color: Colors.white70, fontSize: 13),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: const Color(0xFFF43F5E)),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.warningRed),
             onPressed: () async {
               Navigator.pop(ctx);
               final updated = _currentGoal.copyWith(currentAmount: 0.0);
@@ -81,8 +82,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    backgroundColor: const Color(0xFF14151B),
-                    content: Text('✓ Na-reset na ang "${_currentGoal.title}" sa ₱0.', style: const TextStyle(color: Color(0xFF10B981))),
+                    backgroundColor: AppColors.surface,
+                    content: Text('✓ Na-reset na ang "${_currentGoal.title}" sa ₱0.', style: const TextStyle(color: AppColors.drySage)),
                   ),
                 );
               }
@@ -101,7 +102,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: const Color(0xFF14151B),
+      backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
       ),
@@ -121,10 +122,10 @@ class _GoalsScreenState extends State<GoalsScreen> {
               children: [
                 const Text(
                   'Add Another Ipon Goal',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 17),
+                  style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 17),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close_rounded, color: Colors.white54, size: 20),
+                  icon: const Icon(Icons.close_rounded, color: AppColors.textSecondary, size: 20),
                   onPressed: () => Navigator.pop(ctx),
                 ),
               ],
@@ -132,58 +133,66 @@ class _GoalsScreenState extends State<GoalsScreen> {
             const SizedBox(height: 6),
             const Text(
               'Ano ang bagong pinag-iipunan mo?',
-              style: TextStyle(color: Colors.white54, fontSize: 12),
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
             ),
             const SizedBox(height: 18),
 
             // Goal Title
-            const Text('Pangalan ng Goal', style: TextStyle(color: Colors.white70, fontSize: 12)),
+            const Text('Pangalan ng Goal', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             const SizedBox(height: 6),
             TextField(
               controller: titleController,
               autofocus: true,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
                 hintText: 'Hal. Emergency Fund, Laptop, Travel',
-                hintStyle: const TextStyle(color: Colors.white30, fontSize: 13),
+                hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 13),
                 filled: true,
-                fillColor: const Color(0xFF0B0C0F),
+                fillColor: AppColors.inputFill,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Colors.white10),
+                  borderSide: const BorderSide(color: AppColors.border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: AppColors.drySage),
                 ),
               ),
             ),
 
             const SizedBox(height: 14),
 
-            // Target Amount (Handles commas and dots)
-            const Text('Target Amount', style: TextStyle(color: Colors.white70, fontSize: 12)),
+            // Target Amount
+            const Text('Target Amount', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             const SizedBox(height: 6),
             TextField(
               controller: targetController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
                 prefixText: '₱ ',
-                prefixStyle: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
+                prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
                 hintText: '20,000',
-                hintStyle: const TextStyle(color: Colors.white30, fontSize: 13),
+                hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 13),
                 filled: true,
-                fillColor: const Color(0xFF0B0C0F),
+                fillColor: AppColors.inputFill,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Colors.white10),
+                  borderSide: const BorderSide(color: AppColors.border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: AppColors.drySage),
                 ),
               ),
             ),
 
             const SizedBox(height: 22),
 
-            // Create Button (Refined emerald)
+            // Create Button (Dusty Olive)
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF10B981),
+                backgroundColor: AppColors.dustyOlive,
                 minimumSize: const Size.fromHeight(50),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
@@ -215,15 +224,15 @@ class _GoalsScreenState extends State<GoalsScreen> {
                   setState(() => _selectedGoalIndex = _goals.length - 1);
                   messenger.showSnackBar(
                     SnackBar(
-                      backgroundColor: const Color(0xFF14151B),
-                      content: Text('✓ Naidagdag na ang goal na "$title"!', style: const TextStyle(color: Color(0xFF10B981), fontWeight: FontWeight.bold)),
+                      backgroundColor: AppColors.surface,
+                      content: Text('✓ Naidagdag na ang goal na "$title"!', style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold)),
                     ),
                   );
                 }
               },
               child: const Text(
                 'I-save ang Bagong Goal',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
+                style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 14),
               ),
             ),
           ],
@@ -237,30 +246,34 @@ class _GoalsScreenState extends State<GoalsScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: const Color(0xFF14151B),
+        backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: Text('Mag-ipon para sa "${_currentGoal.title}"', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+        title: Text('Mag-ipon para sa "${_currentGoal.title}"', style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Magkano ang idadagdag mo sa iyong ipon?', style: TextStyle(color: Colors.white54, fontSize: 12)),
+            const Text('Magkano ang idadagdag mo sa iyong ipon?', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             const SizedBox(height: 12),
             TextField(
               controller: controller,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               autofocus: true,
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
                 prefixText: '₱ ',
-                prefixStyle: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
+                prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
                 hintText: '1,000',
-                hintStyle: const TextStyle(color: Colors.white30),
+                hintStyle: const TextStyle(color: AppColors.textMuted),
                 filled: true,
-                fillColor: const Color(0xFF0B0C0F),
+                fillColor: AppColors.inputFill,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: Colors.white10),
+                  borderSide: const BorderSide(color: AppColors.border),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(14),
+                  borderSide: const BorderSide(color: AppColors.drySage),
                 ),
               ),
             ),
@@ -269,10 +282,10 @@ class _GoalsScreenState extends State<GoalsScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: Colors.white54)),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: const Color(0xFF10B981)),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.dustyOlive),
             onPressed: () {
               final clean = controller.text.replaceAll(',', '').replaceAll(' ', '').trim();
               final amt = double.tryParse(clean) ?? 0.0;
@@ -281,7 +294,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
               }
               Navigator.pop(ctx);
             },
-            child: const Text('Idagdag', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            child: const Text('Idagdag', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -304,21 +317,21 @@ class _GoalsScreenState extends State<GoalsScreen> {
   Widget build(BuildContext context) {
     if (_isLoading) {
       return const Scaffold(
-        backgroundColor: Color(0xFF0C0D10),
-        body: Center(child: CircularProgressIndicator(color: Color(0xFFF43F5E))),
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator(color: AppColors.drySage)),
       );
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFF0C0D10),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Ipon & Goals', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text('Ipon & Goals', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.whiteSmoke)),
         actions: [
           TextButton.icon(
             style: TextButton.styleFrom(
-              foregroundColor: const Color(0xFF34D399),
+              foregroundColor: AppColors.drySage,
               padding: const EdgeInsets.symmetric(horizontal: 14),
             ),
             icon: const Icon(Icons.add_circle_outline_rounded, size: 18),
@@ -344,11 +357,11 @@ class _GoalsScreenState extends State<GoalsScreen> {
                     child: ChoiceChip(
                       label: Text(g.title),
                       selected: isSelected,
-                      selectedColor: const Color(0xFF10B981),
-                      backgroundColor: const Color(0xFF14151B),
-                      side: BorderSide(color: isSelected ? const Color(0xFF10B981) : Colors.white10),
+                      selectedColor: AppColors.dustyOlive,
+                      backgroundColor: AppColors.surface,
+                      side: BorderSide(color: isSelected ? AppColors.drySage : AppColors.border),
                       labelStyle: TextStyle(
-                        color: isSelected ? Colors.white : Colors.white70,
+                        color: isSelected ? AppColors.whiteSmoke : AppColors.textSecondary,
                         fontWeight: FontWeight.bold,
                         fontSize: 11,
                       ),
@@ -363,7 +376,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
             const SizedBox(height: 14),
           ],
 
-          // Main Goal Coin Card
+          // Main Goal Coin Card (Using Dark Khaki & Dry Sage from palette)
           GoalCoinCard(
             goal: _currentGoal,
             onTitleChanged: _updateTitle,
@@ -372,19 +385,19 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
           const SizedBox(height: 18),
 
-          // Action Buttons: Clean Mag-ipon and Reset
+          // Action Buttons: Dusty Olive Mag-ipon and Earthy Outline Reset
           Row(
             children: [
               Expanded(
                 flex: 2,
                 child: FilledButton.icon(
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF10B981),
+                    backgroundColor: AppColors.dustyOlive,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
-                  icon: const Icon(Icons.add_rounded, size: 20, color: Colors.white),
-                  label: const Text('Mag-ipon', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                  icon: const Icon(Icons.add_rounded, size: 20, color: AppColors.whiteSmoke),
+                  label: const Text('Mag-ipon', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 14)),
                   onPressed: _showCustomDepositDialog,
                 ),
               ),
@@ -393,13 +406,13 @@ class _GoalsScreenState extends State<GoalsScreen> {
                 flex: 1,
                 child: OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: const Color(0xFFF43F5E),
-                    side: const BorderSide(color: Color(0x50F43F5E)),
+                    foregroundColor: AppColors.ashBrown,
+                    side: const BorderSide(color: AppColors.ashBrown),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
                   icon: const Icon(Icons.restart_alt_rounded, size: 18),
-                  label: const Text('Reset', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                  label: const Text('Reset', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textSecondary)),
                   onPressed: _resetIpon,
                 ),
               ),
@@ -408,19 +421,19 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
           const SizedBox(height: 18),
 
-          // "Add another ipon" Card Button (Clean refined outline, no orange)
+          // "Add another ipon" Card Button
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.white,
-              backgroundColor: const Color(0x06FFFFFF),
-              side: const BorderSide(color: Color(0x3010B981)),
+              foregroundColor: AppColors.whiteSmoke,
+              backgroundColor: AppColors.surface.withValues(alpha: 0.5),
+              side: const BorderSide(color: AppColors.border),
               padding: const EdgeInsets.symmetric(vertical: 15),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
             ),
-            icon: const Icon(Icons.add_circle_outline_rounded, color: Color(0xFF34D399), size: 20),
+            icon: const Icon(Icons.add_circle_outline_rounded, color: AppColors.drySage, size: 20),
             label: const Text(
               'Add another ipon',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+              style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
             ),
             onPressed: _showAddGoalModal,
           ),
