@@ -142,7 +142,7 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                     const SizedBox(height: 16),
 
                     // Name / Entity
-                    const Text('Pangalan o Institusyon', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                    const Text('Pangalan o Institusyon', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: titleController,
@@ -166,7 +166,7 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                     const SizedBox(height: 14),
 
                     // Total Amount
-                    const Text('Kabuuang Halaga (Total Amount)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                    const Text('Kabuuang Halaga (Total Amount)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 6),
                     TextField(
                       controller: amountController,
@@ -199,7 +199,7 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Due Day (Araw ng Sahod)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                              const Text('Due Day (Araw ng Sahod)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
                               const SizedBox(height: 6),
                               TextField(
                                 controller: dueDayController,
@@ -228,7 +228,7 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Monthly Bill (BNPL)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                              const Text('Monthly Bill (BNPL)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
                               const SizedBox(height: 6),
                               TextField(
                                 controller: monthlyController,
@@ -262,7 +262,7 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                     // Borrowed Date Picker
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('Petsa Hiniram (Date Borrowed)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                      title: const Text('Petsa Hiniram (Date Borrowed)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
                       subtitle: Text(
                         '${borrowedDate.year}-${borrowedDate.month.toString().padLeft(2, '0')}-${borrowedDate.day.toString().padLeft(2, '0')}',
                         style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 14),

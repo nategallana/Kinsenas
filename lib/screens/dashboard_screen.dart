@@ -149,7 +149,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Total Net Worth', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                        const Text('Total Net Worth', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 6),
                         Text(
                           '₱${netWorth.toStringAsFixed(2)}',
@@ -227,7 +227,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: AppColors.textMuted, fontSize: 11)),
+          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
           Text(
             '₱${amount.toStringAsFixed(2)}',

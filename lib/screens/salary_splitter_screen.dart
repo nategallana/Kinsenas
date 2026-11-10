@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
 import '../services/payroll_engine.dart';
 
@@ -14,6 +16,133 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
   final TextEditingController _amountController = TextEditingController();
   double _savingsRate = 20.0;
   DeductionTiming _timing = DeductionTiming.bothSplit;
+
+  String _savedMonthlyAmount = '';
+  String _savedDailyAmount = '';
+
+  bool _showSavedIndicator = false;
+  Timer? _savedBadgeTimer;
+  Timer? _debounceTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedSettings();
+  }
+
+  @override
+  void dispose() {
+    _savedBadgeTimer?.cancel();
+    _debounceTimer?.cancel();
+    _amountController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadSavedSettings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedWageType = prefs.getString('splitter_wage_type');
+      final savedMonthly = prefs.getString('splitter_monthly_amount') ?? '';
+      final savedDaily = prefs.getString('splitter_daily_amount') ?? '';
+      final savedSavingsRate = prefs.getDouble('splitter_savings_rate');
+      final savedTiming = prefs.getString('splitter_timing');
+
+      if (mounted) {
+        setState(() {
+          _savedMonthlyAmount = savedMonthly;
+          _savedDailyAmount = savedDaily;
+
+          if (savedWageType == 'daily') {
+            _wageType = WageType.daily;
+            _amountController.text = savedDaily;
+          } else {
+            _wageType = WageType.monthly;
+            _amountController.text = savedMonthly;
+          }
+
+          if (savedSavingsRate != null) {
+            _savingsRate = savedSavingsRate.clamp(0.0, 50.0);
+          }
+
+          if (savedTiming != null) {
+            if (savedTiming == 'fifteenthOnly') {
+              _timing = DeductionTiming.fifteenthOnly;
+            } else if (savedTiming == 'thirtiethOnly') {
+              _timing = DeductionTiming.thirtiethOnly;
+            } else {
+              _timing = DeductionTiming.bothSplit;
+            }
+          }
+        });
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _autoSave({bool triggerFeedback = true}) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('splitter_wage_type', _wageType == WageType.daily ? 'daily' : 'monthly');
+      if (_wageType == WageType.monthly) {
+        _savedMonthlyAmount = _amountController.text;
+        await prefs.setString('splitter_monthly_amount', _amountController.text);
+      } else {
+        _savedDailyAmount = _amountController.text;
+        await prefs.setString('splitter_daily_amount', _amountController.text);
+      }
+      await prefs.setDouble('splitter_savings_rate', _savingsRate);
+      await prefs.setString('splitter_timing', _timing.name);
+
+      if (triggerFeedback && mounted) {
+        _triggerSavedFeedback();
+      }
+    } catch (_) {}
+  }
+
+  void _triggerSavedFeedback() {
+    _savedBadgeTimer?.cancel();
+    setState(() => _showSavedIndicator = true);
+    _savedBadgeTimer = Timer(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() => _showSavedIndicator = false);
+      }
+    });
+  }
+
+  void _onAmountChanged(String val) {
+    setState(() {});
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      _autoSave(triggerFeedback: true);
+    });
+  }
+
+  void _switchWageType(WageType type) {
+    if (_wageType == type) return;
+    setState(() {
+      if (_wageType == WageType.monthly) {
+        _savedMonthlyAmount = _amountController.text;
+      } else {
+        _savedDailyAmount = _amountController.text;
+      }
+
+      _wageType = type;
+      _amountController.text = type == WageType.monthly ? _savedMonthlyAmount : _savedDailyAmount;
+    });
+    _autoSave(triggerFeedback: true);
+  }
+
+  void _selectTiming(DeductionTiming timing) {
+    setState(() => _timing = timing);
+    _autoSave(triggerFeedback: true);
+  }
+
+  void _onSavingsRateChanged(double val) {
+    setState(() => _savingsRate = val);
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 250), () {
+      _autoSave(triggerFeedback: true);
+    });
+  }
 
   double _parseAmount(String text) {
     if (text.trim().isEmpty) return 0.0;
@@ -36,7 +165,42 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Sahod Splitter', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.whiteSmoke)),
+        title: Row(
+          children: [
+            const Text(
+              'Sahod Splitter',
+              style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.whiteSmoke),
+            ),
+            const SizedBox(width: 10),
+            AnimatedOpacity(
+              opacity: _showSavedIndicator ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 250),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.dustyOlive.withValues(alpha: 0.25),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppColors.drySage.withValues(alpha: 0.3)),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.check_rounded, size: 12, color: AppColors.drySage),
+                    SizedBox(width: 4),
+                    Text(
+                      'Autosaved',
+                      style: TextStyle(
+                        color: AppColors.drySage,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -53,12 +217,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
               children: [
                 Expanded(
                   child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _wageType = WageType.monthly;
-                        _amountController.clear();
-                      });
-                    },
+                    onTap: () => _switchWageType(WageType.monthly),
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 9),
                       decoration: BoxDecoration(
@@ -79,12 +238,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                 ),
                 Expanded(
                   child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _wageType = WageType.daily;
-                        _amountController.clear();
-                      });
-                    },
+                    onTap: () => _switchWageType(WageType.daily),
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 9),
                       decoration: BoxDecoration(
@@ -112,14 +266,18 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
           // Income Field (Supports commas and dots like 20,000 or 20,000.50)
           Text(
             _wageType == WageType.monthly ? 'Monthly Gross Pay' : 'Daily Wage (Rate per day)',
-            style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+            style: const TextStyle(
+              color: AppColors.whiteSmoke,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 6),
           TextField(
             controller: _amountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16),
-            onChanged: (_) => setState(() {}),
+            onChanged: _onAmountChanged,
             decoration: InputDecoration(
               hintText: _wageType == WageType.monthly ? '35,000' : '610',
               hintStyle: const TextStyle(color: AppColors.textMuted, fontWeight: FontWeight.normal),
@@ -148,7 +306,14 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Target Ipon (Savings)', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+              const Text(
+                'Target Ipon (Savings)',
+                style: TextStyle(
+                  color: AppColors.whiteSmoke,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               Text(
                 '${_savingsRate.toInt()}% (₱${result.monthlyIpon.toStringAsFixed(2)})',
                 style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 13),
@@ -162,13 +327,20 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
             divisions: 10,
             activeColor: AppColors.drySage,
             inactiveColor: AppColors.border,
-            onChanged: (val) => setState(() => _savingsRate = val),
+            onChanged: _onSavingsRateChanged,
           ),
 
           const SizedBox(height: 14),
 
           // Deduction Timing Selector
-          const Text('When does employer deduct taxes & contributions?', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+          const Text(
+            'When does employer deduct taxes & contributions?',
+            style: TextStyle(
+              color: AppColors.whiteSmoke,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           const SizedBox(height: 8),
           Row(
             children: [
@@ -195,7 +367,14 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Total Deductions', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                    const Text(
+                      'Total Deductions',
+                      style: TextStyle(
+                        color: AppColors.whiteSmoke,
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     Text(
                       '-₱${result.totalDeductions.toStringAsFixed(2)}',
                       style: const TextStyle(color: AppColors.ashBrown, fontWeight: FontWeight.bold, fontSize: 14),
@@ -226,7 +405,14 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('15th Net Payout', style: TextStyle(color: AppColors.textMuted, fontSize: 10, fontWeight: FontWeight.bold)),
+                            const Text(
+                              '15th Net Payout',
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             const SizedBox(height: 4),
                             Text(
                               '₱${result.net15.toStringAsFixed(2)}',
@@ -249,7 +435,14 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('30th Net Payout', style: TextStyle(color: AppColors.textMuted, fontSize: 10, fontWeight: FontWeight.bold)),
+                            const Text(
+                              '30th Net Payout',
+                              style: TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             const SizedBox(height: 4),
                             Text(
                               '₱${result.net30.toStringAsFixed(2)}',
@@ -274,7 +467,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
     final isSelected = _timing == timing;
     return Expanded(
       child: GestureDetector(
-        onTap: () => setState(() => _timing = timing),
+        onTap: () => _selectTiming(timing),
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
@@ -302,8 +495,8 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-          Text('₱${val.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.whiteSmoke, fontSize: 11)),
+          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w500)),
+          Text('₱${val.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.whiteSmoke, fontSize: 11, fontWeight: FontWeight.bold)),
         ],
       ),
     );

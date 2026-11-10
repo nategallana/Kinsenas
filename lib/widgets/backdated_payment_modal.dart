@@ -86,7 +86,7 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
           const SizedBox(height: 18),
 
           // Amount Input
-          const Text('Amount Paid', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+          const Text('Amount Paid', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
           const SizedBox(height: 6),
           TextField(
             controller: _amountController,
@@ -112,7 +112,7 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
           // Date Picker Tile
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Payment Date', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            title: const Text('Payment Date', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
             subtitle: Text(
               '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}',
               style: const TextStyle(

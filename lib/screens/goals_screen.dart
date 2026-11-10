@@ -138,7 +138,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
             const SizedBox(height: 18),
 
             // Goal Title
-            const Text('Pangalan ng Goal', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            const Text('Pangalan ng Goal', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
             const SizedBox(height: 6),
             TextField(
               controller: titleController,
@@ -163,7 +163,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
             const SizedBox(height: 14),
 
             // Target Amount
-            const Text('Target Amount', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            const Text('Target Amount', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
             const SizedBox(height: 6),
             TextField(
               controller: targetController,
@@ -253,7 +253,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Magkano ang idadagdag mo sa iyong ipon?', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            const Text('Magkano ang idadagdag mo sa iyong ipon?', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             TextField(
               controller: controller,

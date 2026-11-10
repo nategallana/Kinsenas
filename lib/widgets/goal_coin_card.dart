@@ -225,7 +225,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Saved', style: TextStyle(color: AppColors.textSecondary, fontSize: 13)),
+              const Text('Saved', style: TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.bold)),
               GestureDetector(
                 onTap: _showEditTargetDialog,
                 child: Row(
