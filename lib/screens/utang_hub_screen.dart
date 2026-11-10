@@ -410,13 +410,6 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text('Utang Tracker', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.whiteSmoke)),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_rounded, color: AppColors.whiteSmoke, size: 28),
-            tooltip: 'Magdagdag ng Utang',
-            onPressed: _showAddDebtModal,
-          ),
-        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: isUtangKo ? AppColors.ashBrown : AppColors.dustyOlive,
