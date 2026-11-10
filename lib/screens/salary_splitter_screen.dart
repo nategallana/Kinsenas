@@ -279,9 +279,9 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
             style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16),
             onChanged: _onAmountChanged,
             decoration: InputDecoration(
-              hintText: _wageType == WageType.monthly ? '35,000' : '610',
+              hintText: _wageType == WageType.monthly ? '₱ 35,000' : '₱ 610',
               hintStyle: const TextStyle(color: AppColors.textMuted, fontWeight: FontWeight.normal),
-              prefixText: '₱ ',
+              prefixText: _amountController.text.isNotEmpty ? '₱ ' : null,
               prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 16),
               filled: true,
               fillColor: AppColors.inputFill,

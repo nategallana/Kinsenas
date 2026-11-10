@@ -93,8 +93,10 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
             decoration: InputDecoration(
-              prefixText: '₱ ',
+              prefixText: _amountController.text.isNotEmpty ? '₱ ' : null,
               prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
+              hintText: '₱ 0.00',
+              hintStyle: const TextStyle(color: AppColors.textMuted),
               filled: true,
               fillColor: AppColors.inputFill,
               border: OutlineInputBorder(

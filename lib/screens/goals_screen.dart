@@ -170,9 +170,9 @@ class _GoalsScreenState extends State<GoalsScreen> {
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
-                prefixText: '₱ ',
+                prefixText: targetController.text.isNotEmpty ? '₱ ' : null,
                 prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
-                hintText: '20,000',
+                hintText: '₱ 20,000',
                 hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 13),
                 filled: true,
                 fillColor: AppColors.inputFill,
@@ -261,9 +261,9 @@ class _GoalsScreenState extends State<GoalsScreen> {
               autofocus: true,
               style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
-                prefixText: '₱ ',
+                prefixText: controller.text.isNotEmpty ? '₱ ' : null,
                 prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
-                hintText: '1,000',
+                hintText: '₱ 1,000',
                 hintStyle: const TextStyle(color: AppColors.textMuted),
                 filled: true,
                 fillColor: AppColors.inputFill,

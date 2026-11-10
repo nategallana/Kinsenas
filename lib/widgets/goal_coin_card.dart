@@ -56,8 +56,10 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
               autofocus: true,
               style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
-                prefixText: '₱ ',
+                prefixText: controller.text.isNotEmpty ? '₱ ' : null,
                 prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
+                hintText: '₱ 50,000',
+                hintStyle: const TextStyle(color: AppColors.textMuted),
                 filled: true,
                 fillColor: AppColors.inputFill,
                 border: OutlineInputBorder(
