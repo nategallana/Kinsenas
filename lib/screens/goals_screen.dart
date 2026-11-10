@@ -328,17 +328,6 @@ class _GoalsScreenState extends State<GoalsScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text('Ipon & Goals', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.whiteSmoke)),
-        actions: [
-          TextButton.icon(
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.drySage,
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-            ),
-            icon: const Icon(Icons.add_circle_outline_rounded, size: 18),
-            label: const Text('Add Goal', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-            onPressed: _showAddGoalModal,
-          ),
-        ],
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
