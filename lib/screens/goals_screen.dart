@@ -51,22 +51,6 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   Future<void> _loadGoalHistory(String goalId) async {
     final history = await DatabaseService.instance.getGoalDeposits(goalId);
-    if (history.isEmpty && (goalId == 'goal_motor' || _currentGoal.title == 'TEST')) {
-      final now = DateTime.now();
-      for (int i = 0; i < 4; i++) {
-        await DatabaseService.instance.insertGoalDeposit(
-          GoalDeposit(
-            id: 'sample_${goalId}_$i',
-            goalId: goalId,
-            amount: 200,
-            createdAt: now.subtract(Duration(days: i)),
-          ),
-        );
-      }
-      final reloaded = await DatabaseService.instance.getGoalDeposits(goalId);
-      if (mounted) setState(() => _history = reloaded);
-      return;
-    }
     if (mounted) {
       setState(() {
         _history = history;
@@ -489,11 +473,25 @@ class _GoalsScreenState extends State<GoalsScreen> {
           ),
           const SizedBox(height: 12),
           if (_history.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(
-                'Walang naitalang hulog pa para sa "${_currentGoal.title}".',
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+              decoration: BoxDecoration(
+                color: AppColors.surface.withValues(alpha: 0.35),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.borderMuted),
+              ),
+              child: const Row(
+                children: [
+                  Icon(Icons.history_toggle_off_rounded, color: AppColors.textSecondary, size: 22),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'No deposit history yet. Tap "+ Mag-ipon" to add money and record when you save!',
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 12, height: 1.4),
+                    ),
+                  ),
+                ],
               ),
             )
           else

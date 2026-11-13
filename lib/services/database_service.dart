@@ -265,18 +265,19 @@ class DatabaseService {
             FOREIGN KEY (goal_id) REFERENCES goals(id)
           )
         ''');
+        // Clean out any legacy sample/dummy deposits
+        await db.delete('goal_deposits', where: "id LIKE 'sample_%'");
         final maps = await db.query(
           'goal_deposits',
           where: 'goal_id = ?',
           whereArgs: [goalId],
           orderBy: 'created_at DESC',
         );
-        if (maps.isNotEmpty) {
-          return maps.map((m) => GoalDeposit.fromMap(m)).toList();
-        }
+        return maps.map((m) => GoalDeposit.fromMap(m)).toList();
       }
     } catch (_) {}
 
+    _memGoalDeposits.removeWhere((d) => d.id.startsWith('sample_'));
     final list = _memGoalDeposits.where((d) => d.goalId == goalId).toList();
     list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return list;

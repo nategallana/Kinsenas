@@ -14,7 +14,10 @@ class GoalDeposit {
   });
 
   String get formattedMessage {
-    final amtStr = (amount % 1 == 0) ? amount.toInt().toString() : amount.toStringAsFixed(2);
+    final formatter = (amount % 1 == 0)
+        ? NumberFormat('#,##0')
+        : NumberFormat('#,##0.00');
+    final amtStr = formatter.format(amount);
     return 'You added $amtStr pesos on your goal!';
   }
 
