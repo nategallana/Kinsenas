@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
 import '../services/payroll_engine.dart';
+import '../utils/decimal_currency_formatter.dart';
 
 class SalarySplitterScreen extends StatefulWidget {
   const SalarySplitterScreen({super.key});
@@ -276,6 +277,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
           TextField(
             controller: _amountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: const [DecimalCurrencyFormatter()],
             style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16),
             onChanged: _onAmountChanged,
             decoration: InputDecoration(

@@ -3,6 +3,7 @@ import '../theme/app_colors.dart';
 import '../models/debt.dart';
 import '../services/database_service.dart';
 import '../widgets/backdated_payment_modal.dart';
+import '../utils/decimal_currency_formatter.dart';
 
 enum DebtViewMode { utangKo, mayUtangSakin }
 
@@ -177,6 +178,7 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                     TextField(
                       controller: amountController,
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: const [DecimalCurrencyFormatter()],
                       style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
                       decoration: InputDecoration(
                         prefixText: amountController.text.isNotEmpty ? '₱ ' : null,
@@ -239,6 +241,7 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                               TextField(
                                 controller: monthlyController,
                                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                inputFormatters: const [DecimalCurrencyFormatter()],
                                 style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
                                 decoration: InputDecoration(
                                   prefixText: monthlyController.text.isNotEmpty ? '₱ ' : null,

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../models/goal.dart';
+import '../models/goal_deposit.dart';
 import '../services/database_service.dart';
 import '../widgets/goal_coin_card.dart';
+import '../utils/decimal_currency_formatter.dart';
 
 class GoalsScreen extends StatefulWidget {
   const GoalsScreen({super.key});
@@ -15,6 +17,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
   List<Goal> _goals = [];
   int _selectedGoalIndex = 0;
   bool _isLoading = true;
+  List<GoalDeposit> _history = [];
 
   @override
   void initState() {
@@ -42,6 +45,32 @@ class _GoalsScreenState extends State<GoalsScreen> {
         }
         _isLoading = false;
       });
+      await _loadGoalHistory(_currentGoal.id);
+    }
+  }
+
+  Future<void> _loadGoalHistory(String goalId) async {
+    final history = await DatabaseService.instance.getGoalDeposits(goalId);
+    if (history.isEmpty && (goalId == 'goal_motor' || _currentGoal.title == 'TEST')) {
+      final now = DateTime.now();
+      for (int i = 0; i < 4; i++) {
+        await DatabaseService.instance.insertGoalDeposit(
+          GoalDeposit(
+            id: 'sample_${goalId}_$i',
+            goalId: goalId,
+            amount: 200,
+            createdAt: now.subtract(Duration(days: i)),
+          ),
+        );
+      }
+      final reloaded = await DatabaseService.instance.getGoalDeposits(goalId);
+      if (mounted) setState(() => _history = reloaded);
+      return;
+    }
+    if (mounted) {
+      setState(() {
+        _history = history;
+      });
     }
   }
 
@@ -53,6 +82,15 @@ class _GoalsScreenState extends State<GoalsScreen> {
     );
     setState(() => _goals[_selectedGoalIndex] = updated);
     await DatabaseService.instance.updateGoal(updated);
+
+    final deposit = GoalDeposit(
+      id: 'dep_${DateTime.now().millisecondsSinceEpoch}',
+      goalId: _currentGoal.id,
+      amount: amount,
+      createdAt: DateTime.now(),
+    );
+    await DatabaseService.instance.insertGoalDeposit(deposit);
+    await _loadGoalHistory(_currentGoal.id);
   }
 
   void _resetIpon() {
@@ -78,6 +116,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
               final updated = _currentGoal.copyWith(currentAmount: 0.0);
               setState(() => _goals[_selectedGoalIndex] = updated);
               await DatabaseService.instance.updateGoal(updated);
+              await DatabaseService.instance.clearGoalDeposits(_currentGoal.id);
+              await _loadGoalHistory(_currentGoal.id);
 
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -111,7 +151,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
           top: 24,
           left: 24,
           right: 24,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+          bottom: MediaQuery.of(ctx).viewInsets.bottom + 24,
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -121,8 +161,8 @@ class _GoalsScreenState extends State<GoalsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  'Add Another Ipon Goal',
-                  style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 17),
+                  'Magdagdag ng Bagong Goal',
+                  style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 IconButton(
                   icon: const Icon(Icons.close_rounded, color: AppColors.textSecondary, size: 20),
@@ -162,12 +202,13 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
             const SizedBox(height: 14),
 
-            // Target Amount
+            // Target Amount (Numbers, commas, and one dot only)
             const Text('Target Amount', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
             const SizedBox(height: 6),
             TextField(
               controller: targetController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: const [DecimalCurrencyFormatter()],
               style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
                 prefixText: targetController.text.isNotEmpty ? '₱ ' : null,
@@ -222,6 +263,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
                 if (mounted) {
                   setState(() => _selectedGoalIndex = _goals.length - 1);
+                  await _loadGoalHistory(newGoal.id);
                   messenger.showSnackBar(
                     SnackBar(
                       backgroundColor: AppColors.surface,
@@ -258,6 +300,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
             TextField(
               controller: controller,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: const [DecimalCurrencyFormatter()],
               autofocus: true,
               style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
@@ -344,18 +387,24 @@ class _GoalsScreenState extends State<GoalsScreen> {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
+                      avatar: isSelected
+                          ? const Icon(Icons.check_rounded, size: 14, color: AppColors.darkKhaki)
+                          : null,
                       label: Text(g.title),
                       selected: isSelected,
-                      selectedColor: AppColors.dustyOlive,
+                      selectedColor: const Color(0xFFBCBD8B), // Dry sage active pill matching Image 1
                       backgroundColor: AppColors.surface,
                       side: BorderSide(color: isSelected ? AppColors.drySage : AppColors.border),
                       labelStyle: TextStyle(
-                        color: isSelected ? AppColors.whiteSmoke : AppColors.textSecondary,
+                        color: isSelected ? AppColors.darkKhaki : AppColors.textSecondary,
                         fontWeight: FontWeight.bold,
                         fontSize: 11,
                       ),
                       onSelected: (selected) {
-                        if (selected) setState(() => _selectedGoalIndex = idx);
+                        if (selected) {
+                          setState(() => _selectedGoalIndex = idx);
+                          _loadGoalHistory(g.id);
+                        }
                       },
                     ),
                   );
@@ -426,6 +475,69 @@ class _GoalsScreenState extends State<GoalsScreen> {
             ),
             onPressed: _showAddGoalModal,
           ),
+
+          // History Section (Image 1)
+          const SizedBox(height: 24),
+          const Text(
+            'History',
+            style: TextStyle(
+              color: AppColors.whiteSmoke,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.2,
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (_history.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Text(
+                'Walang naitalang hulog pa para sa "${_currentGoal.title}".',
+                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+              ),
+            )
+          else
+            Container(
+              constraints: const BoxConstraints(maxHeight: 220),
+              child: Scrollbar(
+                thumbVisibility: true,
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemCount: _history.length,
+                  separatorBuilder: (ctx, i) => const SizedBox(height: 10),
+                  itemBuilder: (context, index) {
+                    final item = _history[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.formattedMessage,
+                              style: const TextStyle(
+                                color: AppColors.whiteSmoke,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            item.formattedDate,
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          const SizedBox(height: 16),
         ],
       ),
     );

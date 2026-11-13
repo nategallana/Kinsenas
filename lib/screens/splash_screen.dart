@@ -64,8 +64,8 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(

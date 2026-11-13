@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../utils/decimal_currency_formatter.dart';
 
 class BackdatedPaymentModal extends StatefulWidget {
   final String title;
@@ -91,6 +92,7 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
           TextField(
             controller: _amountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: const [DecimalCurrencyFormatter()],
             style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
             decoration: InputDecoration(
               prefixText: _amountController.text.isNotEmpty ? '₱ ' : null,

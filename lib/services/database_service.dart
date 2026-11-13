@@ -3,6 +3,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../models/account.dart';
 import '../models/goal.dart';
+import '../models/goal_deposit.dart';
 import '../models/debt.dart';
 
 class DatabaseService {
@@ -30,6 +31,7 @@ class DatabaseService {
 
   final List<Debt> _memDebts = [];
   final List<DebtPayment> _memPayments = [];
+  final List<GoalDeposit> _memGoalDeposits = [];
 
   DatabaseService._init();
 
@@ -113,6 +115,16 @@ class DatabaseService {
       )
     ''');
 
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS goal_deposits (
+        id TEXT PRIMARY KEY,
+        goal_id TEXT NOT NULL,
+        amount REAL NOT NULL,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (goal_id) REFERENCES goals(id)
+      )
+    ''');
+
     // Insert initial clean account with balance 0.0
     await db.insert('accounts', {
       'id': 'default_wallet',
@@ -137,6 +149,7 @@ class DatabaseService {
         await db.update('accounts', {'balance': 0.0});
         await db.delete('debts');
         await db.delete('debt_payments');
+        await db.delete('goal_deposits');
         await db.delete('transactions');
         await db.update('goals', {'current_amount': 0.0});
       }
@@ -156,6 +169,7 @@ class DatabaseService {
 
     _memDebts.clear();
     _memPayments.clear();
+    _memGoalDeposits.clear();
   }
 
   // Account operations
@@ -233,6 +247,69 @@ class DatabaseService {
       }
     } catch (_) {}
     _memGoals.removeWhere((g) => g.id == id);
+    _memGoalDeposits.removeWhere((d) => d.goalId == id);
+    return 1;
+  }
+
+  // Goal Deposit History operations
+  Future<List<GoalDeposit>> getGoalDeposits(String goalId) async {
+    try {
+      final db = await database;
+      if (db != null) {
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS goal_deposits (
+            id TEXT PRIMARY KEY,
+            goal_id TEXT NOT NULL,
+            amount REAL NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (goal_id) REFERENCES goals(id)
+          )
+        ''');
+        final maps = await db.query(
+          'goal_deposits',
+          where: 'goal_id = ?',
+          whereArgs: [goalId],
+          orderBy: 'created_at DESC',
+        );
+        if (maps.isNotEmpty) {
+          return maps.map((m) => GoalDeposit.fromMap(m)).toList();
+        }
+      }
+    } catch (_) {}
+
+    final list = _memGoalDeposits.where((d) => d.goalId == goalId).toList();
+    list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+    return list;
+  }
+
+  Future<int> insertGoalDeposit(GoalDeposit deposit) async {
+    try {
+      final db = await database;
+      if (db != null) {
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS goal_deposits (
+            id TEXT PRIMARY KEY,
+            goal_id TEXT NOT NULL,
+            amount REAL NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY (goal_id) REFERENCES goals(id)
+          )
+        ''');
+        return await db.insert('goal_deposits', deposit.toMap());
+      }
+    } catch (_) {}
+    _memGoalDeposits.add(deposit);
+    return 1;
+  }
+
+  Future<int> clearGoalDeposits(String goalId) async {
+    try {
+      final db = await database;
+      if (db != null) {
+        return await db.delete('goal_deposits', where: 'goal_id = ?', whereArgs: [goalId]);
+      }
+    } catch (_) {}
+    _memGoalDeposits.removeWhere((d) => d.goalId == goalId);
     return 1;
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import '../models/goal.dart';
+import '../utils/decimal_currency_formatter.dart';
 
 class GoalCoinCard extends StatefulWidget {
   final Goal goal;
@@ -53,6 +54,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
             TextField(
               controller: controller,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: const [DecimalCurrencyFormatter()],
               autofocus: true,
               style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
               decoration: InputDecoration(

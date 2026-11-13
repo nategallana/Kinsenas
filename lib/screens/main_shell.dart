@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../widgets/abstract_wave_nav_bar.dart';
 import 'dashboard_screen.dart';
 import 'salary_splitter_screen.dart';
 import 'goals_screen.dart';
@@ -30,40 +31,9 @@ class _MainShellState extends State<MainShell> {
         index: _currentIndex,
         children: _screens,
       ),
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: AppColors.surface,
-          border: Border(top: BorderSide(color: AppColors.border, width: 0.8)),
-        ),
-        child: NavigationBar(
-          selectedIndex: _currentIndex,
-          onDestinationSelected: (idx) => setState(() => _currentIndex = idx),
-          backgroundColor: Colors.transparent,
-          indicatorColor: const Color(0x33BCBD8B), // Subtle Dry Sage pill
-          elevation: 0,
-          destinations: const [
-            NavigationDestination(
-              icon: Icon(Icons.home_outlined, color: AppColors.textSecondary),
-              selectedIcon: Icon(Icons.home_rounded, color: AppColors.drySage),
-              label: 'Home',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.calculate_outlined, color: AppColors.textSecondary),
-              selectedIcon: Icon(Icons.calculate_rounded, color: AppColors.drySage),
-              label: 'Sahod',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.savings_outlined, color: AppColors.textSecondary),
-              selectedIcon: Icon(Icons.savings_rounded, color: AppColors.drySage),
-              label: 'Ipon',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.swap_horiz_rounded, color: AppColors.textSecondary),
-              selectedIcon: Icon(Icons.swap_horiz_rounded, color: AppColors.drySage),
-              label: 'Utang',
-            ),
-          ],
-        ),
+      bottomNavigationBar: AbstractWaveNavBar(
+        selectedIndex: _currentIndex,
+        onItemSelected: (idx) => setState(() => _currentIndex = idx),
       ),
     );
   }
