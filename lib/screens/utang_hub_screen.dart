@@ -102,13 +102,16 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                                   color: isPayable ? AppColors.ashBrown : Colors.transparent,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Text(
-                                  'Utang Ko (I Owe)',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: isPayable ? AppColors.whiteSmoke : AppColors.textSecondary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 11,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    'Utang Ko (I Owe)',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: isPayable ? AppColors.whiteSmoke : AppColors.textSecondary,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 11,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -123,13 +126,16 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                                   color: !isPayable ? AppColors.dustyOlive : Colors.transparent,
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Text(
-                                  'May Utang Sakin',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: !isPayable ? AppColors.whiteSmoke : AppColors.textSecondary,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 11,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    'May Utang Sakin (Owed to Me)',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: !isPayable ? AppColors.whiteSmoke : AppColors.textSecondary,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 11,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -440,18 +446,21 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                     child: GestureDetector(
                       onTap: () => setState(() => _mode = DebtViewMode.utangKo),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
                         decoration: BoxDecoration(
                           color: isUtangKo ? AppColors.ashBrown : Colors.transparent,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Text(
-                          'Utang Ko (I Owe)',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: isUtangKo ? AppColors.whiteSmoke : AppColors.textSecondary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'Utang Ko (I Owe)',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: isUtangKo ? AppColors.whiteSmoke : AppColors.textSecondary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
                       ),
@@ -461,18 +470,21 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                     child: GestureDetector(
                       onTap: () => setState(() => _mode = DebtViewMode.mayUtangSakin),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
                         decoration: BoxDecoration(
                           color: !isUtangKo ? AppColors.dustyOlive : Colors.transparent,
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Text(
-                          'May Utang Sakin',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: !isUtangKo ? AppColors.whiteSmoke : AppColors.textSecondary,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(
+                            'May Utang Sakin (Owed to Me)',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: !isUtangKo ? AppColors.whiteSmoke : AppColors.textSecondary,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
                       ),
@@ -496,7 +508,7 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                             const SizedBox(height: 12),
                             Text(
                               isUtangKo ? 'Walang utang na nakalista! 🎉' : 'Walang may utang sa iyo.',
-                              style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+                              style: const TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
