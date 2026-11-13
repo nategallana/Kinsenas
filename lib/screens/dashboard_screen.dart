@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../theme/app_colors.dart';
 import '../services/database_service.dart';
 import '../models/debt.dart';
+import 'settings_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -14,6 +16,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   double _totalCash = 0.0;
   double _totalPayables = 0.0;
   double _totalReceivables = 0.0;
+  String _paydayCycle = '15_30';
   bool _isLoading = true;
 
   @override
@@ -27,6 +30,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       final accounts = await DatabaseService.instance.getAccounts();
       final debts = await DatabaseService.instance.getDebts();
+      final prefs = await SharedPreferences.getInstance();
+      final cycle = prefs.getString('payday_cycle') ?? '15_30';
 
       double cash = 0.0;
       for (var a in accounts) {
@@ -48,6 +53,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           _totalCash = cash;
           _totalPayables = payables;
           _totalReceivables = receivables;
+          _paydayCycle = cycle;
         });
       }
     } catch (_) {
@@ -63,40 +69,67 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final day = now.day;
     final lastDayOfMonth = DateTime(now.year, now.month + 1, 0).day;
 
-    if (day < 15) {
-      final daysLeft = 15 - day;
-      final daysText = daysLeft == 1 ? 'is tomorrow (15th)!' : 'is in $daysLeft days (15th)';
-      return {
-        'title': 'Upcoming Kinsenas',
-        'subtitle': 'Next payout $daysText',
-      };
-    } else if (day == 15) {
-      return {
-        'title': '🎉 Kinsenas Day!',
-        'subtitle': 'Sahod payout is today (15th)!',
-      };
-    } else {
-      final targetEndDay = lastDayOfMonth >= 30 ? 30 : lastDayOfMonth;
-      if (day < targetEndDay) {
-        final daysLeft = targetEndDay - day;
-        final daysText = daysLeft == 1 ? 'is tomorrow (${targetEndDay}th)!' : 'is in $daysLeft days (${targetEndDay}th)';
+    int firstTarget = 15;
+    int secondTarget = lastDayOfMonth >= 30 ? 30 : lastDayOfMonth;
+
+    if (_paydayCycle == '10_25') {
+      firstTarget = 10;
+      secondTarget = 25;
+    } else if (_paydayCycle == '5_20') {
+      firstTarget = 5;
+      secondTarget = 20;
+    } else if (_paydayCycle == 'end_of_month') {
+      firstTarget = lastDayOfMonth;
+      secondTarget = lastDayOfMonth;
+    }
+
+    if (_paydayCycle == 'end_of_month') {
+      if (day < lastDayOfMonth) {
+        final daysLeft = lastDayOfMonth - day;
+        final daysText = daysLeft == 1 ? 'is tomorrow (${lastDayOfMonth}th)!' : 'is in $daysLeft days (${lastDayOfMonth}th)';
         return {
           'title': 'Upcoming Kinsenas',
           'subtitle': 'Next payout $daysText',
         };
-      } else if (day == targetEndDay || day == lastDayOfMonth) {
+      } else {
         return {
           'title': '🎉 Kinsenas Day!',
-          'subtitle': 'Sahod payout is today (${day}th)!',
-        };
-      } else {
-        final nextMonth15 = DateTime(now.year, now.month + 1, 15);
-        final daysLeft = nextMonth15.difference(DateTime(now.year, now.month, day)).inDays;
-        return {
-          'title': 'Upcoming Kinsenas',
-          'subtitle': 'Next payout is in $daysLeft days (15th)',
+          'subtitle': 'Sahod payout is today (Katapusan)!',
         };
       }
+    }
+
+    if (day < firstTarget) {
+      final daysLeft = firstTarget - day;
+      final daysText = daysLeft == 1 ? 'is tomorrow (${firstTarget}th)!' : 'is in $daysLeft days (${firstTarget}th)';
+      return {
+        'title': 'Upcoming Kinsenas',
+        'subtitle': 'Next payout $daysText',
+      };
+    } else if (day == firstTarget) {
+      return {
+        'title': '🎉 Kinsenas Day!',
+        'subtitle': 'Sahod payout is today (${firstTarget}th)!',
+      };
+    } else if (day < secondTarget) {
+      final daysLeft = secondTarget - day;
+      final daysText = daysLeft == 1 ? 'is tomorrow (${secondTarget}th)!' : 'is in $daysLeft days (${secondTarget}th)';
+      return {
+        'title': 'Upcoming Kinsenas',
+        'subtitle': 'Next payout $daysText',
+      };
+    } else if (day == secondTarget || (secondTarget == 30 && day == lastDayOfMonth)) {
+      return {
+        'title': '🎉 Kinsenas Day!',
+        'subtitle': 'Sahod payout is today (${day}th)!',
+      };
+    } else {
+      final nextFirstTarget = DateTime(now.year, now.month + 1, firstTarget);
+      final daysLeft = nextFirstTarget.difference(DateTime(now.year, now.month, day)).inDays;
+      return {
+        'title': 'Upcoming Kinsenas',
+        'subtitle': 'Next payout is in $daysLeft days (${firstTarget}th)',
+      };
     }
   }
 
@@ -154,9 +187,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
             color: AppColors.surface,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             onSelected: (val) {
-              if (val == 'reset') _confirmResetAll();
+              if (val == 'settings') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                ).then((_) => _loadDashboardData());
+              } else if (val == 'reset') {
+                _confirmResetAll();
+              }
             },
             itemBuilder: (ctx) => [
+              const PopupMenuItem(
+                value: 'settings',
+                child: Row(
+                  children: [
+                    Icon(Icons.settings_rounded, color: AppColors.drySage, size: 18),
+                    SizedBox(width: 10),
+                    Text('Mga Setting (Settings)', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13)),
+                  ],
+                ),
+              ),
               const PopupMenuItem(
                 value: 'reset',
                 child: Row(
