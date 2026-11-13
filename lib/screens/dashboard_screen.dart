@@ -58,6 +58,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+  Map<String, String> _getUpcomingKinsenasInfo() {
+    final now = DateTime.now();
+    final day = now.day;
+    final lastDayOfMonth = DateTime(now.year, now.month + 1, 0).day;
+
+    if (day < 15) {
+      final daysLeft = 15 - day;
+      final daysText = daysLeft == 1 ? 'is tomorrow (15th)!' : 'is in $daysLeft days (15th)';
+      return {
+        'title': 'Upcoming Kinsenas',
+        'subtitle': 'Next payout $daysText',
+      };
+    } else if (day == 15) {
+      return {
+        'title': '🎉 Kinsenas Day!',
+        'subtitle': 'Sahod payout is today (15th)!',
+      };
+    } else {
+      final targetEndDay = lastDayOfMonth >= 30 ? 30 : lastDayOfMonth;
+      if (day < targetEndDay) {
+        final daysLeft = targetEndDay - day;
+        final daysText = daysLeft == 1 ? 'is tomorrow (${targetEndDay}th)!' : 'is in $daysLeft days (${targetEndDay}th)';
+        return {
+          'title': 'Upcoming Kinsenas',
+          'subtitle': 'Next payout $daysText',
+        };
+      } else if (day == targetEndDay || day == lastDayOfMonth) {
+        return {
+          'title': '🎉 Kinsenas Day!',
+          'subtitle': 'Sahod payout is today (${day}th)!',
+        };
+      } else {
+        final nextMonth15 = DateTime(now.year, now.month + 1, 15);
+        final daysLeft = nextMonth15.difference(DateTime(now.year, now.month, day)).inDays;
+        return {
+          'title': 'Upcoming Kinsenas',
+          'subtitle': 'Next payout is in $daysLeft days (15th)',
+        };
+      }
+    }
+  }
+
   void _confirmResetAll() {
     showDialog(
       context: context,
@@ -198,13 +240,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           child: const Icon(Icons.calendar_today_rounded, color: AppColors.drySage, size: 20),
                         ),
                         const SizedBox(width: 14),
-                        const Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Upcoming Kinsenas', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13)),
-                              Text('Next payout is in 5 days (15th)', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-                            ],
+                        Expanded(
+                          child: Builder(
+                            builder: (context) {
+                              final kinsenasInfo = _getUpcomingKinsenasInfo();
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    kinsenasInfo['title'] ?? 'Upcoming Kinsenas',
+                                    style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
+                                  ),
+                                  Text(
+                                    kinsenasInfo['subtitle'] ?? '',
+                                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                                  ),
+                                ],
+                              );
+                            },
                           ),
                         ),
                       ],
