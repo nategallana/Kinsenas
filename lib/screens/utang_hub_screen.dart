@@ -354,7 +354,7 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
     BackdatedPaymentModal.show(
       context: context,
       title: debt.title,
-      remainingAmount: debt.monthlyPayment ?? debt.remainingAmount,
+      remainingAmount: debt.remainingAmount,
       onConfirm: (amount, paymentDate) async {
         final payment = DebtPayment(
           id: 'pay_${DateTime.now().millisecondsSinceEpoch}',
@@ -555,16 +555,47 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                                         fontSize: 13,
                                       ),
                                     ),
-                                    const SizedBox(width: 4),
-                                    IconButton(
-                                      icon: const Icon(Icons.check_circle_outline_rounded, color: AppColors.drySage, size: 22),
-                                      onPressed: () => _handlePayment(debt),
-                                      tooltip: 'Log payment with date',
+                                    const SizedBox(width: 10),
+                                    // Actual Button: Check / Log Payment
+                                    Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: () => _handlePayment(debt),
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Container(
+                                          width: 34,
+                                          height: 34,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0x30717744),
+                                            borderRadius: BorderRadius.circular(10),
+                                            border: Border.all(color: AppColors.dustyOlive, width: 1.2),
+                                          ),
+                                          child: const Center(
+                                            child: Icon(Icons.check_rounded, color: AppColors.drySage, size: 18),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                    IconButton(
-                                      icon: const Icon(Icons.delete_outline_rounded, color: AppColors.textMuted, size: 18),
-                                      onPressed: () => _deleteDebt(debt),
-                                      tooltip: 'Delete',
+                                    const SizedBox(width: 8),
+                                    // Actual Button: Delete Debt
+                                    Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: () => _deleteDebt(debt),
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Container(
+                                          width: 34,
+                                          height: 34,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0x25E07A5F),
+                                            borderRadius: BorderRadius.circular(10),
+                                            border: Border.all(color: const Color(0x60E07A5F), width: 1.2),
+                                          ),
+                                          child: const Center(
+                                            child: Icon(Icons.delete_outline_rounded, color: AppColors.warningRed, size: 17),
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),

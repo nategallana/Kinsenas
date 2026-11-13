@@ -42,15 +42,72 @@ class BackdatedPaymentModal extends StatefulWidget {
 class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
   late TextEditingController _amountController;
   DateTime _selectedDate = DateTime.now();
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _amountController = TextEditingController(text: widget.remainingAmount.toStringAsFixed(2));
+    // Automatically pre-fill the exact current balance into the input box
+    final balanceStr = (widget.remainingAmount % 1 == 0)
+        ? widget.remainingAmount.toInt().toString()
+        : widget.remainingAmount.toStringAsFixed(2);
+    _amountController = TextEditingController(text: balanceStr);
+  }
+
+  @override
+  void dispose() {
+    _amountController.dispose();
+    super.dispose();
+  }
+
+  void _validateAmount(String value) {
+    final clean = value.replaceAll(',', '').replaceAll(' ', '').trim();
+    if (clean.isEmpty) {
+      setState(() => _errorMessage = 'Ilagay ang halaga ng ibinayad (Enter amount)');
+      return;
+    }
+    final entered = double.tryParse(clean);
+    if (entered == null || entered <= 0) {
+      setState(() => _errorMessage = 'Mangyaring maglagay ng tamang halaga');
+    } else if (entered > widget.remainingAmount) {
+      final maxStr = (widget.remainingAmount % 1 == 0)
+          ? widget.remainingAmount.toInt().toString()
+          : widget.remainingAmount.toStringAsFixed(2);
+      setState(() => _errorMessage = 'Hindi maaaring lumagpas sa balanse (Max: ₱$maxStr)');
+    } else {
+      if (_errorMessage != null) {
+        setState(() => _errorMessage = null);
+      }
+    }
+  }
+
+  void _handleConfirm() {
+    final clean = _amountController.text.replaceAll(',', '').replaceAll(' ', '').trim();
+    final amt = double.tryParse(clean) ?? 0.0;
+
+    if (amt <= 0) {
+      setState(() => _errorMessage = 'Maglagay ng halagang mas mataas sa ₱0');
+      return;
+    }
+
+    if (amt > widget.remainingAmount) {
+      final maxStr = (widget.remainingAmount % 1 == 0)
+          ? widget.remainingAmount.toInt().toString()
+          : widget.remainingAmount.toStringAsFixed(2);
+      setState(() => _errorMessage = 'Hindi maaaring lumagpas sa balanse (Max: ₱$maxStr)');
+      return;
+    }
+
+    widget.onConfirm(amt, _selectedDate);
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
+    final formattedMax = (widget.remainingAmount % 1 == 0)
+        ? widget.remainingAmount.toInt().toString()
+        : widget.remainingAmount.toStringAsFixed(2);
+
     return Padding(
       padding: EdgeInsets.only(
         top: 24,
@@ -62,15 +119,18 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'Log Payment: ${widget.title}',
-                style: const TextStyle(
-                  color: AppColors.whiteSmoke,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+              Expanded(
+                child: Text(
+                  'Log Payment: ${widget.title}',
+                  style: const TextStyle(
+                    color: AppColors.whiteSmoke,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
                 ),
               ),
               IconButton(
@@ -86,43 +146,64 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
           ),
           const SizedBox(height: 18),
 
-          // Amount Input
-          const Text('Amount Paid', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
+          // Amount Paid Header with Current Balance Badge
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Amount Paid',
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                'Balance: ₱$formattedMax',
+                style: const TextStyle(color: AppColors.drySage, fontSize: 12, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
           const SizedBox(height: 6),
+
+          // Amount Input Box (Pre-filled with balance & capped at balance)
           TextField(
             controller: _amountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: const [DecimalCurrencyFormatter()],
-            style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
+            onChanged: _validateAmount,
+            style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16),
             decoration: InputDecoration(
-              prefixText: _amountController.text.isNotEmpty ? '₱ ' : null,
-              prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
-              hintText: '₱ 0.00',
+              prefixText: '₱ ',
+              prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 16),
+              hintText: '0.00',
               hintStyle: const TextStyle(color: AppColors.textMuted),
+              errorText: _errorMessage,
+              errorStyle: const TextStyle(color: AppColors.warningRed, fontSize: 11, fontWeight: FontWeight.bold),
               filled: true,
               fillColor: AppColors.inputFill,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
                 borderSide: const BorderSide(color: AppColors.border),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: AppColors.drySage),
+                borderSide: const BorderSide(color: AppColors.drySage, width: 1.5),
               ),
             ),
           ),
           const SizedBox(height: 16),
 
-          // Date Picker Tile
+          // Payment Date Title
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text('Payment Date', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
+            title: const Text(
+              'Payment Date',
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
+            ),
             subtitle: Text(
               '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}',
               style: const TextStyle(
                 color: AppColors.drySage,
                 fontWeight: FontWeight.bold,
-                fontSize: 15,
+                fontSize: 16,
               ),
             ),
             trailing: const Icon(Icons.calendar_month_rounded, color: AppColors.drySage),
@@ -138,54 +219,105 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
               }
             },
           ),
+          const SizedBox(height: 8),
 
-          // Quick Presets
-          Wrap(
-            spacing: 8,
+          // Quick Presets in a clean 2x2 Grid
+          Column(
             children: [
-              ActionChip(
-                backgroundColor: AppColors.surfaceElevated,
-                side: const BorderSide(color: AppColors.border),
-                label: const Text('Today', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
-                onPressed: () => setState(() => _selectedDate = DateTime.now()),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildPresetTile(
+                      label: 'Today',
+                      date: DateTime.now(),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _buildPresetTile(
+                      label: 'Yesterday',
+                      date: DateTime.now().subtract(const Duration(days: 1)),
+                    ),
+                  ),
+                ],
               ),
-              ActionChip(
-                backgroundColor: AppColors.surfaceElevated,
-                side: const BorderSide(color: AppColors.border),
-                label: const Text('Yesterday', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
-                onPressed: () => setState(() => _selectedDate = DateTime.now().subtract(const Duration(days: 1))),
-              ),
-              ActionChip(
-                backgroundColor: AppColors.surfaceElevated,
-                side: const BorderSide(color: AppColors.border),
-                label: const Text('3 Days Ago', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
-                onPressed: () => setState(() => _selectedDate = DateTime.now().subtract(const Duration(days: 3))),
-              ),
-              ActionChip(
-                backgroundColor: AppColors.surfaceElevated,
-                side: const BorderSide(color: AppColors.border),
-                label: const Text('Last Kinsenas', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
-                onPressed: () => setState(() => _selectedDate = DateTime.now().subtract(const Duration(days: 15))),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildPresetTile(
+                      label: '3 Days Ago',
+                      date: DateTime.now().subtract(const Duration(days: 3)),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _buildPresetTile(
+                      label: 'Last Kinsenas',
+                      date: DateTime.now().subtract(const Duration(days: 15)),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
 
           const SizedBox(height: 24),
+
+          // Confirm Button
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: AppColors.dustyOlive,
+              backgroundColor: _errorMessage != null ? AppColors.dustyOlive.withValues(alpha: 0.5) : AppColors.dustyOlive,
               minimumSize: const Size.fromHeight(48),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             ),
-            onPressed: () {
-              final cleanAmt = _amountController.text.replaceAll(',', '').replaceAll(' ', '').trim();
-              final amt = double.tryParse(cleanAmt) ?? widget.remainingAmount;
-              widget.onConfirm(amt, _selectedDate);
-              Navigator.pop(context);
-            },
-            child: const Text('Confirm & Update Balance', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold)),
+            onPressed: _handleConfirm,
+            child: const Text(
+              'Confirm & Update Balance',
+              style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 14),
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPresetTile({
+    required String label,
+    required DateTime date,
+  }) {
+    final isSelected = _selectedDate.year == date.year &&
+        _selectedDate.month == date.month &&
+        _selectedDate.day == date.day;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () => setState(() => _selectedDate = date),
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppColors.dustyOlive.withValues(alpha: 0.3)
+                : AppColors.surfaceElevated,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected ? AppColors.drySage : AppColors.border,
+              width: isSelected ? 1.4 : 1.0,
+            ),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? AppColors.whiteSmoke : AppColors.textSecondary,
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+            ),
+          ),
+        ),
       ),
     );
   }
