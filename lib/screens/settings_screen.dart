@@ -81,6 +81,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onPressed: () async {
               Navigator.pop(ctx);
               await DatabaseService.instance.resetAllToZero();
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.remove('payday_delayed_until');
+              await prefs.remove('payday_last_received_cycle');
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -109,7 +112,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
-          'Mga Setting (Settings)',
+          'Settings',
           style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 18),
         ),
       ),
