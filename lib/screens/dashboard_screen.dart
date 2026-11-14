@@ -770,14 +770,18 @@ class DashboardScreenState extends State<DashboardScreen> {
                                 children: [
                                   Row(
                                     children: [
-                                      Text(
-                                        cycleInfo.title,
-                                        style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
+                                      Flexible(
+                                        child: Text(
+                                          cycleInfo.title,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
+                                        ),
                                       ),
                                       if (cycleInfo.isDelayed) ...[
-                                        const SizedBox(width: 6),
+                                        const SizedBox(width: 4),
                                         Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                                           decoration: BoxDecoration(
                                             color: const Color(0x30E07A5F),
                                             borderRadius: BorderRadius.circular(6),
@@ -789,9 +793,9 @@ class DashboardScreenState extends State<DashboardScreen> {
                                         ),
                                       ],
                                       if (cycleInfo.isEarly) ...[
-                                        const SizedBox(width: 6),
+                                        const SizedBox(width: 4),
                                         Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                                           decoration: BoxDecoration(
                                             color: AppColors.dustyOlive.withValues(alpha: 0.35),
                                             borderRadius: BorderRadius.circular(6),
@@ -806,6 +810,8 @@ class DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                   Text(
                                     cycleInfo.subtitle,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
                                   ),
                                 ],
@@ -823,7 +829,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                                       onTap: () => _openAdjustModal(cycleInfo, initialMode: PaydayAdjustMode.early),
                                       borderRadius: BorderRadius.circular(10),
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
                                         decoration: BoxDecoration(
                                           color: cycleInfo.isEarly
                                               ? AppColors.dustyOlive.withValues(alpha: 0.3)
@@ -836,8 +842,8 @@ class DashboardScreenState extends State<DashboardScreen> {
                                         child: const Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Icon(Icons.bolt_rounded, color: AppColors.drySage, size: 13),
-                                            SizedBox(width: 3),
+                                            Icon(Icons.bolt_rounded, color: AppColors.drySage, size: 12),
+                                            SizedBox(width: 2),
                                             Text(
                                               'Maaga',
                                               style: TextStyle(color: AppColors.drySage, fontSize: 11, fontWeight: FontWeight.bold),
@@ -847,7 +853,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 6),
+                                  const SizedBox(width: 5),
                                   // Delay Button
                                   Material(
                                     color: Colors.transparent,
@@ -855,7 +861,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                                       onTap: () => _openAdjustModal(cycleInfo, initialMode: PaydayAdjustMode.delayed),
                                       borderRadius: BorderRadius.circular(10),
                                       child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 5),
                                         decoration: BoxDecoration(
                                           color: cycleInfo.isDelayed
                                               ? const Color(0x30E07A5F)
@@ -871,9 +877,9 @@ class DashboardScreenState extends State<DashboardScreen> {
                                             Icon(
                                               cycleInfo.isDelayed ? Icons.edit_calendar_rounded : Icons.hourglass_empty_rounded,
                                               color: cycleInfo.isDelayed ? AppColors.warningRed : AppColors.textSecondary,
-                                              size: 13,
+                                              size: 12,
                                             ),
-                                            const SizedBox(width: 3),
+                                            const SizedBox(width: 2),
                                             Text(
                                               cycleInfo.isDelayed ? 'I-adjust' : 'Na-delay',
                                               style: TextStyle(
@@ -1022,13 +1028,17 @@ class DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     Row(
                       children: [
-                        const Text(
-                          'PETSA DE PELIGRO',
-                          style: TextStyle(
-                            color: AppColors.whiteSmoke,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 0.6,
-                            fontSize: 13,
+                        const Flexible(
+                          child: Text(
+                            'PETSA DE PELIGRO',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: AppColors.whiteSmoke,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.6,
+                              fontSize: 13,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 6),
@@ -1055,6 +1065,8 @@ class DashboardScreenState extends State<DashboardScreen> {
                     ),
                     Text(
                       'Plano ng Gastusin at Pag-iipon hanggang ${DateFormat('MMM d').format(cycle.targetDate)}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
                     ),
                   ],
@@ -1078,26 +1090,33 @@ class DashboardScreenState extends State<DashboardScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Row(
-                  children: [
-                    Icon(Icons.savings_outlined, color: AppColors.drySage, size: 14),
-                    SizedBox(width: 6),
-                    Text(
-                      'GUSTO KONG MATIRA SA SAHOD (SAVINGS):',
-                      style: TextStyle(
-                        color: AppColors.textMuted,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: 0.5,
+                const Expanded(
+                  child: Row(
+                    children: [
+                      Icon(Icons.savings_outlined, color: AppColors.drySage, size: 14),
+                      SizedBox(width: 6),
+                      Flexible(
+                        child: Text(
+                          'MATITIRA SA SAHOD (SAVINGS):',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: AppColors.textMuted,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                if (_savingsTarget > 0)
+                if (_savingsTarget > 0) ...[
+                  const SizedBox(width: 6),
                   Text(
                     'Target: ₱${_savingsTarget.toStringAsFixed(0)}',
                     style: const TextStyle(color: AppColors.drySage, fontSize: 10, fontWeight: FontWeight.bold),
                   ),
+                ],
               ],
             ),
             const SizedBox(height: 8),
@@ -1164,15 +1183,19 @@ class DashboardScreenState extends State<DashboardScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'MAX GASTUSIN ARAW-ARAW (UPANG MAKAPAG-IPON)',
-                        style: TextStyle(
-                          color: AppColors.textMuted,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.5,
+                      const Expanded(
+                        child: Text(
+                          'MAX GASTUSIN KADA ARAW',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: AppColors.textMuted,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.5,
+                          ),
                         ),
                       ),
+                      const SizedBox(width: 6),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
@@ -1387,21 +1410,27 @@ class DashboardScreenState extends State<DashboardScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Row(
-                        children: [
-                          Icon(Icons.lightbulb_rounded, color: AppColors.drySage, size: 18),
-                          SizedBox(width: 8),
-                          Text(
-                            'Mga Paraan Para Makatipid (Tipid Hacks)',
-                            style: TextStyle(
-                              color: AppColors.whiteSmoke,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                      const Expanded(
+                        child: Row(
+                          children: [
+                            Icon(Icons.lightbulb_rounded, color: AppColors.drySage, size: 18),
+                            SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                'Paraan Para Makatipid (Tipid Hacks)',
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: AppColors.whiteSmoke,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                      if (totalSavedToday > 0)
+                      if (totalSavedToday > 0) ...[
+                        const SizedBox(width: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                           decoration: BoxDecoration(
@@ -1418,6 +1447,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                             ),
                           ),
                         ),
+                      ],
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -1576,15 +1606,26 @@ class DashboardScreenState extends State<DashboardScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold),
+                ),
+              ),
               if (editable)
                 const Icon(Icons.edit_rounded, color: AppColors.drySage, size: 12),
             ],
           ),
           const SizedBox(height: 4),
-          Text(
-            '₱${amount.toStringAsFixed(2)}',
-            style: TextStyle(color: accentColor, fontWeight: FontWeight.bold, fontSize: 13),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '₱${amount.toStringAsFixed(2)}',
+              style: TextStyle(color: accentColor, fontWeight: FontWeight.bold, fontSize: 13),
+            ),
           ),
         ],
       ),
