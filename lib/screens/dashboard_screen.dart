@@ -49,6 +49,59 @@ class _DashboardScreenState extends State<DashboardScreen> {
   DateTime? _delayedUntilDate;
   String? _lastReceivedCycle;
   bool _showPetsaDePeligroDetails = true;
+  double _savingsTarget = 200.0;
+  Set<String> _checkedHacks = {};
+
+  final List<Map<String, dynamic>> _tipidHacks = const [
+    {
+      'id': 'baon',
+      'title': 'Magbaon ng Pagkain / Mag-saing',
+      'desc': 'Magbaon ng lunch o itlog imbes na mag-Grab o kumain sa labas.',
+      'savings': 180.0,
+      'icon': Icons.lunch_dining_rounded,
+      'color': Color(0xFFE09F3E),
+    },
+    {
+      'id': 'water',
+      'title': 'Sariling Tumbler / No Milk Tea',
+      'desc': 'Mag-refill ng tubig at iwas muna sa milk tea at iced coffee.',
+      'savings': 120.0,
+      'icon': Icons.local_drink_rounded,
+      'color': Color(0xFF4A90E2),
+    },
+    {
+      'id': 'commute',
+      'title': 'Jeep / Tren over Grab & Taxi',
+      'desc': 'Sumakay sa MRT/LRT o jeep kapag may regular na biyahe.',
+      'savings': 150.0,
+      'icon': Icons.directions_bus_rounded,
+      'color': AppColors.drySage,
+    },
+    {
+      'id': 'cart_freeze',
+      'title': 'I-freeze ang Online Shopping Carts',
+      'desc': 'Iwasang mag-checkout sa Shopee/Lazada hanggang may sahod.',
+      'savings': 250.0,
+      'icon': Icons.shopping_cart_outlined,
+      'color': AppColors.warningRed,
+    },
+    {
+      'id': 'carinderia',
+      'title': 'Carinderia Gulay at Sabaw Diskarte',
+      'desc': 'Piliin ang gulay at libreng sabaw—mas mura kaysa fast food.',
+      'savings': 100.0,
+      'icon': Icons.soup_kitchen_rounded,
+      'color': AppColors.dustyOlive,
+    },
+    {
+      'id': 'free_transfer',
+      'title': 'Libreng InstaPay / Bank Transfers',
+      'desc': 'Gamitin ang mga bangko o e-wallets na walang transfer fee.',
+      'savings': 25.0,
+      'icon': Icons.swap_horiz_rounded,
+      'color': AppColors.ashBrown,
+    },
+  ];
 
   @override
   void initState() {
@@ -65,6 +118,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final cycle = prefs.getString('payday_cycle') ?? '15_30';
       final delayedStr = prefs.getString('payday_delayed_until');
       final lastReceived = prefs.getString('payday_last_received_cycle');
+      final savedTarget = prefs.getDouble('petsa_savings_target') ?? 200.0;
+      final savedHacks = prefs.getStringList('petsa_checked_hacks') ?? [];
 
       double cash = 0.0;
       for (var a in accounts) {
@@ -96,6 +151,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           _paydayCycle = cycle;
           _delayedUntilDate = delayedDate;
           _lastReceivedCycle = lastReceived;
+          _savingsTarget = savedTarget;
+          _checkedHacks = savedHacks.toSet();
         });
       }
     } catch (_) {
@@ -431,6 +488,93 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Future<void> _setSavingsTarget(double val) async {
+    setState(() => _savingsTarget = val);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('petsa_savings_target', val);
+  }
+
+  Future<void> _toggleTipidHack(String hackId) async {
+    setState(() {
+      if (_checkedHacks.contains(hackId)) {
+        _checkedHacks.remove(hackId);
+      } else {
+        _checkedHacks.add(hackId);
+      }
+    });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList('petsa_checked_hacks', _checkedHacks.toList());
+  }
+
+  void _showCustomTargetDialog() {
+    final controller = TextEditingController(
+      text: _savingsTarget > 0 ? _savingsTarget.toStringAsFixed(2) : '',
+    );
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+        title: const Row(
+          children: [
+            Icon(Icons.savings_rounded, color: AppColors.drySage, size: 22),
+            SizedBox(width: 10),
+            Text(
+              'Custom Savings Target',
+              style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 15),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Magkano ang nais mong matira sa pera mo pagdating ng susunod na sahod (cutoff)?',
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+            ),
+            const SizedBox(height: 14),
+            TextField(
+              controller: controller,
+              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              inputFormatters: const [DecimalCurrencyFormatter()],
+              autofocus: true,
+              style: const TextStyle(color: AppColors.whiteSmoke, fontSize: 18, fontWeight: FontWeight.bold),
+              decoration: InputDecoration(
+                prefixText: '₱ ',
+                prefixStyle: const TextStyle(color: AppColors.drySage, fontSize: 18, fontWeight: FontWeight.bold),
+                filled: true,
+                fillColor: AppColors.inputFill,
+                hintText: '0.00',
+                hintStyle: const TextStyle(color: AppColors.textMuted),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.drySage)),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.dustyOlive),
+            onPressed: () async {
+              final text = controller.text.replaceAll(',', '').replaceAll('₱', '').trim();
+              final val = double.tryParse(text) ?? 0.0;
+              Navigator.pop(ctx);
+              await _setSavingsTarget(val);
+            },
+            child: const Text('I-save', style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _confirmResetAll() {
     showDialog(
       context: context,
@@ -455,6 +599,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               final prefs = await SharedPreferences.getInstance();
               await prefs.remove('payday_delayed_until');
               await prefs.remove('payday_last_received_cycle');
+              await prefs.remove('petsa_savings_target');
+              await prefs.remove('petsa_checked_hacks');
               await _loadDashboardData();
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -820,8 +966,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildPetsaDePeligroCard(KinsenasCycleInfo cycle) {
     final int effectiveDays = cycle.daysLeft > 0 ? cycle.daysLeft : 1;
-    final double dailyAllowance = _totalCash / effectiveDays;
+    final double actualBuffer = _savingsTarget.clamp(0.0, _totalCash);
+    final double spendableCash = (_totalCash - actualBuffer).clamp(0.0, _totalCash);
+    final double dailySpendToSave = spendableCash / effectiveDays;
+    final double dailyZeroOut = _totalCash / effectiveDays;
     final isDangerZone = cycle.isDelayed || cycle.daysLeft <= 3;
+
+    double totalSavedToday = 0.0;
+    for (var h in _tipidHacks) {
+      if (_checkedHacks.contains(h['id'])) {
+        totalSavedToday += (h['savings'] as num).toDouble();
+      }
+    }
+
+    final twentyPctBuffer = (_totalCash * 0.2).roundToDouble();
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -894,7 +1052,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       ],
                     ),
                     Text(
-                      'Daily Survival Allowance hanggang ${DateFormat('MMM d').format(cycle.targetDate)}',
+                      'Plano ng Gastusin at Pag-iipon hanggang ${DateFormat('MMM d').format(cycle.targetDate)}',
                       style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
                     ),
                   ],
@@ -914,7 +1072,83 @@ class _DashboardScreenState extends State<DashboardScreen> {
           if (_showPetsaDePeligroDetails) ...[
             const SizedBox(height: 16),
 
-            // Daily Survival Cap Highlight
+            // 1. Savings Cushion Selector (Gusto kong matira bago mag-sahod)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Row(
+                  children: [
+                    Icon(Icons.savings_outlined, color: AppColors.drySage, size: 14),
+                    SizedBox(width: 6),
+                    Text(
+                      'GUSTO KONG MATIRA SA SAHOD (SAVINGS):',
+                      style: TextStyle(
+                        color: AppColors.textMuted,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+                if (_savingsTarget > 0)
+                  Text(
+                    'Target: ₱${_savingsTarget.toStringAsFixed(0)}',
+                    style: const TextStyle(color: AppColors.drySage, fontSize: 10, fontWeight: FontWeight.bold),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 8),
+
+            // Savings Target Presets Row
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _buildSavingsPresetChip('₱0 (Sagad)', 0.0),
+                  _buildSavingsPresetChip('₱200', 200.0),
+                  _buildSavingsPresetChip('₱500', 500.0),
+                  if (twentyPctBuffer > 0 && twentyPctBuffer != 200.0 && twentyPctBuffer != 500.0)
+                    _buildSavingsPresetChip('20% (₱${twentyPctBuffer.toStringAsFixed(0)})', twentyPctBuffer),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: InkWell(
+                      onTap: _showCustomTargetDialog,
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: (_savingsTarget != 0.0 && _savingsTarget != 200.0 && _savingsTarget != 500.0 && _savingsTarget != twentyPctBuffer)
+                              ? AppColors.dustyOlive.withValues(alpha: 0.3)
+                              : AppColors.inputFill,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: (_savingsTarget != 0.0 && _savingsTarget != 200.0 && _savingsTarget != 500.0 && _savingsTarget != twentyPctBuffer)
+                                ? AppColors.drySage
+                                : AppColors.border,
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.edit_rounded, color: AppColors.drySage, size: 11),
+                            SizedBox(width: 4),
+                            Text(
+                              'Iba pa',
+                              style: TextStyle(color: AppColors.drySage, fontSize: 11, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 14),
+
+            // 2. Main Daily Spend Calculator Highlight
             Container(
               padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
               decoration: BoxDecoration(
@@ -925,14 +1159,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'MAX GASTUSIN KADA ARAW (SURVIVAL BUDGET)',
-                    style: TextStyle(
-                      color: AppColors.textMuted,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'MAX GASTUSIN ARAW-ARAW (UPANG MAKAPAG-IPON)',
+                        style: TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: AppColors.dustyOlive.withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          _savingsTarget > 0 ? 'MAY MATITIRA' : 'SAGAD SPEND',
+                          style: const TextStyle(color: AppColors.drySage, fontSize: 9, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 6),
                   Row(
@@ -940,7 +1190,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     textBaseline: TextBaseline.alphabetic,
                     children: [
                       Text(
-                        '₱${dailyAllowance.toStringAsFixed(2)}',
+                        '₱${dailySpendToSave.toStringAsFixed(2)}',
                         style: const TextStyle(
                           color: AppColors.whiteSmoke,
                           fontSize: 26,
@@ -960,10 +1210,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    cycle.daysLeft == 0
-                        ? 'Para sa araw na ito hanggang pumasok ang iyong sahod.'
-                        : 'Batay sa ₱${_totalCash.toStringAsFixed(2)} cash hinati sa ${cycle.daysLeft} araw.',
-                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                    _savingsTarget > 0
+                        ? '✓ Kung ₱${dailySpendToSave.toStringAsFixed(2)} lang ang gagastusin mo kada araw, may matitira kang ₱${actualBuffer.toStringAsFixed(2)} sahod buffer pagdating ng ${DateFormat('MMM d').format(cycle.targetDate)}!'
+                        : 'Saktong mauubos ang pera sa ₱0.00 pagsapit ng sahod sa ${DateFormat('MMM d').format(cycle.targetDate)}. Mag-set ng target sa itaas para may matipid.',
+                    style: TextStyle(
+                      color: _savingsTarget > 0 ? AppColors.whiteSmoke : AppColors.textSecondary,
+                      fontSize: 11,
+                      height: 1.3,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+                  const Divider(color: AppColors.border, height: 1),
+                  const SizedBox(height: 8),
+
+                  // Three Mini Breakdown Tiles
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Pwedeng Gastusin', style: TextStyle(color: AppColors.textMuted, fontSize: 9)),
+                            Text('₱${spendableCash.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.whiteSmoke, fontSize: 11, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Matitirang Ipon', style: TextStyle(color: AppColors.textMuted, fontSize: 9)),
+                            Text('₱${actualBuffer.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.drySage, fontSize: 11, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Sagad (Zero-out)', style: TextStyle(color: AppColors.textMuted, fontSize: 9)),
+                            Text('₱${dailyZeroOut.toStringAsFixed(2)}/day', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -992,12 +1283,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const Text(
-                          'Kinsenas Survival Tip:',
+                          'Kinsenas Diskarte Advice:',
                           style: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 11),
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          _getSurvivalTip(dailyAllowance, _totalCash),
+                          _getSurvivalTip(dailySpendToSave, _totalCash),
                           style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, height: 1.3),
                         ),
                       ],
@@ -1007,9 +1298,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
 
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
 
-            // Action row: Update Cash & Adjust Delay
+            // 3. Quick Action Row: Update Cash & Adjust Date
             Row(
               children: [
                 Expanded(
@@ -1077,8 +1368,180 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
               ],
             ),
+
+            const SizedBox(height: 14),
+
+            // 4. Practical Philippine Tipid Hacks Section
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceElevated,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.lightbulb_rounded, color: AppColors.drySage, size: 18),
+                          SizedBox(width: 8),
+                          Text(
+                            'Mga Paraan Para Makatipid (Tipid Hacks)',
+                            style: TextStyle(
+                              color: AppColors.whiteSmoke,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (totalSavedToday > 0)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppColors.dustyOlive.withValues(alpha: 0.35),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: AppColors.drySage.withValues(alpha: 0.5)),
+                          ),
+                          child: Text(
+                            '+₱${totalSavedToday.toStringAsFixed(0)} saved!',
+                            style: const TextStyle(
+                              color: AppColors.drySage,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  const Text(
+                    'I-check ang mga ginawa mo ngayong araw upang makaraos nang may naiwang pera:',
+                    style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // Interactive Checklist of Tipid Hacks
+                  ...List.generate(_tipidHacks.length, (idx) {
+                    final hack = _tipidHacks[idx];
+                    final isChecked = _checkedHacks.contains(hack['id'] as String);
+                    final color = hack['color'] as Color;
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: InkWell(
+                        onTap: () => _toggleTipidHack(hack['id'] as String),
+                        borderRadius: BorderRadius.circular(12),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                          decoration: BoxDecoration(
+                            color: isChecked
+                                ? AppColors.dustyOlive.withValues(alpha: 0.25)
+                                : AppColors.inputFill,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: isChecked ? AppColors.drySage : AppColors.borderMuted,
+                              width: isChecked ? 1.2 : 1.0,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                width: 32,
+                                height: 32,
+                                decoration: BoxDecoration(
+                                  color: color.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(hack['icon'] as IconData, color: color, size: 16),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      hack['title'] as String,
+                                      style: TextStyle(
+                                        color: isChecked ? AppColors.whiteSmoke : AppColors.textSecondary,
+                                        fontWeight: isChecked ? FontWeight.bold : FontWeight.w600,
+                                        fontSize: 11,
+                                      ),
+                                    ),
+                                    Text(
+                                      hack['desc'] as String,
+                                      style: const TextStyle(color: AppColors.textMuted, fontSize: 10),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: isChecked
+                                          ? AppColors.dustyOlive
+                                          : AppColors.surface,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      '+₱${(hack['savings'] as num).toStringAsFixed(0)}',
+                                      style: TextStyle(
+                                        color: isChecked ? AppColors.whiteSmoke : AppColors.drySage,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Icon(
+                                    isChecked ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+                                    size: 15,
+                                    color: isChecked ? AppColors.drySage : AppColors.textMuted,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
           ],
         ],
+      ),
+    );
+  }
+
+  Widget _buildSavingsPresetChip(String label, double value) {
+    final isSelected = (_savingsTarget - value).abs() < 0.01;
+    return Padding(
+      padding: const EdgeInsets.only(right: 6),
+      child: ChoiceChip(
+        selected: isSelected,
+        label: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? AppColors.whiteSmoke : AppColors.textSecondary,
+            fontSize: 11,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+          ),
+        ),
+        selectedColor: AppColors.dustyOlive,
+        backgroundColor: AppColors.inputFill,
+        side: BorderSide(color: isSelected ? AppColors.drySage : AppColors.border),
+        onSelected: (_) => _setSavingsTarget(value),
       ),
     );
   }
