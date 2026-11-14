@@ -5,6 +5,7 @@ import '../models/account.dart';
 import '../models/goal.dart';
 import '../models/goal_deposit.dart';
 import '../models/debt.dart';
+import '../models/bill.dart';
 
 class DatabaseService {
   static final DatabaseService instance = DatabaseService._init();
@@ -32,6 +33,7 @@ class DatabaseService {
   final List<Debt> _memDebts = [];
   final List<DebtPayment> _memPayments = [];
   final List<GoalDeposit> _memGoalDeposits = [];
+  final List<Bill> _memBills = [];
 
   DatabaseService._init();
 
@@ -54,6 +56,21 @@ class DatabaseService {
       path,
       version: 1,
       onCreate: _createDB,
+      onOpen: (db) async {
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS bills (
+            id TEXT PRIMARY KEY,
+            title TEXT NOT NULL,
+            amount REAL NOT NULL,
+            category TEXT NOT NULL,
+            due_day INTEGER,
+            cutoff TEXT NOT NULL,
+            is_paid INTEGER NOT NULL DEFAULT 0,
+            last_paid_date TEXT,
+            created_at TEXT NOT NULL
+          )
+        ''');
+      },
     );
   }
 
@@ -125,6 +142,20 @@ class DatabaseService {
       )
     ''');
 
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS bills (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        amount REAL NOT NULL,
+        category TEXT NOT NULL,
+        due_day INTEGER,
+        cutoff TEXT NOT NULL,
+        is_paid INTEGER NOT NULL DEFAULT 0,
+        last_paid_date TEXT,
+        created_at TEXT NOT NULL
+      )
+    ''');
+
     // Insert initial clean account with balance 0.0
     await db.insert('accounts', {
       'id': 'default_wallet',
@@ -151,6 +182,7 @@ class DatabaseService {
         await db.delete('debt_payments');
         await db.delete('goal_deposits');
         await db.delete('transactions');
+        await db.delete('bills');
         await db.update('goals', {'current_amount': 0.0});
       }
     } catch (_) {}
@@ -170,6 +202,7 @@ class DatabaseService {
     _memDebts.clear();
     _memPayments.clear();
     _memGoalDeposits.clear();
+    _memBills.clear();
   }
 
   // Account operations
@@ -392,5 +425,82 @@ class DatabaseService {
         paidTerms: newPaidTerms,
       );
     }
+  }
+
+  // =========================================================================
+  // BILL OPERATIONS (MGA BAYARIN)
+  // =========================================================================
+
+  Future<List<Bill>> getBills() async {
+    try {
+      final db = await database;
+      if (db != null) {
+        final maps = await db.query('bills', orderBy: 'due_day ASC');
+        return maps.map((m) => Bill.fromMap(m)).toList();
+      }
+    } catch (_) {}
+    return List.from(_memBills);
+  }
+
+  Future<void> addBill(Bill bill) async {
+    try {
+      final db = await database;
+      if (db != null) {
+        await db.insert('bills', bill.toMap(), conflictAlgorithm: ConflictAlgorithm.replace);
+        return;
+      }
+    } catch (_) {}
+    _memBills.add(bill);
+  }
+
+  Future<void> updateBill(Bill bill) async {
+    try {
+      final db = await database;
+      if (db != null) {
+        await db.update('bills', bill.toMap(), where: 'id = ?', whereArgs: [bill.id]);
+        return;
+      }
+    } catch (_) {}
+    final idx = _memBills.indexWhere((b) => b.id == bill.id);
+    if (idx != -1) {
+      _memBills[idx] = bill;
+    }
+  }
+
+  Future<void> toggleBillPaid(String id, bool isPaid) async {
+    final now = DateTime.now();
+    try {
+      final db = await database;
+      if (db != null) {
+        await db.update(
+          'bills',
+          {
+            'is_paid': isPaid ? 1 : 0,
+            'last_paid_date': isPaid ? now.toIso8601String() : null,
+          },
+          where: 'id = ?',
+          whereArgs: [id],
+        );
+        return;
+      }
+    } catch (_) {}
+    final idx = _memBills.indexWhere((b) => b.id == id);
+    if (idx != -1) {
+      _memBills[idx] = _memBills[idx].copyWith(
+        isPaid: isPaid,
+        lastPaidDate: isPaid ? now : null,
+      );
+    }
+  }
+
+  Future<void> deleteBill(String id) async {
+    try {
+      final db = await database;
+      if (db != null) {
+        await db.delete('bills', where: 'id = ?', whereArgs: [id]);
+        return;
+      }
+    } catch (_) {}
+    _memBills.removeWhere((b) => b.id == id);
   }
 }

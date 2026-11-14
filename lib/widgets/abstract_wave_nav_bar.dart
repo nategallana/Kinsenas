@@ -50,6 +50,12 @@ class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
       activeIcon: Icons.swap_horizontal_circle,
       activeColor: AppColors.whiteSmoke, // White icon when active
     ),
+    _NavItemData(
+      label: 'Mga Bayarin',
+      outlineIcon: Icons.receipt_long_outlined,
+      activeIcon: Icons.receipt_long_rounded,
+      activeColor: AppColors.whiteSmoke, // White icon when active
+    ),
   ];
 
   @override
@@ -134,11 +140,14 @@ class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
                                   // Text label underneath each icon
                                   Text(
                                     item.label,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                       color: isActive ? AppColors.whiteSmoke : AppColors.textSecondary,
-                                      fontSize: 11,
+                                      fontSize: 10,
                                       fontWeight: FontWeight.bold,
-                                      letterSpacing: 0.2,
+                                      letterSpacing: 0.1,
                                     ),
                                   ),
                                 ],

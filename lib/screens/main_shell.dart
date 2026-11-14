@@ -5,6 +5,7 @@ import 'dashboard_screen.dart';
 import 'salary_splitter_screen.dart';
 import 'goals_screen.dart';
 import 'utang_hub_screen.dart';
+import 'mga_bayarin_screen.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
@@ -21,6 +22,7 @@ class _MainShellState extends State<MainShell> {
     SalarySplitterScreen(),
     GoalsScreen(),
     UtangHubScreen(),
+    MgaBayarinScreen(),
   ];
 
   @override
