@@ -16,13 +16,14 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
+  final GlobalKey<DashboardScreenState> _dashboardKey = GlobalKey<DashboardScreenState>();
 
-  final List<Widget> _screens = const [
-    DashboardScreen(),
-    SalarySplitterScreen(),
-    GoalsScreen(),
-    UtangHubScreen(),
-    MgaBayarinScreen(),
+  late final List<Widget> _screens = [
+    DashboardScreen(key: _dashboardKey),
+    const SalarySplitterScreen(),
+    const GoalsScreen(),
+    const UtangHubScreen(),
+    const MgaBayarinScreen(),
   ];
 
   @override
@@ -35,7 +36,12 @@ class _MainShellState extends State<MainShell> {
       ),
       bottomNavigationBar: AbstractWaveNavBar(
         selectedIndex: _currentIndex,
-        onItemSelected: (idx) => setState(() => _currentIndex = idx),
+        onItemSelected: (idx) {
+          if (idx == 0) {
+            _dashboardKey.currentState?.loadDashboardData();
+          }
+          setState(() => _currentIndex = idx);
+        },
       ),
     );
   }

@@ -408,6 +408,22 @@ class DatabaseService {
               where: 'id = ?',
               whereArgs: [payment.debtId],
             );
+
+            // Automatically sync Cash / Wallets account balance!
+            final accounts = await txn.query('accounts', limit: 1);
+            if (accounts.isNotEmpty) {
+              final curBal = (accounts.first['balance'] as num).toDouble();
+              final isPayable = currentDebt.type == DebtType.payable;
+              // If payable (Utang Ko): user paid out money -> subtract from cash
+              // If receivable (May Utang Sakin): user received money back -> add to cash
+              final newBal = isPayable ? (curBal - payment.amountPaid) : (curBal + payment.amountPaid);
+              await txn.update(
+                'accounts',
+                {'balance': newBal},
+                where: 'id = ?',
+                whereArgs: [accounts.first['id']],
+              );
+            }
           }
         });
         return;
@@ -424,6 +440,14 @@ class DatabaseService {
         remainingAmount: newRemaining,
         paidTerms: newPaidTerms,
       );
+
+      final isPayable = currentDebt.type == DebtType.payable;
+      if (_memAccounts.isNotEmpty) {
+        final curBal = _memAccounts.first.balance;
+        _memAccounts[0] = _memAccounts.first.copyWith(
+          balance: isPayable ? (curBal - payment.amountPaid) : (curBal + payment.amountPaid),
+        );
+      }
     }
   }
 
@@ -472,24 +496,50 @@ class DatabaseService {
     try {
       final db = await database;
       if (db != null) {
-        await db.update(
-          'bills',
-          {
-            'is_paid': isPaid ? 1 : 0,
-            'last_paid_date': isPaid ? now.toIso8601String() : null,
-          },
-          where: 'id = ?',
-          whereArgs: [id],
-        );
+        await db.transaction((txn) async {
+          final billMap = await txn.query('bills', where: 'id = ?', whereArgs: [id], limit: 1);
+          if (billMap.isNotEmpty) {
+            final bill = Bill.fromMap(billMap.first);
+            final accounts = await txn.query('accounts', limit: 1);
+            if (accounts.isNotEmpty) {
+              final curBal = (accounts.first['balance'] as num).toDouble();
+              // If marking paid: deduct bill amount from cash
+              // If unmarking (undo): return bill amount back to cash
+              final newBal = isPaid ? (curBal - bill.amount) : (curBal + bill.amount);
+              await txn.update(
+                'accounts',
+                {'balance': newBal},
+                where: 'id = ?',
+                whereArgs: [accounts.first['id']],
+              );
+            }
+            await txn.update(
+              'bills',
+              {
+                'is_paid': isPaid ? 1 : 0,
+                'last_paid_date': isPaid ? now.toIso8601String() : null,
+              },
+              where: 'id = ?',
+              whereArgs: [id],
+            );
+          }
+        });
         return;
       }
     } catch (_) {}
     final idx = _memBills.indexWhere((b) => b.id == id);
     if (idx != -1) {
-      _memBills[idx] = _memBills[idx].copyWith(
+      final bill = _memBills[idx];
+      _memBills[idx] = bill.copyWith(
         isPaid: isPaid,
         lastPaidDate: isPaid ? now : null,
       );
+      if (_memAccounts.isNotEmpty) {
+        final curBal = _memAccounts.first.balance;
+        _memAccounts[0] = _memAccounts.first.copyWith(
+          balance: isPaid ? (curBal - bill.amount) : (curBal + bill.amount),
+        );
+      }
     }
   }
 

@@ -36,10 +36,10 @@ class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  State<DashboardScreen> createState() => _DashboardScreenState();
+  State<DashboardScreen> createState() => DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class DashboardScreenState extends State<DashboardScreen> {
   double _totalCash = 0.0;
   double _totalPayables = 0.0;
   double _totalReceivables = 0.0;
@@ -51,6 +51,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool _showPetsaDePeligroDetails = true;
   double _savingsTarget = 200.0;
   Set<String> _checkedHacks = {};
+
+  Future<void> loadDashboardData() => _loadDashboardData();
 
   final List<Map<String, dynamic>> _tipidHacks = const [
     {
