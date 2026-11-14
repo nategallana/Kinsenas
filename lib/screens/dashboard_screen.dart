@@ -13,6 +13,7 @@ class KinsenasCycleInfo {
   final int daysLeft;
   final bool isPaydayToday;
   final bool isDelayed;
+  final bool isEarly;
   final bool isAwaitingConfirmation;
   final String title;
   final String subtitle;
@@ -23,6 +24,7 @@ class KinsenasCycleInfo {
     required this.daysLeft,
     required this.isPaydayToday,
     required this.isDelayed,
+    this.isEarly = false,
     required this.isAwaitingConfirmation,
     required this.title,
     required this.subtitle,
@@ -123,46 +125,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
       secondTarget = lastDayOfMonth;
     }
 
-    // 1. If user has active delayed date
+    // 1. If user has active adjusted date (early or delayed)
     if (_delayedUntilDate != null) {
-      final delayedDay = DateTime(_delayedUntilDate!.year, _delayedUntilDate!.month, _delayedUntilDate!.day);
-      final daysDiff = delayedDay.difference(today).inDays;
-      final cycleKey = 'delayed_${delayedDay.year}_${delayedDay.month}_${delayedDay.day}';
+      final customDay = DateTime(_delayedUntilDate!.year, _delayedUntilDate!.month, _delayedUntilDate!.day);
+      final daysDiff = customDay.difference(today).inDays;
+
+      // Check whether this custom date is earlier or later than the regular cutoff
+      final regularRef = today.isBefore(DateTime(now.year, now.month, firstTarget))
+          ? DateTime(now.year, now.month, firstTarget)
+          : DateTime(now.year, now.month, secondTarget);
+      final isEarly = customDay.isBefore(regularRef);
+      final cycleKey = '${isEarly ? "early" : "delayed"}_${customDay.year}_${customDay.month}_${customDay.day}';
 
       if (daysDiff == 0) {
         return KinsenasCycleInfo(
-          targetDate: delayedDay,
+          targetDate: customDay,
           daysLeft: 0,
           isPaydayToday: true,
-          isDelayed: true,
+          isDelayed: !isEarly,
+          isEarly: isEarly,
           isAwaitingConfirmation: true,
-          title: '🎉 Inaasahang Sahod Day Ngayon!',
-          subtitle: 'Dumating na ba ang delayed na payout mo?',
+          title: isEarly ? '⚡ Maagang Sahod Day Ngayon!' : '🎉 Inaasahang Sahod Day Ngayon!',
+          subtitle: isEarly ? 'Pumasok na ba ang maagang payout mo?' : 'Dumating na ba ang delayed na payout mo?',
           cycleKey: cycleKey,
         );
       } else if (daysDiff > 0) {
         return KinsenasCycleInfo(
-          targetDate: delayedDay,
+          targetDate: customDay,
           daysLeft: daysDiff,
           isPaydayToday: false,
-          isDelayed: true,
+          isDelayed: !isEarly,
+          isEarly: isEarly,
           isAwaitingConfirmation: false,
-          title: '⏳ Na-delay ang Sahod',
+          title: isEarly ? '⚡ Maagang Sahod Schedule' : '⏳ Na-delay ang Sahod',
           subtitle: daysDiff == 1
-              ? 'Inaasahang papasok bukas (${DateFormat('MMM d').format(delayedDay)})!'
-              : 'Inaasahang papasok sa $daysDiff araw (${DateFormat('MMM d').format(delayedDay)})',
+              ? 'Inaasahang papasok bukas (${DateFormat('MMM d').format(customDay)})!'
+              : 'Inaasahang papasok sa $daysDiff araw (${DateFormat('MMM d').format(customDay)})',
           cycleKey: cycleKey,
         );
       } else {
-        // Delayed date has passed and user hasn't confirmed yet
+        // Date has passed and user hasn't confirmed yet
         return KinsenasCycleInfo(
-          targetDate: delayedDay,
+          targetDate: customDay,
           daysLeft: 0,
           isPaydayToday: false,
-          isDelayed: true,
+          isDelayed: !isEarly,
+          isEarly: isEarly,
           isAwaitingConfirmation: true,
-          title: '⚠️ Delayed Sahod (Lagpas na sa petsa)',
-          subtitle: 'Inaasahan noong ${DateFormat('MMM d').format(delayedDay)}. Dumating na ba?',
+          title: isEarly ? '⚡ Maagang Sahod (Lagpas na sa petsa)' : '⚠️ Delayed Sahod (Lagpas na sa petsa)',
+          subtitle: 'Inaasahan noong ${DateFormat('MMM d').format(customDay)}. Dumating na ba?',
           cycleKey: cycleKey,
         );
       }
@@ -289,12 +300,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
-  void _openDelayModal(KinsenasCycleInfo cycle) {
+  void _openAdjustModal(KinsenasCycleInfo cycle, {PaydayAdjustMode initialMode = PaydayAdjustMode.delayed}) {
     DelayPaydayModal.show(
       context: context,
       currentScheduledDate: cycle.targetDate,
       existingDelayedDate: _delayedUntilDate,
-      onConfirmDelay: (newDate) async {
+      initialMode: initialMode,
+      onInstantReceived: () => _confirmSahodReceived(cycle),
+      onConfirmDate: (newDate, isEarly) async {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('payday_delayed_until', newDate.toIso8601String());
         setState(() => _delayedUntilDate = newDate);
@@ -305,7 +318,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
             SnackBar(
               backgroundColor: AppColors.surface,
               content: Text(
-                '✓ Na-adjust ang petsa sa ${DateFormat('MMM d').format(newDate)}! Na-update ang Petsa de Peligro budget.',
+                isEarly
+                    ? '⚡ Na-set ang maagang sahod sa ${DateFormat('MMM d').format(newDate)}!'
+                    : '✓ Na-adjust ang petsa sa ${DateFormat('MMM d').format(newDate)}! Na-update ang Petsa de Peligro budget.',
                 style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
               ),
             ),
@@ -593,7 +608,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Icon(
-                                cycleInfo.isDelayed ? Icons.hourglass_bottom_rounded : Icons.calendar_today_rounded,
+                                cycleInfo.isDelayed
+                                    ? Icons.hourglass_bottom_rounded
+                                    : (cycleInfo.isEarly ? Icons.bolt_rounded : Icons.calendar_today_rounded),
                                 color: cycleInfo.isDelayed ? AppColors.warningRed : AppColors.drySage,
                                 size: 20,
                               ),
@@ -623,6 +640,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           ),
                                         ),
                                       ],
+                                      if (cycleInfo.isEarly) ...[
+                                        const SizedBox(width: 6),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.dustyOlive.withValues(alpha: 0.35),
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                          child: const Text(
+                                            'MAAGA',
+                                            style: TextStyle(color: AppColors.drySage, fontSize: 9, fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ],
                                     ],
                                   ),
                                   Text(
@@ -632,37 +663,83 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ],
                               ),
                             ),
-                            // Quick delay snooze icon if not currently in confirmation mode
+                            // Quick adjust icons if not currently in confirmation mode
                             if (!cycleInfo.isAwaitingConfirmation)
-                              Material(
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  onTap: () => _openDelayModal(cycleInfo),
-                                  borderRadius: BorderRadius.circular(10),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.inputFill,
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  // Early Button
+                                  Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () => _openAdjustModal(cycleInfo, initialMode: PaydayAdjustMode.early),
                                       borderRadius: BorderRadius.circular(10),
-                                      border: Border.all(color: AppColors.border),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          cycleInfo.isDelayed ? Icons.edit_calendar_rounded : Icons.hourglass_empty_rounded,
-                                          color: AppColors.drySage,
-                                          size: 13,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: cycleInfo.isEarly
+                                              ? AppColors.dustyOlive.withValues(alpha: 0.3)
+                                              : AppColors.inputFill,
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: cycleInfo.isEarly ? AppColors.drySage : AppColors.border,
+                                          ),
                                         ),
-                                        const SizedBox(width: 4),
-                                        Text(
-                                          cycleInfo.isDelayed ? 'I-adjust' : 'Na-delay?',
-                                          style: const TextStyle(color: AppColors.drySage, fontSize: 11, fontWeight: FontWeight.bold),
+                                        child: const Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(Icons.bolt_rounded, color: AppColors.drySage, size: 13),
+                                            SizedBox(width: 3),
+                                            Text(
+                                              'Maaga',
+                                              style: TextStyle(color: AppColors.drySage, fontSize: 11, fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
                                         ),
-                                      ],
+                                      ),
                                     ),
                                   ),
-                                ),
+                                  const SizedBox(width: 6),
+                                  // Delay Button
+                                  Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () => _openAdjustModal(cycleInfo, initialMode: PaydayAdjustMode.delayed),
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+                                        decoration: BoxDecoration(
+                                          color: cycleInfo.isDelayed
+                                              ? const Color(0x30E07A5F)
+                                              : AppColors.inputFill,
+                                          borderRadius: BorderRadius.circular(10),
+                                          border: Border.all(
+                                            color: cycleInfo.isDelayed ? AppColors.warningRed : AppColors.border,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Icon(
+                                              cycleInfo.isDelayed ? Icons.edit_calendar_rounded : Icons.hourglass_empty_rounded,
+                                              color: cycleInfo.isDelayed ? AppColors.warningRed : AppColors.textSecondary,
+                                              size: 13,
+                                            ),
+                                            const SizedBox(width: 3),
+                                            Text(
+                                              cycleInfo.isDelayed ? 'I-adjust' : 'Na-delay',
+                                              style: TextStyle(
+                                                color: cycleInfo.isDelayed ? AppColors.warningRed : AppColors.textSecondary,
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                           ],
                         ),
@@ -711,7 +788,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           padding: const EdgeInsets.symmetric(vertical: 9),
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                         ),
-                                        onPressed: () => _openDelayModal(cycleInfo),
+                                        onPressed: () => _openAdjustModal(cycleInfo, initialMode: PaydayAdjustMode.delayed),
                                         icon: const Icon(Icons.hourglass_bottom_rounded, color: AppColors.warningRed, size: 15),
                                         label: const Text(
                                           'Hindi Pa / Na-delay',
@@ -963,7 +1040,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: InkWell(
-                    onTap: () => _openDelayModal(cycle),
+                    onTap: () => _openAdjustModal(cycle, initialMode: cycle.isEarly ? PaydayAdjustMode.early : PaydayAdjustMode.delayed),
                     borderRadius: BorderRadius.circular(12),
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 10),
