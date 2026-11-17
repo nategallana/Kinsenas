@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
 /// A sleek, minimalist bottom navigation bar that renders:
-/// 1. A clean, flat dark base background with zero full-width waves.
-/// 2. An organic olive green teardrop / bell-curve scoop that dips down from the top edge
-///    and neatly hugs only the currently active navigation item.
+/// 1. A clean, flat dark base background (#11140E) without full-width waves or cut-through lines.
+/// 2. An organic olive green teardrop / bell-curve scoop (#717744) that dips down from the top edge
+///    into a wide, perfectly round circular bowl surrounding only the active navigation tab.
 /// 3. Minimalist pure white outline icons for inactive tabs.
-/// 4. Solid filled white icon perfectly centered inside the olive scoop for the active tab.
+/// 4. Solid filled white icon centered inside the round olive bulb for the active tab.
 class AbstractWaveNavBar extends StatefulWidget {
   final int selectedIndex;
   final ValueChanged<int> onItemSelected;
@@ -54,7 +54,7 @@ class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
-    const double barHeight = 64.0;
+    const double barHeight = 66.0;
 
     return Container(
       color: AppColors.background,
@@ -73,7 +73,7 @@ class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
               return Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  // LAYER 1: Dark background + Olive Teardrop Scoop Painter
+                  // LAYER 1: Dark background + Perfectly Round Olive Teardrop Scoop
                   Positioned.fill(
                     child: CustomPaint(
                       painter: _TeardropScoopPainter(
@@ -145,9 +145,8 @@ class _NavItemData {
 }
 
 /// Custom painter that draws:
-/// 1. Solid dark bar base (#11140E)
-/// 2. Subtle top border line along the flat edge
-/// 3. S-curve olive teardrop scoop (#717744) dipping from the top edge around the active tab
+/// 1. Solid flat dark base (#11140E)
+/// 2. Clean, wide, perfectly round olive green (#717744) scoop dipping from the top edge
 class _TeardropScoopPainter extends CustomPainter {
   final double activeX;
   final double tabWidth;
@@ -167,61 +166,67 @@ class _TeardropScoopPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), darkBasePaint);
 
-    // 2. Subtle top edge line for crisp demarcation
-    final topBorderPaint = Paint()
-      ..color = const Color(0x18FFFFFF)
-      ..strokeWidth = 1.0
-      ..style = PaintingStyle.stroke;
-    canvas.drawLine(const Offset(0, 0), Offset(size.width, 0), topBorderPaint);
-
-    // 3. Olive scoop matching user's design (#717744)
+    // 2. Olive scoop matching user's design (#717744)
     final olivePaint = Paint()
       ..color = AppColors.dustyOlive
       ..style = PaintingStyle.fill;
 
-    // Proportions calibrated to match the reference design:
-    // Top flare width extends symmetrically around active tab center
-    final double topSpread = (tabWidth * 0.44).clamp(32.0, 42.0);
-    const double bulbRadius = 24.5;
-    final double iconY = barHeight / 2.0;
-    final double bottomY = (iconY + bulbRadius).clamp(0.0, barHeight - 4.0);
-    final double neckY = iconY - 8.0;
+    // Geometric parameters matching reference design:
+    final double iconY = barHeight / 2.0; // 33.0
+    const double bulbRadius = 27.5;
+    const double neckRadius = 25.0;
+    final double neckY = iconY - 9.0; // 24.0
+    final double bottomY = (iconY + bulbRadius).clamp(0.0, barHeight - 4.0); // 60.5
+    final double topSpread = (tabWidth * 0.52).clamp(36.0, 48.0);
+    const double kappa = 0.55228; // Standard quarter-circle Bezier constant
 
     final path = Path();
-    // Start at top edge left flare
+    // Start at top-left flare
     path.moveTo(activeX - topSpread, 0);
 
-    // Left flare curve down into bulb waist:
-    // Starts horizontal at top edge, curves inward and transitions smoothly vertical at neck
+    // 1. Left flare: from (activeX - topSpread, 0) to (activeX - neckRadius, neckY)
     path.cubicTo(
-      activeX - topSpread * 0.55, 0,
-      activeX - bulbRadius, neckY * 0.35,
-      activeX - bulbRadius, neckY,
+      activeX - topSpread + (topSpread - neckRadius) * 0.40, 0,
+      activeX - neckRadius, neckY * 0.45,
+      activeX - neckRadius, neckY,
     );
 
-    // Left bulb curve down to bottom apex:
-    // Continues vertically from neck, rounds out around the icon, and flattens at bottom apex
+    // 2. Left neck to bulb equator: from (activeX - neckRadius, neckY) to (activeX - bulbRadius, iconY)
     path.cubicTo(
-      activeX - bulbRadius, neckY + 10.0,
-      activeX - bulbRadius * 0.55, bottomY,
+      activeX - neckRadius, neckY + (iconY - neckY) * 0.45,
+      activeX - bulbRadius, iconY - (iconY - neckY) * 0.35,
+      activeX - bulbRadius, iconY,
+    );
+
+    // 3. Quarter-circle bottom-left: from (activeX - bulbRadius, iconY) to bottom apex (activeX, bottomY)
+    path.cubicTo(
+      activeX - bulbRadius, iconY + kappa * bulbRadius,
+      activeX - kappa * bulbRadius, bottomY,
       activeX, bottomY,
     );
 
-    // Right bulb curve up from bottom apex to waist:
+    // 4. Quarter-circle bottom-right: from bottom apex (activeX, bottomY) to (activeX + bulbRadius, iconY)
     path.cubicTo(
-      activeX + bulbRadius * 0.55, bottomY,
-      activeX + bulbRadius, neckY + 10.0,
-      activeX + bulbRadius, neckY,
+      activeX + kappa * bulbRadius, bottomY,
+      activeX + bulbRadius, iconY + kappa * bulbRadius,
+      activeX + bulbRadius, iconY,
     );
 
-    // Right flare curve up to top edge:
+    // 5. Right bulb equator to neck: from (activeX + bulbRadius, iconY) to (activeX + neckRadius, neckY)
     path.cubicTo(
-      activeX + bulbRadius, neckY * 0.35,
-      activeX + topSpread * 0.55, 0,
+      activeX + bulbRadius, iconY - (iconY - neckY) * 0.35,
+      activeX + neckRadius, neckY + (iconY - neckY) * 0.45,
+      activeX + neckRadius, neckY,
+    );
+
+    // 6. Right flare: from (activeX + neckRadius, neckY) up to top edge (activeX + topSpread, 0)
+    path.cubicTo(
+      activeX + neckRadius, neckY * 0.45,
+      activeX + topSpread - (topSpread - neckRadius) * 0.40, 0,
       activeX + topSpread, 0,
     );
 
-    // Close straight across top edge
+    // Close path along the top edge
     path.close();
 
     canvas.drawPath(path, olivePaint);
