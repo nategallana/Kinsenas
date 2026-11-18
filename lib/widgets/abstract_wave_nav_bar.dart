@@ -1,12 +1,15 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-/// A sleek, minimalist bottom navigation bar that renders:
-/// 1. A clean, flat dark base background (#11140E) without full-width waves or cut-through lines.
-/// 2. An organic olive green teardrop / bell-curve scoop (#717744) that dips down from the top edge
-///    into a wide, perfectly round circular bowl surrounding only the active navigation tab.
-/// 3. Minimalist pure white outline icons for inactive tabs.
-/// 4. Solid filled white icon centered inside the round olive bulb for the active tab.
+/// A sleek, minimalist bottom navigation bar styled to match the Kinsenas
+/// Earthy Botanical palette:
+/// 1. A solid black (#000000) rectangular base bar across the bottom.
+/// 2. A crisp U-shaped (half-capsule) active tab in Dusty Olive (#717744)
+///    dipping smoothly from the top edge around the selected icon.
+/// 3. Crisp White Smoke (#EFF1ED) outline icons on the black bar for inactive tabs.
+/// 4. Solid filled black (#000000) icon centered inside the green U-shaped tab
+///    for the active tab.
 class AbstractWaveNavBar extends StatefulWidget {
   final int selectedIndex;
   final ValueChanged<int> onItemSelected;
@@ -37,27 +40,28 @@ class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
     _NavItemData(
       label: 'Ipon',
       outlineIcon: Icons.savings_outlined,
-      activeIcon: Icons.savings_rounded,
+      activeIcon: Icons.savings,
     ),
     _NavItemData(
       label: 'Utang',
       outlineIcon: Icons.swap_horiz_rounded,
       activeIcon: Icons.swap_horiz_rounded,
+      sizeOffset: 3.0,
     ),
     _NavItemData(
       label: 'Mga Bayarin',
       outlineIcon: Icons.receipt_long_outlined,
-      activeIcon: Icons.receipt_long_rounded,
+      activeIcon: Icons.receipt_long,
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
-    const double barHeight = 66.0;
+    const double barHeight = 56.0;
 
     return Container(
-      color: AppColors.background,
+      color: Colors.black,
       height: barHeight + bottomPadding,
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -73,10 +77,10 @@ class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
               return Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  // LAYER 1: Dark background + Perfectly Round Olive Teardrop Scoop
+                  // LAYER 1: Solid black bar with Dusty Olive U-shaped active tab
                   Positioned.fill(
                     child: CustomPaint(
-                      painter: _TeardropScoopPainter(
+                      painter: _UShapedCutoutNavPainter(
                         activeX: currentX,
                         tabWidth: tabWidth,
                         barHeight: barHeight,
@@ -84,7 +88,7 @@ class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
                     ),
                   ),
 
-                  // LAYER 2: Navigation Icons centered vertically in the bar
+                  // LAYER 2: Navigation icons tightly centered with compact bottom margin
                   Positioned(
                     top: 0,
                     left: 0,
@@ -104,15 +108,15 @@ class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
                               onTap: () => widget.onItemSelected(index),
                               child: Center(
                                 child: AnimatedScale(
-                                  duration: const Duration(milliseconds: 200),
+                                  duration: const Duration(milliseconds: 220),
                                   scale: isActive ? 1.08 : 1.0,
                                   curve: Curves.easeOutBack,
                                   child: Icon(
                                     isActive ? item.activeIcon : item.outlineIcon,
-                                    size: isActive ? 27.0 : 25.0,
+                                    size: (isActive ? 28.0 : 26.0) + item.sizeOffset,
                                     color: isActive
-                                        ? Colors.white
-                                        : Colors.white.withValues(alpha: 0.90),
+                                        ? Colors.black
+                                        : AppColors.whiteSmoke,
                                   ),
                                 ),
                               ),
@@ -136,23 +140,25 @@ class _NavItemData {
   final String label;
   final IconData outlineIcon;
   final IconData activeIcon;
+  final double sizeOffset;
 
   const _NavItemData({
     required this.label,
     required this.outlineIcon,
     required this.activeIcon,
+    this.sizeOffset = 0.0,
   });
 }
 
-/// Custom painter that draws:
-/// 1. Solid flat dark base (#11140E)
-/// 2. Clean, wide, perfectly round olive green (#717744) scoop dipping from the top edge
-class _TeardropScoopPainter extends CustomPainter {
+/// Custom painter that draws a solid black (#000000) bottom bar with a crisp
+/// U-shaped (half-capsule) active tab in Dusty Olive (#717744) dipping straight
+/// down from the top edge.
+class _UShapedCutoutNavPainter extends CustomPainter {
   final double activeX;
   final double tabWidth;
   final double barHeight;
 
-  _TeardropScoopPainter({
+  _UShapedCutoutNavPainter({
     required this.activeX,
     required this.tabWidth,
     required this.barHeight,
@@ -160,80 +166,45 @@ class _TeardropScoopPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // 1. Dark base background
-    final darkBasePaint = Paint()
-      ..color = AppColors.background
+    // 1. Solid black base bar
+    final barPaint = Paint()
+      ..color = Colors.black
       ..style = PaintingStyle.fill;
-    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), darkBasePaint);
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), barPaint);
 
-    // 2. Olive scoop matching user's design (#717744)
-    final olivePaint = Paint()
+    // 2. Dusty Olive (#717744) U-shaped half-capsule active tab
+    final activeTabPaint = Paint()
       ..color = AppColors.dustyOlive
-      ..style = PaintingStyle.fill;
+      ..style = PaintingStyle.fill
+      ..isAntiAlias = true;
 
-    // Geometric parameters matching reference design:
-    final double iconY = barHeight / 2.0; // 33.0
-    const double bulbRadius = 27.5;
-    const double neckRadius = 25.0;
-    final double neckY = iconY - 9.0; // 24.0
-    final double bottomY = (iconY + bulbRadius).clamp(0.0, barHeight - 4.0); // 60.5
-    final double topSpread = (tabWidth * 0.52).clamp(36.0, 48.0);
-    const double kappa = 0.55228; // Standard quarter-circle Bezier constant
+    final double tabDepth = barHeight * 0.89;
+    final double tabRadius = math.min(barHeight * 0.56, tabWidth * 0.44);
+    final double straightDepth = math.max(0.0, tabDepth - tabRadius);
 
-    final path = Path();
-    // Start at top-left flare
-    path.moveTo(activeX - topSpread, 0);
+    final double leftX = (activeX - tabRadius).clamp(0.0, size.width);
+    final double rightX = (activeX + tabRadius).clamp(0.0, size.width);
 
-    // 1. Left flare: from (activeX - topSpread, 0) to (activeX - neckRadius, neckY)
-    path.cubicTo(
-      activeX - topSpread + (topSpread - neckRadius) * 0.40, 0,
-      activeX - neckRadius, neckY * 0.45,
-      activeX - neckRadius, neckY,
-    );
+    final path = Path()
+      ..moveTo(leftX, 0)
+      ..lineTo(leftX, straightDepth)
+      ..arcTo(
+        Rect.fromCircle(
+          center: Offset(activeX, straightDepth),
+          radius: tabRadius,
+        ),
+        math.pi,
+        -math.pi,
+        false,
+      )
+      ..lineTo(rightX, 0)
+      ..close();
 
-    // 2. Left neck to bulb equator: from (activeX - neckRadius, neckY) to (activeX - bulbRadius, iconY)
-    path.cubicTo(
-      activeX - neckRadius, neckY + (iconY - neckY) * 0.45,
-      activeX - bulbRadius, iconY - (iconY - neckY) * 0.35,
-      activeX - bulbRadius, iconY,
-    );
-
-    // 3. Quarter-circle bottom-left: from (activeX - bulbRadius, iconY) to bottom apex (activeX, bottomY)
-    path.cubicTo(
-      activeX - bulbRadius, iconY + kappa * bulbRadius,
-      activeX - kappa * bulbRadius, bottomY,
-      activeX, bottomY,
-    );
-
-    // 4. Quarter-circle bottom-right: from bottom apex (activeX, bottomY) to (activeX + bulbRadius, iconY)
-    path.cubicTo(
-      activeX + kappa * bulbRadius, bottomY,
-      activeX + bulbRadius, iconY + kappa * bulbRadius,
-      activeX + bulbRadius, iconY,
-    );
-
-    // 5. Right bulb equator to neck: from (activeX + bulbRadius, iconY) to (activeX + neckRadius, neckY)
-    path.cubicTo(
-      activeX + bulbRadius, iconY - (iconY - neckY) * 0.35,
-      activeX + neckRadius, neckY + (iconY - neckY) * 0.45,
-      activeX + neckRadius, neckY,
-    );
-
-    // 6. Right flare: from (activeX + neckRadius, neckY) up to top edge (activeX + topSpread, 0)
-    path.cubicTo(
-      activeX + neckRadius, neckY * 0.45,
-      activeX + topSpread - (topSpread - neckRadius) * 0.40, 0,
-      activeX + topSpread, 0,
-    );
-
-    // Close path along the top edge
-    path.close();
-
-    canvas.drawPath(path, olivePaint);
+    canvas.drawPath(path, activeTabPaint);
   }
 
   @override
-  bool shouldRepaint(covariant _TeardropScoopPainter oldDelegate) {
+  bool shouldRepaint(covariant _UShapedCutoutNavPainter oldDelegate) {
     return oldDelegate.activeX != activeX ||
         oldDelegate.tabWidth != tabWidth ||
         oldDelegate.barHeight != barHeight;
