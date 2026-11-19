@@ -30,6 +30,19 @@ class KinsenasApp extends StatelessWidget {
           bodyColor: AppColors.whiteSmoke,
           displayColor: AppColors.whiteSmoke,
         ),
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          scrolledUnderElevation: 0,
+          elevation: 0,
+          centerTitle: true,
+          titleTextStyle: GoogleFonts.plusJakartaSans(
+            color: AppColors.whiteSmoke,
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.3,
+          ),
+        ),
       ),
       home: const SplashScreen(),
     );

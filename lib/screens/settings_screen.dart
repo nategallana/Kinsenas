@@ -106,14 +106,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         elevation: 0,
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.whiteSmoke),
           onPressed: () => Navigator.pop(context),
         ),
         title: const Text(
           'Settings',
-          style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 18),
+          style: TextStyle(
+            color: AppColors.whiteSmoke,
+            fontWeight: FontWeight.w800,
+            fontSize: 20,
+            letterSpacing: -0.3,
+          ),
         ),
       ),
       body: ListView(

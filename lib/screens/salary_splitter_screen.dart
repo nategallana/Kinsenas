@@ -165,43 +165,53 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         elevation: 0,
-        title: Row(
-          children: [
-            const Text(
-              'Sahod Splitter',
-              style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.whiteSmoke),
-            ),
-            const SizedBox(width: 10),
-            AnimatedOpacity(
-              opacity: _showSavedIndicator ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 250),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppColors.dustyOlive.withValues(alpha: 0.25),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: AppColors.drySage.withValues(alpha: 0.3)),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.check_rounded, size: 12, color: AppColors.drySage),
-                    SizedBox(width: 4),
-                    Text(
-                      'Autosaved',
-                      style: TextStyle(
-                        color: AppColors.drySage,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
+        centerTitle: true,
+        title: const Text(
+          'Sahod Splitter',
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            fontSize: 20,
+            letterSpacing: -0.3,
+            color: AppColors.whiteSmoke,
+          ),
+        ),
+        actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: AnimatedOpacity(
+                opacity: _showSavedIndicator ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 250),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppColors.dustyOlive.withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColors.drySage.withValues(alpha: 0.3)),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.check_rounded, size: 12, color: AppColors.drySage),
+                      SizedBox(width: 4),
+                      Text(
+                        'Autosaved',
+                        style: TextStyle(
+                          color: AppColors.drySage,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

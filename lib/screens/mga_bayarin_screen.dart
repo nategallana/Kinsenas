@@ -503,10 +503,18 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         elevation: 0,
+        centerTitle: true,
         title: const Text(
           'Mga Bayarin',
-          style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.whiteSmoke),
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            fontSize: 20,
+            letterSpacing: -0.3,
+            color: AppColors.whiteSmoke,
+          ),
         ),
       ),
       body: _isLoading

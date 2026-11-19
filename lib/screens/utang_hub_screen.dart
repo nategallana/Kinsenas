@@ -417,8 +417,19 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         elevation: 0,
-        title: const Text('Utang Tracker', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.whiteSmoke)),
+        centerTitle: true,
+        title: const Text(
+          'Utang Tracker',
+          style: TextStyle(
+            fontWeight: FontWeight.w800,
+            fontSize: 20,
+            letterSpacing: -0.3,
+            color: AppColors.whiteSmoke,
+          ),
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: isUtangKo ? AppColors.ashBrown : AppColors.dustyOlive,
