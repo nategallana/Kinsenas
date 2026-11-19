@@ -36,6 +36,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  Future<void> _setThemeMode(bool isDark) async {
+    await AppColors.setDarkMode(isDark);
+    setState(() {});
+  }
+
   Future<void> _savePaydayCycle(String value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('payday_cycle', value);
@@ -108,15 +113,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text('Reset Everything to ₱0?', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16)),
-        content: const Text(
+        title: Text('Reset Everything to ₱0?', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16)),
+        content: Text(
           'Mabubura ang lahat ng tala ng utang, maibabalik sa ₱0 ang iyong naipon, at mabu-clear ang wallet balance.',
           style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+            child: Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.warningRed),
@@ -128,14 +133,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
               await prefs.remove('payday_last_received_cycle');
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                     backgroundColor: AppColors.surface,
                     content: Text('✓ Everything reset back to ₱0.00!', style: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold)),
                   ),
                 );
               }
             },
-            child: const Text('Reset to ₱0', style: TextStyle(fontWeight: FontWeight.bold)),
+            child: const Text('Reset to ₱0', style: TextStyle(color: AppColors.rawWhiteSmoke, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -144,6 +149,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = AppColors.isDark;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -153,10 +160,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.whiteSmoke),
+          icon: Icon(Icons.arrow_back_rounded, color: AppColors.whiteSmoke),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Settings',
           style: TextStyle(
             color: AppColors.whiteSmoke,
@@ -169,6 +176,90 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         children: [
+          // Section: Dark Mode & Light Mode (Appearance)
+          _buildSectionHeader('ITSURA NG APP (APPEARANCE)'),
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppColors.dustyOlive.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(
+                        isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                        color: AppColors.drySage,
+                        size: 22,
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            isDark ? 'Dark Mode' : 'Light Mode',
+                            style: TextStyle(
+                              color: AppColors.whiteSmoke,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Pumili sa pagitan ng Dark Mode at Light Mode.',
+                            style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Switch(
+                      activeThumbColor: AppColors.drySage,
+                      activeTrackColor: AppColors.dustyOlive,
+                      value: isDark,
+                      onChanged: _setThemeMode,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildThemeOptionCard(
+                        label: 'Dark Mode',
+                        icon: Icons.dark_mode_rounded,
+                        isSelected: isDark,
+                        onTap: () => _setThemeMode(true),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _buildThemeOptionCard(
+                        label: 'Light Mode',
+                        icon: Icons.light_mode_rounded,
+                        isSelected: !isDark,
+                        onTap: () => _setThemeMode(false),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 24),
+
           // Section: Payday Cycle Schedule
           _buildSectionHeader('ARAW NG SAHOD (PAYDAY SCHEDULE)'),
           const SizedBox(height: 8),
@@ -182,12 +273,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Kailan ang regular mong kinsenas?',
                   style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
                 ),
                 const SizedBox(height: 4),
-                const Text(
+                Text(
                   'Gagamitin ito sa countdown banner sa Dashboard.',
                   style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                 ),
@@ -202,7 +293,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           const SizedBox(height: 24),
 
-          // Section: Export Data as PDF (User Request)
+          // Section: Export Data as PDF
           _buildSectionHeader('EXPORT DATA'),
           const SizedBox(height: 8),
           Container(
@@ -223,10 +314,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         color: AppColors.dustyOlive.withValues(alpha: 0.25),
                         borderRadius: BorderRadius.circular(14),
                       ),
-                      child: const Icon(Icons.picture_as_pdf_rounded, color: AppColors.drySage, size: 24),
+                      child: Icon(Icons.picture_as_pdf_rounded, color: AppColors.drySage, size: 24),
                     ),
                     const SizedBox(width: 14),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -255,12 +346,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ? const SizedBox(
                           width: 16,
                           height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.whiteSmoke),
+                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.rawWhiteSmoke),
                         )
-                      : const Icon(Icons.download_rounded, size: 18, color: AppColors.whiteSmoke),
+                      : const Icon(Icons.download_rounded, size: 18, color: AppColors.rawWhiteSmoke),
                   label: Text(
                     _isExporting ? 'Bumubuo ng PDF...' : 'I-download ang PDF Report',
-                    style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
+                    style: const TextStyle(color: AppColors.rawWhiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
                   ),
                 ),
               ],
@@ -311,7 +402,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           children: [
                             Row(
                               children: [
-                                const Flexible(
+                                Flexible(
                                   child: Text(
                                     'I-on ang Notifications',
                                     style: TextStyle(
@@ -349,7 +440,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               _notificationsEnabled
                                   ? 'Aktibo ang mga paalala sa sahod, bayarin, at utang.'
                                   : 'Naka-mute ang lahat ng paalala sa app.',
-                              style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                              style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                             ),
                           ],
                         ),
@@ -364,7 +455,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                 ),
 
-                const Divider(color: AppColors.border, height: 1, indent: 16, endIndent: 16),
+                Divider(color: AppColors.border, height: 1, indent: 16, endIndent: 16),
 
                 // Sub-toggles (enabled when master notifications are ON)
                 AnimatedOpacity(
@@ -376,43 +467,43 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         activeThumbColor: AppColors.drySage,
                         activeTrackColor: AppColors.dustyOlive,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                        title: const Text(
+                        title: Text(
                           'Paalala Bago ang Sahod',
                           style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
                         ),
-                        subtitle: const Text(
+                        subtitle: Text(
                           'Magpaalala kapag 1 araw na lang bago ang iyong kinsenas.',
                           style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                         ),
                         value: _notificationsEnabled && _remindersEnabled,
                         onChanged: _notificationsEnabled ? _saveReminders : null,
                       ),
-                      const Divider(color: AppColors.borderMuted, height: 1, indent: 16, endIndent: 16),
+                      Divider(color: AppColors.borderMuted, height: 1, indent: 16, endIndent: 16),
                       SwitchListTile(
                         activeThumbColor: AppColors.drySage,
                         activeTrackColor: AppColors.dustyOlive,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                        title: const Text(
+                        title: Text(
                           'Paalala sa Mga Bayarin (Bills Due)',
                           style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
                         ),
-                        subtitle: const Text(
+                        subtitle: Text(
                           'Magpaalala kapag malapit na ang due date ng buwanang bayarin.',
                           style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                         ),
                         value: _notificationsEnabled && _billRemindersEnabled,
                         onChanged: _notificationsEnabled ? _saveBillReminders : null,
                       ),
-                      const Divider(color: AppColors.borderMuted, height: 1, indent: 16, endIndent: 16),
+                      Divider(color: AppColors.borderMuted, height: 1, indent: 16, endIndent: 16),
                       SwitchListTile(
                         activeThumbColor: AppColors.drySage,
                         activeTrackColor: AppColors.dustyOlive,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-                        title: const Text(
+                        title: Text(
                           'Paalala sa Utang at Singilin',
                           style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
                         ),
-                        subtitle: const Text(
+                        subtitle: Text(
                           'Magpaalala sa mga nakatakdang bayaran at sisingiling pautang.',
                           style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                         ),
@@ -446,7 +537,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: TextStyle(color: AppColors.warningRed, fontWeight: FontWeight.bold, fontSize: 13),
                 ),
                 const SizedBox(height: 4),
-                const Text(
+                Text(
                   'Buburahin nito ang lahat ng naitalang debts, savings progress, at balances pabalik sa simula.',
                   style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                 ),
@@ -468,11 +559,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: 30),
 
           // About / Privacy Note
-          const Center(
+          Center(
             child: Column(
               children: [
                 Text('Kinsenas v1.0.0', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   '100% Offline & Lokal • Ang iyong data ay ligtas sa iyong device.',
                   style: TextStyle(color: AppColors.textMuted, fontSize: 10),
@@ -486,10 +577,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Widget _buildThemeOptionCard({
+    required String label,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+          decoration: BoxDecoration(
+            color: isSelected ? AppColors.dustyOlive : AppColors.inputFill,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isSelected ? AppColors.drySage : AppColors.border,
+              width: isSelected ? 1.4 : 1.0,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 16,
+                color: isSelected ? AppColors.rawWhiteSmoke : AppColors.textSecondary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? AppColors.rawWhiteSmoke : AppColors.textSecondary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildSectionHeader(String title) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         color: AppColors.textSecondary,
         fontSize: 11,
         fontWeight: FontWeight.bold,
@@ -519,7 +656,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: isSelected ? AppColors.drySage : Colors.transparent,
               ),
               child: isSelected
-                  ? const Center(
+                  ? Center(
                       child: Icon(Icons.circle, size: 8, color: AppColors.background),
                     )
                   : null,

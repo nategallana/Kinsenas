@@ -116,7 +116,7 @@ class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
                                     size: (isActive ? 28.0 : 26.0) + item.sizeOffset,
                                     color: isActive
                                         ? Colors.black
-                                        : AppColors.whiteSmoke,
+                                        : AppColors.rawWhiteSmoke,
                                   ),
                                 ),
                               ),

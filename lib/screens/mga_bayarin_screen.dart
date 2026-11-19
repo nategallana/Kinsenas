@@ -68,15 +68,15 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: const Text('Burahin ang Bayarin?', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16)),
+        title: Text('Burahin ang Bayarin?', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16)),
         content: Text(
           'Sigurado ka bang nais mong burahin ang "${bill.title}"?',
-          style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+            child: Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.warningRed),
@@ -94,7 +94,7 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: AppColors.surface,
-            content: Text('✓ Nabura ang "${bill.title}"', style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold)),
+            content: Text('✓ Nabura ang "${bill.title}"', style: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold)),
           ),
         );
       }
@@ -129,9 +129,9 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
       builder: (ctx) => StatefulBuilder(
         builder: (context, setModalState) {
           return Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
             ),
             padding: EdgeInsets.only(
               top: 20,
@@ -169,17 +169,17 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                               color: AppColors.dustyOlive.withValues(alpha: 0.25),
                               borderRadius: BorderRadius.circular(12),
                             ),
-                            child: const Icon(Icons.receipt_long_rounded, color: AppColors.drySage, size: 20),
+                            child: Icon(Icons.receipt_long_rounded, color: AppColors.drySage, size: 20),
                           ),
                           const SizedBox(width: 10),
                           Text(
                             editBill == null ? 'Magdagdag ng Bayarin' : 'I-edit ang Bayarin',
-                            style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16),
+                            style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                         ],
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close_rounded, color: AppColors.textSecondary, size: 20),
+                        icon: Icon(Icons.close_rounded, color: AppColors.textSecondary, size: 20),
                         onPressed: () => Navigator.pop(ctx),
                       ),
                     ],
@@ -189,7 +189,7 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
 
                   // Quick Suggestion Chips (only on new)
                   if (editBill == null) ...[
-                    const Text('Mabilisang Pagpipilian (Quick Pick):', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                    Text('Mabilisang Pagpipilian (Quick Pick):', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
                     const SizedBox(height: 6),
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
@@ -199,10 +199,10 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                             padding: const EdgeInsets.only(right: 6),
                             child: ActionChip(
                               backgroundColor: AppColors.surfaceElevated,
-                              side: const BorderSide(color: AppColors.border),
+                              side: BorderSide(color: AppColors.border),
                               label: Text(
                                 item['title'] as String,
-                                style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold),
+                                style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold),
                               ),
                               onPressed: () {
                                 setModalState(() {
@@ -219,19 +219,19 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                   ],
 
                   // Bill Title
-                  const Text('Pangalan ng Bayarin (Bill Name)', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                  Text('Pangalan ng Bayarin (Bill Name)', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 6),
                   TextField(
                     controller: titleController,
-                    style: const TextStyle(color: AppColors.whiteSmoke, fontSize: 14),
+                    style: TextStyle(color: AppColors.whiteSmoke, fontSize: 14),
                     decoration: InputDecoration(
                       hintText: 'hal. Meralco, Wifi, Upa...',
-                      hintStyle: const TextStyle(color: AppColors.textMuted, fontSize: 13),
+                      hintStyle: TextStyle(color: AppColors.textMuted, fontSize: 13),
                       filled: true,
                       fillColor: AppColors.inputFill,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
-                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.drySage)),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.border)),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.border)),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.drySage)),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     ),
                   ),
@@ -239,23 +239,23 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                   const SizedBox(height: 14),
 
                   // Amount
-                  const Text('Halaga (Amount Due)', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                  Text('Halaga (Amount Due)', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 6),
                   TextField(
                     controller: amountController,
                     keyboardType: const TextInputType.numberWithOptions(decimal: true),
                     inputFormatters: const [DecimalCurrencyFormatter()],
-                    style: const TextStyle(color: AppColors.whiteSmoke, fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: AppColors.whiteSmoke, fontSize: 16, fontWeight: FontWeight.bold),
                     decoration: InputDecoration(
                       prefixText: '₱ ',
-                      prefixStyle: const TextStyle(color: AppColors.drySage, fontSize: 16, fontWeight: FontWeight.bold),
+                      prefixStyle: TextStyle(color: AppColors.drySage, fontSize: 16, fontWeight: FontWeight.bold),
                       hintText: '0.00',
-                      hintStyle: const TextStyle(color: AppColors.textMuted),
+                      hintStyle: TextStyle(color: AppColors.textMuted),
                       filled: true,
                       fillColor: AppColors.inputFill,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
-                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.drySage)),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.border)),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.border)),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.drySage)),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     ),
                   ),
@@ -263,7 +263,7 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                   const SizedBox(height: 14),
 
                   // Category Selector
-                  const Text('Kategorya (Category)', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                  Text('Kategorya (Category)', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 6),
                   Wrap(
                     spacing: 8,
@@ -291,7 +291,7 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                   const SizedBox(height: 14),
 
                   // Kinsenas Cutoff Allocation
-                  const Text('Kailan Babayaran? (Kinsenas Cutoff)', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                  Text('Kailan Babayaran? (Kinsenas Cutoff)', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 6),
                   Container(
                     padding: const EdgeInsets.all(4),
@@ -312,21 +312,21 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                   const SizedBox(height: 14),
 
                   // Due Day of Month
-                  const Text('Petsa ng Due Date (Araw ng Buwan: 1 - 31)', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                  Text('Petsa ng Due Date (Araw ng Buwan: 1 - 31)', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 6),
                   TextField(
                     controller: dueDayController,
                     keyboardType: TextInputType.number,
-                    style: const TextStyle(color: AppColors.whiteSmoke, fontSize: 14),
+                    style: TextStyle(color: AppColors.whiteSmoke, fontSize: 14),
                     decoration: InputDecoration(
                       hintText: 'hal. 15',
                       suffixText: 'ng buwan',
-                      suffixStyle: const TextStyle(color: AppColors.textMuted, fontSize: 12),
+                      suffixStyle: TextStyle(color: AppColors.textMuted, fontSize: 12),
                       filled: true,
                       fillColor: AppColors.inputFill,
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
-                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
-                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.drySage)),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.border)),
+                      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.border)),
+                      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.drySage)),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     ),
                   ),
@@ -379,7 +379,7 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                     },
                     child: Text(
                       editBill == null ? 'Idagdag ang Bayarin' : 'I-save ang Pagbabago',
-                      style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 14),
+                      style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 14),
                     ),
                   ),
                 ],
@@ -507,7 +507,7 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
         scrolledUnderElevation: 0,
         elevation: 0,
         centerTitle: true,
-        title: const Text(
+        title: Text(
           'Mga Bayarin',
           style: TextStyle(
             fontWeight: FontWeight.w800,
@@ -518,7 +518,7 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.drySage))
+          ? Center(child: CircularProgressIndicator(color: AppColors.drySage))
           : RefreshIndicator(
               color: AppColors.drySage,
               backgroundColor: AppColors.surface,
@@ -537,7 +537,7 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'KABUUANG MGA BAYARIN (MONTHLY BILLS)',
                           style: TextStyle(
                             color: AppColors.textSecondary,
@@ -549,7 +549,7 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                         const SizedBox(height: 6),
                         Text(
                           '₱${totalBills.toStringAsFixed(2)}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.whiteSmoke,
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
@@ -571,9 +571,9 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('15th Cutoff', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                                    Text('15th Cutoff', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
                                     const SizedBox(height: 4),
-                                    Text('₱${total15.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.drySage, fontSize: 13, fontWeight: FontWeight.bold)),
+                                    Text('₱${total15.toStringAsFixed(2)}', style: TextStyle(color: AppColors.drySage, fontSize: 13, fontWeight: FontWeight.bold)),
                                   ],
                                 ),
                               ),
@@ -590,9 +590,9 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('30th Cutoff', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                                    Text('30th Cutoff', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
                                     const SizedBox(height: 4),
-                                    Text('₱${total30.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.drySage, fontSize: 13, fontWeight: FontWeight.bold)),
+                                    Text('₱${total30.toStringAsFixed(2)}', style: TextStyle(color: AppColors.drySage, fontSize: 13, fontWeight: FontWeight.bold)),
                                   ],
                                 ),
                               ),
@@ -608,11 +608,11 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                           children: [
                             Text(
                               'Bayad na: $paidCount of ${_bills.length} (${(paidPct * 100).toStringAsFixed(0)}%)',
-                              style: const TextStyle(color: AppColors.textMuted, fontSize: 11, fontWeight: FontWeight.w600),
+                              style: TextStyle(color: AppColors.textMuted, fontSize: 11, fontWeight: FontWeight.w600),
                             ),
                             Text(
                               '₱${totalPaid.toStringAsFixed(2)} / ₱${totalBills.toStringAsFixed(2)}',
-                              style: const TextStyle(color: AppColors.drySage, fontSize: 11, fontWeight: FontWeight.bold),
+                              style: TextStyle(color: AppColors.drySage, fontSize: 11, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -667,15 +667,15 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                               color: AppColors.dustyOlive.withValues(alpha: 0.2),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.receipt_long_rounded, color: AppColors.drySage, size: 28),
+                            child: Icon(Icons.receipt_long_rounded, color: AppColors.drySage, size: 28),
                           ),
                           const SizedBox(height: 14),
-                          const Text(
+                          Text(
                             'Walang Nakalistang Bayarin',
                             style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 14),
                           ),
                           const SizedBox(height: 4),
-                          const Text(
+                          Text(
                             'Ilista ang mga buwanang bayarin tulad ng kuryente, tubig, upa, o internet para madaling i-budget sa kinsenas.',
                             textAlign: TextAlign.center,
                             style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
@@ -687,8 +687,8 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             ),
                             onPressed: () => _showAddEditBillModal(),
-                            icon: const Icon(Icons.add_rounded, size: 16, color: AppColors.whiteSmoke),
-                            label: const Text('Magdagdag ng Bayarin', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 12)),
+                            icon: Icon(Icons.add_rounded, size: 16, color: AppColors.whiteSmoke),
+                            label: Text('Magdagdag ng Bayarin', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 12)),
                           ),
                         ],
                       ),
@@ -700,12 +700,12 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.whiteSmoke,
                         backgroundColor: AppColors.surface.withValues(alpha: 0.5),
-                        side: const BorderSide(color: AppColors.border),
+                        side: BorderSide(color: AppColors.border),
                         padding: const EdgeInsets.symmetric(vertical: 15),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
                       ),
-                      icon: const Icon(Icons.add_circle_outline_rounded, color: AppColors.drySage, size: 20),
-                      label: const Text(
+                      icon: Icon(Icons.add_circle_outline_rounded, color: AppColors.drySage, size: 20),
+                      label: Text(
                         'Magdagdag ng Bayarin',
                         style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
                       ),
@@ -794,7 +794,7 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                   children: [
                     Text(
                       'Due: ${bill.dueDay}th • $cutoffLabel',
-                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                     ),
                   ],
                 ),
@@ -873,7 +873,7 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: AppColors.border),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Icon(Icons.edit_outlined, color: AppColors.textSecondary, size: 14),
                         ),
                       ),

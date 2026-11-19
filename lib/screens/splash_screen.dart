@@ -87,10 +87,10 @@ class _SplashScreenState extends State<SplashScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Row(
+                    Row(
                       children: [
                         Icon(Icons.circle, size: 8, color: AppColors.drySage),
-                        SizedBox(width: 6),
+                        const SizedBox(width: 6),
                         Text(
                           'DECEMBER 2026',
                           style: TextStyle(
@@ -216,14 +216,14 @@ class _SplashScreenState extends State<SplashScreen> {
                 // Status Text
                 Text(
                   isPhase1 ? 'Calculating Cutoff 1 (Dec $_activeDay)...' : 'Processing Cutoff 2 (Dec $_activeDay)...',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.whiteSmoke,
                     fontWeight: FontWeight.bold,
                     fontSize: 14,
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
+                Text(
                   'Kinsenas · Every Centavo Accounted For',
                   style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                 ),
@@ -247,7 +247,7 @@ class _WeekdayLabel extends StatelessWidget {
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: const TextStyle(color: AppColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold),
+        style: TextStyle(color: AppColors.textMuted, fontSize: 11, fontWeight: FontWeight.bold),
       ),
     );
   }

@@ -126,7 +126,7 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
               Expanded(
                 child: Text(
                   'Log Payment: ${widget.title}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.whiteSmoke,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -134,13 +134,13 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.close_rounded, color: AppColors.textSecondary, size: 20),
+                icon: Icon(Icons.close_rounded, color: AppColors.textSecondary, size: 20),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
           ),
           const SizedBox(height: 4),
-          const Text(
+          Text(
             'Forgot to update on time? Pick the exact date the money changed hands.',
             style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
           ),
@@ -150,13 +150,13 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Amount Paid',
                 style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
               ),
               Text(
                 'Balance: ₱$formattedMax',
-                style: const TextStyle(color: AppColors.drySage, fontSize: 12, fontWeight: FontWeight.bold),
+                style: TextStyle(color: AppColors.drySage, fontSize: 12, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -168,12 +168,12 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: const [DecimalCurrencyFormatter()],
             onChanged: _validateAmount,
-            style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16),
             decoration: InputDecoration(
               prefixText: '₱ ',
-              prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 16),
+              prefixStyle: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 16),
               hintText: '0.00',
-              hintStyle: const TextStyle(color: AppColors.textMuted),
+              hintStyle: TextStyle(color: AppColors.textMuted),
               errorText: _errorMessage,
               errorStyle: const TextStyle(color: AppColors.warningRed, fontSize: 11, fontWeight: FontWeight.bold),
               filled: true,
@@ -181,11 +181,11 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: AppColors.border),
+                borderSide: BorderSide(color: AppColors.border),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: AppColors.drySage, width: 1.5),
+                borderSide: BorderSide(color: AppColors.drySage, width: 1.5),
               ),
             ),
           ),
@@ -194,19 +194,19 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
           // Payment Date Title
           ListTile(
             contentPadding: EdgeInsets.zero,
-            title: const Text(
+            title: Text(
               'Payment Date',
               style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
             ),
             subtitle: Text(
               '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}',
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.drySage,
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
               ),
             ),
-            trailing: const Icon(Icons.calendar_month_rounded, color: AppColors.drySage),
+            trailing: Icon(Icons.calendar_month_rounded, color: AppColors.drySage),
             onTap: () async {
               final picked = await showDatePicker(
                 context: context,
@@ -272,7 +272,7 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
             ),
             onPressed: _handleConfirm,
-            child: const Text(
+            child: Text(
               'Confirm & Update Balance',
               style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 14),
             ),

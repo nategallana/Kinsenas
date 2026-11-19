@@ -18,31 +18,35 @@ class _MainShellState extends State<MainShell> {
   int _currentIndex = 0;
   final GlobalKey<DashboardScreenState> _dashboardKey = GlobalKey<DashboardScreenState>();
 
-  late final List<Widget> _screens = [
-    DashboardScreen(key: _dashboardKey),
-    const SalarySplitterScreen(),
-    const GoalsScreen(),
-    const UtangHubScreen(),
-    const MgaBayarinScreen(),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
-      bottomNavigationBar: AbstractWaveNavBar(
-        selectedIndex: _currentIndex,
-        onItemSelected: (idx) {
-          if (idx == 0) {
-            _dashboardKey.currentState?.loadDashboardData();
-          }
-          setState(() => _currentIndex = idx);
-        },
-      ),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: AppColors.themeNotifier,
+      builder: (context, themeMode, _) {
+        return Scaffold(
+          key: ValueKey(themeMode),
+          backgroundColor: AppColors.background,
+          body: IndexedStack(
+            index: _currentIndex,
+            children: [
+              DashboardScreen(key: _dashboardKey),
+              const SalarySplitterScreen(),
+              const GoalsScreen(),
+              const UtangHubScreen(),
+              const MgaBayarinScreen(),
+            ],
+          ),
+          bottomNavigationBar: AbstractWaveNavBar(
+            selectedIndex: _currentIndex,
+            onItemSelected: (idx) {
+              if (idx == 0) {
+                _dashboardKey.currentState?.loadDashboardData();
+              }
+              setState(() => _currentIndex = idx);
+            },
+          ),
+        );
+      },
     );
   }
 }

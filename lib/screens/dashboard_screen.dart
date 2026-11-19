@@ -77,7 +77,7 @@ class DashboardScreenState extends State<DashboardScreen> {
       'desc': 'Sumakay sa MRT/LRT o jeep kapag may regular na biyahe.',
       'savings': 150.0,
       'icon': Icons.directions_bus_rounded,
-      'color': AppColors.drySage,
+      'color': AppColors.rawDrySage,
     },
     {
       'id': 'cart_freeze',
@@ -339,13 +339,13 @@ class DashboardScreenState extends State<DashboardScreen> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           backgroundColor: AppColors.surface,
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
           content: Row(
             children: [
               Icon(Icons.celebration_rounded, color: AppColors.drySage, size: 20),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   '🎉 Natanggap na ang sahod! Na-set na ang countdown para sa susunod na kinsenas.',
@@ -380,7 +380,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                 isEarly
                     ? '⚡ Na-set ang maagang sahod sa ${DateFormat('MMM d').format(newDate)}!'
                     : '✓ Na-adjust ang petsa sa ${DateFormat('MMM d').format(newDate)}! Na-update ang Petsa de Peligro budget.',
-                style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
+                style: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
               ),
             ),
           );
@@ -394,7 +394,7 @@ class DashboardScreenState extends State<DashboardScreen> {
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               backgroundColor: AppColors.surface,
               content: Text(
                 '✓ Naibalik sa regular schedule ang countdown.',
@@ -417,10 +417,10 @@ class DashboardScreenState extends State<DashboardScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-        title: const Row(
+        title: Row(
           children: [
             Icon(Icons.account_balance_wallet_rounded, color: AppColors.drySage, size: 22),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Text(
               'I-update ang Cash Balance',
               style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 15),
@@ -431,7 +431,7 @@ class DashboardScreenState extends State<DashboardScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Ilagay ang kabuuang pera mo ngayon (Cash on hand + GCash/Maya/Bank). Gagamitin ito sa Petsa de Peligro allowance.',
               style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
             ),
@@ -441,17 +441,17 @@ class DashboardScreenState extends State<DashboardScreen> {
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               inputFormatters: const [DecimalCurrencyFormatter()],
               autofocus: true,
-              style: const TextStyle(color: AppColors.whiteSmoke, fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(color: AppColors.whiteSmoke, fontSize: 18, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
                 prefixText: '₱ ',
-                prefixStyle: const TextStyle(color: AppColors.drySage, fontSize: 18, fontWeight: FontWeight.bold),
+                prefixStyle: TextStyle(color: AppColors.drySage, fontSize: 18, fontWeight: FontWeight.bold),
                 filled: true,
                 fillColor: AppColors.inputFill,
                 hintText: '0.00',
-                hintStyle: const TextStyle(color: AppColors.textMuted),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
-                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.drySage)),
+                hintStyle: TextStyle(color: AppColors.textMuted),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.border)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.border)),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.drySage)),
               ),
             ),
           ],
@@ -459,7 +459,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+            child: Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.dustyOlive),
@@ -478,7 +478,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     backgroundColor: AppColors.surface,
-                    content: Text('✓ Na-update ang Cash sa ₱${val.toStringAsFixed(2)}!', style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold)),
+                    content: Text('✓ Na-update ang Cash sa ₱${val.toStringAsFixed(2)}!', style: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold)),
                   ),
                 );
               }
@@ -518,10 +518,10 @@ class DashboardScreenState extends State<DashboardScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-        title: const Row(
+        title: Row(
           children: [
             Icon(Icons.savings_rounded, color: AppColors.drySage, size: 22),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             Text(
               'Custom Savings Target',
               style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 15),
@@ -532,7 +532,7 @@ class DashboardScreenState extends State<DashboardScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Magkano ang nais mong matira sa pera mo pagdating ng susunod na sahod (cutoff)?',
               style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
             ),
@@ -542,17 +542,17 @@ class DashboardScreenState extends State<DashboardScreen> {
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               inputFormatters: const [DecimalCurrencyFormatter()],
               autofocus: true,
-              style: const TextStyle(color: AppColors.whiteSmoke, fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(color: AppColors.whiteSmoke, fontSize: 18, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
                 prefixText: '₱ ',
-                prefixStyle: const TextStyle(color: AppColors.drySage, fontSize: 18, fontWeight: FontWeight.bold),
+                prefixStyle: TextStyle(color: AppColors.drySage, fontSize: 18, fontWeight: FontWeight.bold),
                 filled: true,
                 fillColor: AppColors.inputFill,
                 hintText: '0.00',
-                hintStyle: const TextStyle(color: AppColors.textMuted),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
-                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.border)),
-                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.drySage)),
+                hintStyle: TextStyle(color: AppColors.textMuted),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.border)),
+                enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.border)),
+                focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: AppColors.drySage)),
               ),
             ),
           ],
@@ -560,7 +560,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+            child: Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.dustyOlive),
@@ -583,15 +583,15 @@ class DashboardScreenState extends State<DashboardScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text('Reset Everything to ₱0?', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16)),
-        content: const Text(
+        title: Text('Reset Everything to ₱0?', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16)),
+        content: Text(
           'This will reset your wallet balance to ₱0.00, clear all debts, and reset savings progress to ₱0.',
           style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+            child: Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.warningRed),
@@ -606,7 +606,7 @@ class DashboardScreenState extends State<DashboardScreen> {
               await _loadDashboardData();
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
+                  SnackBar(
                     backgroundColor: AppColors.surface,
                     content: Text('✓ Everything reset back to ₱0.00!', style: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold)),
                   ),
@@ -633,7 +633,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         scrolledUnderElevation: 0,
         elevation: 0,
         centerTitle: true,
-        title: const Text(
+        title: Text(
           'Kinsenas',
           style: TextStyle(
             fontWeight: FontWeight.w800,
@@ -644,7 +644,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         ),
         actions: [
           PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert_rounded, color: AppColors.textSecondary),
+            icon: Icon(Icons.more_vert_rounded, color: AppColors.textSecondary),
             color: AppColors.surface,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             onSelected: (val) {
@@ -658,12 +658,12 @@ class DashboardScreenState extends State<DashboardScreen> {
               }
             },
             itemBuilder: (ctx) => [
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'settings',
                 child: Row(
                   children: [
                     Icon(Icons.settings_rounded, color: AppColors.drySage, size: 18),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text('Settings', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13)),
                   ],
                 ),
@@ -683,7 +683,7 @@ class DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.drySage))
+          ? Center(child: CircularProgressIndicator(color: AppColors.drySage))
           : RefreshIndicator(
               color: AppColors.drySage,
               backgroundColor: AppColors.surface,
@@ -702,11 +702,11 @@ class DashboardScreenState extends State<DashboardScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Total Net Worth', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
+                        Text('Total Net Worth', style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
                         const SizedBox(height: 6),
                         Text(
                           '₱${netWorth.toStringAsFixed(2)}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: AppColors.whiteSmoke,
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
@@ -786,7 +786,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                                           cycleInfo.title,
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
+                                          style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
                                         ),
                                       ),
                                       if (cycleInfo.isDelayed) ...[
@@ -811,7 +811,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                                             color: AppColors.dustyOlive.withValues(alpha: 0.35),
                                             borderRadius: BorderRadius.circular(6),
                                           ),
-                                          child: const Text(
+                                          child: Text(
                                             'MAAGA',
                                             style: TextStyle(color: AppColors.drySage, fontSize: 9, fontWeight: FontWeight.bold),
                                           ),
@@ -823,7 +823,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                                     cycleInfo.subtitle,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                                    style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                                   ),
                                 ],
                               ),
@@ -850,11 +850,11 @@ class DashboardScreenState extends State<DashboardScreen> {
                                             color: cycleInfo.isEarly ? AppColors.drySage : AppColors.border,
                                           ),
                                         ),
-                                        child: const Row(
+                                        child: Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             Icon(Icons.bolt_rounded, color: AppColors.drySage, size: 12),
-                                            SizedBox(width: 2),
+                                            const SizedBox(width: 2),
                                             Text(
                                               'Maaga',
                                               style: TextStyle(color: AppColors.drySage, fontSize: 11, fontWeight: FontWeight.bold),
@@ -922,7 +922,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                Text(
                                   'Dumating na ba ang sahod mo sa account/wallet?',
                                   style: TextStyle(color: AppColors.whiteSmoke, fontSize: 12, fontWeight: FontWeight.w600),
                                 ),
@@ -937,8 +937,8 @@ class DashboardScreenState extends State<DashboardScreen> {
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                         ),
                                         onPressed: () => _confirmSahodReceived(cycleInfo),
-                                        icon: const Icon(Icons.check_circle_rounded, color: AppColors.whiteSmoke, size: 15),
-                                        label: const Text(
+                                        icon: Icon(Icons.check_circle_rounded, color: AppColors.whiteSmoke, size: 15),
+                                        label: Text(
                                           'Oo, Natanggap Na!',
                                           style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 11),
                                         ),
@@ -948,14 +948,14 @@ class DashboardScreenState extends State<DashboardScreen> {
                                     Expanded(
                                       child: OutlinedButton.icon(
                                         style: OutlinedButton.styleFrom(
-                                          side: const BorderSide(color: AppColors.border),
+                                          side: BorderSide(color: AppColors.border),
                                           backgroundColor: AppColors.surface,
                                           padding: const EdgeInsets.symmetric(vertical: 9),
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                         ),
                                         onPressed: () => _openAdjustModal(cycleInfo, initialMode: PaydayAdjustMode.delayed),
                                         icon: const Icon(Icons.hourglass_bottom_rounded, color: AppColors.warningRed, size: 15),
-                                        label: const Text(
+                                        label: Text(
                                           'Hindi Pa / Na-delay',
                                           style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.bold, fontSize: 11),
                                         ),
@@ -1039,7 +1039,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     Row(
                       children: [
-                        const Flexible(
+                        Flexible(
                           child: Text(
                             'PETSA DE PELIGRO',
                             maxLines: 1,
@@ -1078,7 +1078,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                       'Plano ng Gastusin at Pag-iipon hanggang ${DateFormat('MMM d').format(cycle.targetDate)}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                     ),
                   ],
                 ),
@@ -1101,11 +1101,11 @@ class DashboardScreenState extends State<DashboardScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Expanded(
+                Expanded(
                   child: Row(
                     children: [
                       Icon(Icons.savings_outlined, color: AppColors.drySage, size: 14),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Flexible(
                         child: Text(
                           'MATITIRA SA SAHOD (SAVINGS):',
@@ -1125,7 +1125,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                   const SizedBox(width: 6),
                   Text(
                     'Target: ₱${_savingsTarget.toStringAsFixed(0)}',
-                    style: const TextStyle(color: AppColors.drySage, fontSize: 10, fontWeight: FontWeight.bold),
+                    style: TextStyle(color: AppColors.drySage, fontSize: 10, fontWeight: FontWeight.bold),
                   ),
                 ],
               ],
@@ -1160,11 +1160,11 @@ class DashboardScreenState extends State<DashboardScreen> {
                                 : AppColors.border,
                           ),
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.edit_rounded, color: AppColors.drySage, size: 11),
-                            SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             Text(
                               'Iba pa',
                               style: TextStyle(color: AppColors.drySage, fontSize: 11, fontWeight: FontWeight.bold),
@@ -1194,7 +1194,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           'MAX GASTUSIN KADA ARAW',
                           overflow: TextOverflow.ellipsis,
@@ -1215,7 +1215,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                         ),
                         child: Text(
                           _savingsTarget > 0 ? 'MAY MATITIRA' : 'SAGAD SPEND',
-                          style: const TextStyle(color: AppColors.drySage, fontSize: 9, fontWeight: FontWeight.bold),
+                          style: TextStyle(color: AppColors.drySage, fontSize: 9, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
@@ -1227,14 +1227,14 @@ class DashboardScreenState extends State<DashboardScreen> {
                     children: [
                       Text(
                         '₱${dailySpendToSave.toStringAsFixed(2)}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.whiteSmoke,
                           fontSize: 26,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
                       const SizedBox(width: 6),
-                      const Text(
+                      Text(
                         '/ araw',
                         style: TextStyle(
                           color: AppColors.drySage,
@@ -1257,7 +1257,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                   ),
 
                   const SizedBox(height: 10),
-                  const Divider(color: AppColors.border, height: 1),
+                  Divider(color: AppColors.border, height: 1),
                   const SizedBox(height: 8),
 
                   // Three Mini Breakdown Tiles
@@ -1267,8 +1267,8 @@ class DashboardScreenState extends State<DashboardScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Pwedeng Gastusin', style: TextStyle(color: AppColors.textMuted, fontSize: 9)),
-                            Text('₱${spendableCash.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.whiteSmoke, fontSize: 11, fontWeight: FontWeight.bold)),
+                            Text('Pwedeng Gastusin', style: TextStyle(color: AppColors.textMuted, fontSize: 9)),
+                            Text('₱${spendableCash.toStringAsFixed(2)}', style: TextStyle(color: AppColors.whiteSmoke, fontSize: 11, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -1276,8 +1276,8 @@ class DashboardScreenState extends State<DashboardScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Matitirang Ipon', style: TextStyle(color: AppColors.textMuted, fontSize: 9)),
-                            Text('₱${actualBuffer.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.drySage, fontSize: 11, fontWeight: FontWeight.bold)),
+                            Text('Matitirang Ipon', style: TextStyle(color: AppColors.textMuted, fontSize: 9)),
+                            Text('₱${actualBuffer.toStringAsFixed(2)}', style: TextStyle(color: AppColors.drySage, fontSize: 11, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -1285,8 +1285,8 @@ class DashboardScreenState extends State<DashboardScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Sagad (Zero-out)', style: TextStyle(color: AppColors.textMuted, fontSize: 9)),
-                            Text('₱${dailyZeroOut.toStringAsFixed(2)}/day', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
+                            Text('Sagad (Zero-out)', style: TextStyle(color: AppColors.textMuted, fontSize: 9)),
+                            Text('₱${dailyZeroOut.toStringAsFixed(2)}/day', style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
@@ -1309,8 +1309,8 @@ class DashboardScreenState extends State<DashboardScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(top: 2),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
                     child: Icon(Icons.tips_and_updates_rounded, color: AppColors.drySage, size: 16),
                   ),
                   const SizedBox(width: 10),
@@ -1318,14 +1318,14 @@ class DashboardScreenState extends State<DashboardScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Kinsenas Diskarte Advice:',
                           style: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 11),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           _getSurvivalTip(dailySpendToSave, _totalCash),
-                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, height: 1.3),
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: 11, height: 1.3),
                         ),
                       ],
                     ),
@@ -1350,11 +1350,11 @@ class DashboardScreenState extends State<DashboardScreen> {
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: AppColors.border),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(Icons.edit_rounded, color: AppColors.drySage, size: 14),
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                           Text(
                             'I-update ang Cash',
                             style: TextStyle(color: AppColors.drySage, fontSize: 11, fontWeight: FontWeight.bold),
@@ -1421,11 +1421,11 @@ class DashboardScreenState extends State<DashboardScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Row(
                           children: [
                             Icon(Icons.lightbulb_rounded, color: AppColors.drySage, size: 18),
-                            SizedBox(width: 8),
+                            const SizedBox(width: 8),
                             Flexible(
                               child: Text(
                                 'Paraan Para Makatipid (Tipid Hacks)',
@@ -1451,7 +1451,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                           ),
                           child: Text(
                             '+₱${totalSavedToday.toStringAsFixed(0)} saved!',
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.drySage,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
@@ -1462,7 +1462,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  const Text(
+                  Text(
                     'I-check ang mga ginawa mo ngayong araw upang makaraos nang may naiwang pera:',
                     style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                   ),
@@ -1518,7 +1518,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                                     ),
                                     Text(
                                       hack['desc'] as String,
-                                      style: const TextStyle(color: AppColors.textMuted, fontSize: 10),
+                                      style: TextStyle(color: AppColors.textMuted, fontSize: 10),
                                     ),
                                   ],
                                 ),
@@ -1622,11 +1622,11 @@ class DashboardScreenState extends State<DashboardScreen> {
                   label,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold),
+                  style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.bold),
                 ),
               ),
               if (editable)
-                const Icon(Icons.edit_rounded, color: AppColors.drySage, size: 12),
+                Icon(Icons.edit_rounded, color: AppColors.drySage, size: 12),
             ],
           ),
           const SizedBox(height: 4),

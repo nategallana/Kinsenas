@@ -1,41 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Kinsenas Earthy Botanical Design System
-/// Palette inspired by:
+/// Supports both Dark Mode and Light Mode while preserving the signature
+/// Earthy Botanical palette:
 /// - White Smoke (#EFF1ED)
 /// - Dark Khaki (#373D20)
 /// - Dusty Olive (#717744)
 /// - Dry Sage (#BCBD8B)
 /// - Ash Brown (#766153)
 class AppColors {
-  // Raw Palette Swatches
-  static const Color whiteSmoke = Color(0xFFEFF1ED);
+  static const String _prefKeyDarkMode = 'is_dark_mode';
+
+  /// Global theme notifier for reactive Dark / Light mode switching
+  static final ValueNotifier<ThemeMode> themeNotifier =
+      ValueNotifier<ThemeMode>(ThemeMode.dark);
+
+  static bool get isDark => themeNotifier.value != ThemeMode.light;
+
+  static Future<void> loadTheme() async {
+    final prefs = await SharedPreferences.getInstance();
+    final isDarkPref = prefs.getBool(_prefKeyDarkMode) ?? true;
+    themeNotifier.value = isDarkPref ? ThemeMode.dark : ThemeMode.light;
+  }
+
+  static Future<void> setDarkMode(bool isDarkMode) async {
+    themeNotifier.value = isDarkMode ? ThemeMode.dark : ThemeMode.light;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_prefKeyDarkMode, isDarkMode);
+  }
+
+  // Raw Palette Swatches (Constant brand colors for dark-surface elements)
+  static const Color rawWhiteSmoke = Color(0xFFEFF1ED);
+  static const Color rawDrySage = Color(0xFFBCBD8B);
   static const Color darkKhaki = Color(0xFF373D20);
   static const Color dustyOlive = Color(0xFF717744);
-  static const Color drySage = Color(0xFFBCBD8B);
   static const Color ashBrown = Color(0xFF766153);
 
+  // Adaptive Palette Swatches
+  static Color get whiteSmoke =>
+      isDark ? const Color(0xFFEFF1ED) : const Color(0xFF1B2117);
+  static Color get drySage =>
+      isDark ? const Color(0xFFBCBD8B) : const Color(0xFF555B30);
+
   // Semantic Design Tokens
-  static const Color background = Color(0xFF11140E); // Deep organic dark base
-  static const Color surface = Color(0xFF1B2117);    // Primary card surface
-  static const Color surfaceElevated = Color(0xFF252D20); // Secondary / elevated container
-  static const Color surfaceDarkKhaki = Color(0xFF373D20); // Hero Goal Card from user sketch
-  static const Color inputFill = Color(0xFF141811);  // Field backgrounds
+  static Color get background =>
+      isDark ? const Color(0xFF11140E) : const Color(0xFFF3F5EF);
+  static Color get surface =>
+      isDark ? const Color(0xFF1B2117) : const Color(0xFFFFFFFF);
+  static Color get surfaceElevated =>
+      isDark ? const Color(0xFF252D20) : const Color(0xFFE7EBE0);
+  static const Color surfaceDarkKhaki = Color(0xFF373D20);
+  static Color get inputFill =>
+      isDark ? const Color(0xFF141811) : const Color(0xFFECF0E6);
 
   // Borders
-  static const Color border = Color(0x28BCBD8B);      // Subtle Dry Sage 16% border
-  static const Color borderFocused = Color(0xFFBCBD8B); // Focused border
-  static const Color borderMuted = Color(0x18EFF1ED);
+  static Color get border =>
+      isDark ? const Color(0x28BCBD8B) : const Color(0x38717744);
+  static Color get borderFocused =>
+      isDark ? const Color(0xFFBCBD8B) : const Color(0xFF717744);
+  static Color get borderMuted =>
+      isDark ? const Color(0x18EFF1ED) : const Color(0x181B2117);
 
   // Typography
-  static const Color textPrimary = Color(0xFFEFF1ED);   // Crisp White Smoke
-  static const Color textSecondary = Color(0xFFA5AD9F); // Muted Sage
-  static const Color textMuted = Color(0xFF6F7969);     // Tertiary / hints
-  static const Color textOnAccent = Color(0xFF11140E);  // High contrast on Dry Sage
+  static Color get textPrimary =>
+      isDark ? const Color(0xFFEFF1ED) : const Color(0xFF1B2117);
+  static Color get textSecondary =>
+      isDark ? const Color(0xFFA5AD9F) : const Color(0xFF525B4B);
+  static Color get textMuted =>
+      isDark ? const Color(0xFF6F7969) : const Color(0xFF7A8472);
+  static const Color textOnAccent = Color(0xFF11140E);
 
   // Accents & Actions
-  static const Color primary = Color(0xFF717744);       // Dusty Olive
-  static const Color accent = Color(0xFFBCBD8B);        // Dry Sage
-  static const Color secondary = Color(0xFF766153);     // Ash Brown
-  static const Color warningRed = Color(0xFFA65858);     // Muted terracotta rose for debts
+  static const Color primary = Color(0xFF717744); // Dusty Olive
+  static Color get accent => drySage;
+  static const Color secondary = Color(0xFF766153); // Ash Brown
+  static const Color warningRed = Color(0xFFA65858); // Muted terracotta rose
 }

@@ -117,13 +117,13 @@ class _DelayPaydayModalState extends State<DelayPaydayModal> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
+            colorScheme: ColorScheme.dark(
               primary: AppColors.dustyOlive,
               onPrimary: AppColors.whiteSmoke,
               surface: AppColors.surface,
               onSurface: AppColors.whiteSmoke,
             ),
-            dialogTheme: const DialogThemeData(
+            dialogTheme: DialogThemeData(
               backgroundColor: AppColors.surface,
             ),
           ),
@@ -157,9 +157,9 @@ class _DelayPaydayModalState extends State<DelayPaydayModal> {
     final minus2 = widget.currentScheduledDate.subtract(const Duration(days: 2));
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       padding: EdgeInsets.only(
         top: 20,
@@ -206,7 +206,7 @@ class _DelayPaydayModalState extends State<DelayPaydayModal> {
                   children: [
                     Text(
                       isEarlyMode ? 'Maagang Sahod (Early Payout)' : 'Na-delay ang Sahod?',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.whiteSmoke,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -217,13 +217,13 @@ class _DelayPaydayModalState extends State<DelayPaydayModal> {
                       isEarlyMode
                           ? 'I-record kung pumasok nang maaga ang payout'
                           : 'I-adjust ang countdown at survival budget',
-                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                     ),
                   ],
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.close_rounded, color: AppColors.textSecondary, size: 20),
+                icon: Icon(Icons.close_rounded, color: AppColors.textSecondary, size: 20),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
@@ -335,8 +335,8 @@ class _DelayPaydayModalState extends State<DelayPaydayModal> {
                 widget.onInstantReceived();
                 Navigator.pop(context);
               },
-              icon: const Icon(Icons.check_circle_rounded, color: AppColors.whiteSmoke, size: 18),
-              label: const Text(
+              icon: Icon(Icons.check_circle_rounded, color: AppColors.whiteSmoke, size: 18),
+              label: Text(
                 'Natanggap Ko Na Ngayong Araw! 🎉',
                 style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
               ),
@@ -366,7 +366,7 @@ class _DelayPaydayModalState extends State<DelayPaydayModal> {
                 : (daysDiff > 0
                     ? 'Papasok sa $daysDiff araw mula ngayon'
                     : 'Mas maaga ng ${-daysDiff} araw'),
-            style: const TextStyle(color: AppColors.textMuted, fontSize: 11),
+            style: TextStyle(color: AppColors.textMuted, fontSize: 11),
           ),
 
           const SizedBox(height: 12),
@@ -469,11 +469,11 @@ class _DelayPaydayModalState extends State<DelayPaydayModal> {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppColors.border),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.calendar_month_rounded, color: AppColors.drySage, size: 16),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       'Pumili ng Ibang Petsa sa Kalendaryo',
                       style: TextStyle(
@@ -503,7 +503,7 @@ class _DelayPaydayModalState extends State<DelayPaydayModal> {
             },
             child: Text(
               isEarlyMode ? 'I-save ang Maagang Petsa' : 'I-save ang Bagong Petsa',
-              style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
+              style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
             ),
           ),
 

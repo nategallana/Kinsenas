@@ -169,7 +169,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
         scrolledUnderElevation: 0,
         elevation: 0,
         centerTitle: true,
-        title: const Text(
+        title: Text(
           'Sahod Splitter',
           style: TextStyle(
             fontWeight: FontWeight.w800,
@@ -192,11 +192,11 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(color: AppColors.drySage.withValues(alpha: 0.3)),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.check_rounded, size: 12, color: AppColors.drySage),
-                      SizedBox(width: 4),
+                      const SizedBox(width: 4),
                       Text(
                         'Autosaved',
                         style: TextStyle(
@@ -277,7 +277,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
           // Income Field (Supports commas and dots like 20,000 or 20,000.50)
           Text(
             _wageType == WageType.monthly ? 'Monthly Gross Pay' : 'Daily Wage (Rate per day)',
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.whiteSmoke,
               fontSize: 13,
               fontWeight: FontWeight.bold,
@@ -288,26 +288,26 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
             controller: _amountController,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             inputFormatters: const [DecimalCurrencyFormatter()],
-            style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16),
+            style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16),
             onChanged: _onAmountChanged,
             decoration: InputDecoration(
               hintText: _wageType == WageType.monthly ? '₱ 35,000' : '₱ 610',
-              hintStyle: const TextStyle(color: AppColors.textMuted, fontWeight: FontWeight.normal),
+              hintStyle: TextStyle(color: AppColors.textMuted, fontWeight: FontWeight.normal),
               prefixText: _amountController.text.isNotEmpty ? '₱ ' : null,
-              prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 16),
+              prefixStyle: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 16),
               filled: true,
               fillColor: AppColors.inputFill,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: AppColors.border),
+                borderSide: BorderSide(color: AppColors.border),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: AppColors.border),
+                borderSide: BorderSide(color: AppColors.border),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(14),
-                borderSide: const BorderSide(color: AppColors.drySage),
+                borderSide: BorderSide(color: AppColors.drySage),
               ),
             ),
           ),
@@ -318,7 +318,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
+              Text(
                 'Target Ipon (Savings)',
                 style: TextStyle(
                   color: AppColors.whiteSmoke,
@@ -328,7 +328,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
               ),
               Text(
                 '${_savingsRate.toInt()}% (₱${result.monthlyIpon.toStringAsFixed(2)})',
-                style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 13),
+                style: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 13),
               ),
             ],
           ),
@@ -345,7 +345,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
           const SizedBox(height: 14),
 
           // Deduction Timing Selector
-          const Text(
+          Text(
             'When does employer deduct taxes & contributions?',
             style: TextStyle(
               color: AppColors.whiteSmoke,
@@ -379,7 +379,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Total Deductions',
                       style: TextStyle(
                         color: AppColors.whiteSmoke,
@@ -393,7 +393,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                     ),
                   ],
                 ),
-                const Divider(color: AppColors.border, height: 20),
+                Divider(color: AppColors.border, height: 20),
                 _buildDeductionRow('SSS Contribution', result.sss),
                 _buildDeductionRow('PhilHealth (2.5%)', result.philhealth),
                 _buildDeductionRow('Pag-IBIG Fund', result.pagibig),
@@ -417,7 +417,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               '15th Net Payout',
                               style: TextStyle(
                                 color: AppColors.textSecondary,
@@ -428,9 +428,9 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                             const SizedBox(height: 4),
                             Text(
                               '₱${result.net15.toStringAsFixed(2)}',
-                              style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 14),
+                              style: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 14),
                             ),
-                            Text('Ipon: ₱${(result.monthlyIpon / 2).toStringAsFixed(2)}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+                            Text('Ipon: ₱${(result.monthlyIpon / 2).toStringAsFixed(2)}', style: TextStyle(color: AppColors.textSecondary, fontSize: 10)),
                           ],
                         ),
                       ),
@@ -447,7 +447,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               '30th Net Payout',
                               style: TextStyle(
                                 color: AppColors.textSecondary,
@@ -458,9 +458,9 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                             const SizedBox(height: 4),
                             Text(
                               '₱${result.net30.toStringAsFixed(2)}',
-                              style: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 14),
+                              style: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold, fontSize: 14),
                             ),
-                            Text('Ipon: ₱${(result.monthlyIpon / 2).toStringAsFixed(2)}', style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+                            Text('Ipon: ₱${(result.monthlyIpon / 2).toStringAsFixed(2)}', style: TextStyle(color: AppColors.textSecondary, fontSize: 10)),
                           ],
                         ),
                       ),
@@ -507,8 +507,8 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w500)),
-          Text('₱${val.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.whiteSmoke, fontSize: 11, fontWeight: FontWeight.bold)),
+          Text(label, style: TextStyle(color: AppColors.textSecondary, fontSize: 11, fontWeight: FontWeight.w500)),
+          Text('₱${val.toStringAsFixed(2)}', style: TextStyle(color: AppColors.whiteSmoke, fontSize: 11, fontWeight: FontWeight.bold)),
         ],
       ),
     );

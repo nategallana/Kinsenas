@@ -44,33 +44,33 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-        title: const Text('Change Target Amount', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16)),
+        title: Text('Change Target Amount', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 16)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Magkano ang target goal mo?', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            Text('Magkano ang target goal mo?', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
             const SizedBox(height: 12),
             TextField(
               controller: controller,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               inputFormatters: const [DecimalCurrencyFormatter()],
               autofocus: true,
-              style: const TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
+              style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold),
               decoration: InputDecoration(
                 prefixText: controller.text.isNotEmpty ? '₱ ' : null,
-                prefixStyle: const TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
+                prefixStyle: TextStyle(color: AppColors.drySage, fontWeight: FontWeight.bold),
                 hintText: '₱ 50,000',
-                hintStyle: const TextStyle(color: AppColors.textMuted),
+                hintStyle: TextStyle(color: AppColors.textMuted),
                 filled: true,
                 fillColor: AppColors.inputFill,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: AppColors.border),
+                  borderSide: BorderSide(color: AppColors.border),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: AppColors.drySage),
+                  borderSide: BorderSide(color: AppColors.drySage),
                 ),
               ),
             ),
@@ -79,7 +79,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+            child: Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: AppColors.dustyOlive),
@@ -91,7 +91,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
               }
               Navigator.pop(ctx);
             },
-            child: const Text('Save', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold)),
+            child: const Text('Save', style: TextStyle(color: AppColors.rawWhiteSmoke, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -105,9 +105,9 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.darkKhaki, // #373D20 Dark Khaki from user sketch!
+        color: AppColors.darkKhaki,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppColors.drySage.withValues(alpha: 0.35)),
+        border: Border.all(color: AppColors.rawDrySage.withValues(alpha: 0.35)),
         boxShadow: const [
           BoxShadow(
             color: Color(0x60000000),
@@ -118,7 +118,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
       ),
       child: Column(
         children: [
-          // Top Row: Inline Renameable Goal Name (NO TARGET DATE)
+          // Top Row: Inline Renameable Goal Name
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -128,7 +128,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                         controller: _titleController,
                         autofocus: true,
                         style: const TextStyle(
-                          color: AppColors.whiteSmoke,
+                          color: AppColors.rawWhiteSmoke,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                           letterSpacing: 1,
@@ -137,7 +137,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                           isDense: true,
                           contentPadding: EdgeInsets.symmetric(vertical: 4),
                           border: UnderlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.drySage),
+                            borderSide: BorderSide(color: AppColors.rawDrySage),
                           ),
                         ),
                         onSubmitted: (val) {
@@ -153,21 +153,21 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                           Text(
                             _titleController.text.toUpperCase(),
                             style: const TextStyle(
-                              color: AppColors.whiteSmoke,
+                              color: AppColors.rawWhiteSmoke,
                               fontWeight: FontWeight.w800,
                               fontSize: 15,
                               letterSpacing: 1,
                             ),
                           ),
                           const SizedBox(width: 6),
-                          const Icon(Icons.edit_rounded, color: AppColors.drySage, size: 15),
+                          const Icon(Icons.edit_rounded, color: AppColors.rawDrySage, size: 15),
                         ],
                       ),
                     ),
               Text(
                 '${(progress * 100).toStringAsFixed(0)}%',
                 style: const TextStyle(
-                  color: AppColors.drySage,
+                  color: AppColors.rawDrySage,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -188,7 +188,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                   value: progress,
                   strokeWidth: 8,
                   backgroundColor: Colors.black.withValues(alpha: 0.25),
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.drySage),
+                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.rawDrySage),
                 ),
                 Container(
                   width: 86,
@@ -196,7 +196,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: const LinearGradient(
-                      colors: [AppColors.drySage, Color(0xFF9EA573)],
+                      colors: [AppColors.rawDrySage, Color(0xFF9EA573)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -225,11 +225,11 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
 
           const SizedBox(height: 28),
 
-          // Bottom: Progress Numbers and Bar (Tap target to edit target amount)
+          // Bottom: Progress Numbers and Bar
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Saved', style: TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.bold)),
+              const Text('Saved', style: TextStyle(color: Color(0xFFA5AD9F), fontSize: 13, fontWeight: FontWeight.bold)),
               GestureDetector(
                 onTap: _showEditTargetDialog,
                 child: Row(
@@ -237,13 +237,13 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                     Text(
                       '₱${widget.goal.currentAmount.toStringAsFixed(0)} / ₱${widget.goal.targetAmount.toStringAsFixed(0)}',
                       style: const TextStyle(
-                        color: AppColors.whiteSmoke,
+                        color: AppColors.rawWhiteSmoke,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
                     ),
                     const SizedBox(width: 5),
-                    const Icon(Icons.edit_outlined, color: AppColors.drySage, size: 14),
+                    const Icon(Icons.edit_outlined, color: AppColors.rawDrySage, size: 14),
                   ],
                 ),
               ),
@@ -253,7 +253,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
           LinearProgressIndicator(
             value: progress,
             backgroundColor: Colors.black.withValues(alpha: 0.3),
-            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.drySage),
+            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.rawDrySage),
             minHeight: 6,
             borderRadius: BorderRadius.circular(4),
           ),
