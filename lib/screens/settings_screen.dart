@@ -13,7 +13,10 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String _paydayCycle = '15_30';
+  bool _notificationsEnabled = true;
   bool _remindersEnabled = true;
+  bool _billRemindersEnabled = true;
+  bool _debtRemindersEnabled = true;
   bool _isExporting = false;
 
   @override
@@ -26,7 +29,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
       _paydayCycle = prefs.getString('payday_cycle') ?? '15_30';
+      _notificationsEnabled = prefs.getBool('notifications_enabled') ?? true;
       _remindersEnabled = prefs.getBool('payday_reminders') ?? true;
+      _billRemindersEnabled = prefs.getBool('bill_reminders') ?? true;
+      _debtRemindersEnabled = prefs.getBool('debt_reminders') ?? true;
     });
   }
 
@@ -36,10 +42,46 @@ class _SettingsScreenState extends State<SettingsScreen> {
     setState(() => _paydayCycle = value);
   }
 
+  Future<void> _saveMasterNotifications(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('notifications_enabled', value);
+    setState(() => _notificationsEnabled = value);
+    if (mounted) {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColors.surface,
+          duration: const Duration(seconds: 2),
+          content: Text(
+            value
+                ? '✓ Naka-ON na ang mga notification at paalala.'
+                : 'Naka-OFF na ang lahat ng notification.',
+            style: TextStyle(
+              color: value ? AppColors.drySage : AppColors.textSecondary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      );
+    }
+  }
+
   Future<void> _saveReminders(bool value) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('payday_reminders', value);
     setState(() => _remindersEnabled = value);
+  }
+
+  Future<void> _saveBillReminders(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('bill_reminders', value);
+    setState(() => _billRemindersEnabled = value);
+  }
+
+  Future<void> _saveDebtReminders(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('debt_reminders', value);
+    setState(() => _debtRemindersEnabled = value);
   }
 
   void _exportPdf() async {
@@ -236,13 +278,151 @@ class _SettingsScreenState extends State<SettingsScreen> {
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppColors.border),
             ),
-            child: SwitchListTile(
-              activeThumbColor: AppColors.drySage,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-              title: const Text('Paalala Bago ang Sahod', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13)),
-              subtitle: const Text('Magpaalala kapag 1 araw na lang bago ang iyong kinsenas.', style: TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-              value: _remindersEnabled,
-              onChanged: _saveReminders,
+            child: Column(
+              children: [
+                // Master Turn On / Off Notifications Switch
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 14, 12, 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: _notificationsEnabled
+                              ? AppColors.dustyOlive.withValues(alpha: 0.25)
+                              : AppColors.inputFill,
+                          borderRadius: BorderRadius.circular(14),
+                          border: Border.all(
+                            color: _notificationsEnabled ? AppColors.drySage.withValues(alpha: 0.4) : AppColors.border,
+                          ),
+                        ),
+                        child: Icon(
+                          _notificationsEnabled
+                              ? Icons.notifications_active_rounded
+                              : Icons.notifications_off_outlined,
+                          color: _notificationsEnabled ? AppColors.drySage : AppColors.textMuted,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Flexible(
+                                  child: Text(
+                                    'I-on ang Notifications',
+                                    style: TextStyle(
+                                      color: AppColors.whiteSmoke,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: _notificationsEnabled
+                                        ? AppColors.dustyOlive.withValues(alpha: 0.35)
+                                        : AppColors.inputFill,
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: Border.all(
+                                      color: _notificationsEnabled ? AppColors.drySage : AppColors.border,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    _notificationsEnabled ? 'ON' : 'OFF',
+                                    style: TextStyle(
+                                      color: _notificationsEnabled ? AppColors.drySage : AppColors.textMuted,
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              _notificationsEnabled
+                                  ? 'Aktibo ang mga paalala sa sahod, bayarin, at utang.'
+                                  : 'Naka-mute ang lahat ng paalala sa app.',
+                              style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Switch(
+                        activeThumbColor: AppColors.drySage,
+                        activeTrackColor: AppColors.dustyOlive,
+                        value: _notificationsEnabled,
+                        onChanged: _saveMasterNotifications,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const Divider(color: AppColors.border, height: 1, indent: 16, endIndent: 16),
+
+                // Sub-toggles (enabled when master notifications are ON)
+                AnimatedOpacity(
+                  opacity: _notificationsEnabled ? 1.0 : 0.45,
+                  duration: const Duration(milliseconds: 200),
+                  child: Column(
+                    children: [
+                      SwitchListTile(
+                        activeThumbColor: AppColors.drySage,
+                        activeTrackColor: AppColors.dustyOlive,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                        title: const Text(
+                          'Paalala Bago ang Sahod',
+                          style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                        subtitle: const Text(
+                          'Magpaalala kapag 1 araw na lang bago ang iyong kinsenas.',
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                        ),
+                        value: _notificationsEnabled && _remindersEnabled,
+                        onChanged: _notificationsEnabled ? _saveReminders : null,
+                      ),
+                      const Divider(color: AppColors.borderMuted, height: 1, indent: 16, endIndent: 16),
+                      SwitchListTile(
+                        activeThumbColor: AppColors.drySage,
+                        activeTrackColor: AppColors.dustyOlive,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                        title: const Text(
+                          'Paalala sa Mga Bayarin (Bills Due)',
+                          style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                        subtitle: const Text(
+                          'Magpaalala kapag malapit na ang due date ng buwanang bayarin.',
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                        ),
+                        value: _notificationsEnabled && _billRemindersEnabled,
+                        onChanged: _notificationsEnabled ? _saveBillReminders : null,
+                      ),
+                      const Divider(color: AppColors.borderMuted, height: 1, indent: 16, endIndent: 16),
+                      SwitchListTile(
+                        activeThumbColor: AppColors.drySage,
+                        activeTrackColor: AppColors.dustyOlive,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+                        title: const Text(
+                          'Paalala sa Utang at Singilin',
+                          style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
+                        ),
+                        subtitle: const Text(
+                          'Magpaalala sa mga nakatakdang bayaran at sisingiling pautang.',
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
+                        ),
+                        value: _notificationsEnabled && _debtRemindersEnabled,
+                        onChanged: _notificationsEnabled ? _saveDebtReminders : null,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
 
