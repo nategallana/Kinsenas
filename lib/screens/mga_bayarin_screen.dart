@@ -508,24 +508,6 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
           'Mga Bayarin',
           style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.whiteSmoke),
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: FilledButton.icon(
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.dustyOlive,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              ),
-              onPressed: () => _showAddEditBillModal(),
-              icon: const Icon(Icons.add_rounded, size: 16, color: AppColors.whiteSmoke),
-              label: const Text(
-                'Magdagdag',
-                style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 12),
-              ),
-            ),
-          ),
-        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator(color: AppColors.drySage))
@@ -703,8 +685,25 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                         ],
                       ),
                     )
-                  else
+                  else ...[
                     ...filteredBills.map((bill) => _buildBillCard(bill)),
+                    const SizedBox(height: 6),
+                    OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.whiteSmoke,
+                        backgroundColor: AppColors.surface.withValues(alpha: 0.5),
+                        side: const BorderSide(color: AppColors.border),
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+                      ),
+                      icon: const Icon(Icons.add_circle_outline_rounded, color: AppColors.drySage, size: 20),
+                      label: const Text(
+                        'Magdagdag ng Bayarin',
+                        style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
+                      ),
+                      onPressed: () => _showAddEditBillModal(),
+                    ),
+                  ],
 
                   const SizedBox(height: 30),
                 ],
