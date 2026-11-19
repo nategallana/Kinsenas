@@ -389,7 +389,7 @@ class _SalarySplitterScreenState extends State<SalarySplitterScreen> {
                     ),
                     Text(
                       '-₱${result.totalDeductions.toStringAsFixed(2)}',
-                      style: const TextStyle(color: AppColors.ashBrown, fontWeight: FontWeight.bold, fontSize: 14),
+                      style: TextStyle(color: AppColors.ashBrown, fontWeight: FontWeight.bold, fontSize: 14),
                     ),
                   ],
                 ),

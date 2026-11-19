@@ -98,7 +98,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             backgroundColor: AppColors.surface,
-            content: Text('Error generating PDF: $e', style: const TextStyle(color: AppColors.warningRed)),
+            content: Text('Error generating PDF: $e', style: TextStyle(color: AppColors.warningRed)),
           ),
         );
       }
@@ -140,7 +140,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 );
               }
             },
-            child: const Text('Reset to ₱0', style: TextStyle(color: AppColors.rawWhiteSmoke, fontWeight: FontWeight.bold)),
+            child: Text('Reset to ₱0', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -176,83 +176,56 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         children: [
-          // Section: Dark Mode & Light Mode (Appearance)
+          // Section: Dark Mode & Light Mode (Appearance Toggle Only)
           _buildSectionHeader('ITSURA NG APP (APPEARANCE)'),
           const SizedBox(height: 8),
           Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppColors.border),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppColors.dustyOlive.withValues(alpha: 0.25),
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(
-                        isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-                        color: AppColors.drySage,
-                        size: 22,
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            isDark ? 'Dark Mode' : 'Light Mode',
-                            style: TextStyle(
-                              color: AppColors.whiteSmoke,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            'Pumili sa pagitan ng Dark Mode at Light Mode.',
-                            style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Switch(
-                      activeThumbColor: AppColors.drySage,
-                      activeTrackColor: AppColors.dustyOlive,
-                      value: isDark,
-                      onChanged: _setThemeMode,
-                    ),
-                  ],
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.dustyOlive.withValues(alpha: 0.25),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Icon(
+                    isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                    color: AppColors.drySage,
+                    size: 22,
+                  ),
                 ),
-                const SizedBox(height: 14),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildThemeOptionCard(
-                        label: 'Dark Mode',
-                        icon: Icons.dark_mode_rounded,
-                        isSelected: isDark,
-                        onTap: () => _setThemeMode(true),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isDark ? 'Dark Mode' : 'Light Mode',
+                        style: TextStyle(
+                          color: AppColors.whiteSmoke,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _buildThemeOptionCard(
-                        label: 'Light Mode',
-                        icon: Icons.light_mode_rounded,
-                        isSelected: !isDark,
-                        onTap: () => _setThemeMode(false),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Pumili sa pagitan ng Dark Mode at Light Mode.',
+                        style: TextStyle(color: AppColors.textSecondary, fontSize: 11),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                ),
+                Switch(
+                  activeThumbColor: AppColors.drySage,
+                  activeTrackColor: AppColors.dustyOlive,
+                  value: isDark,
+                  onChanged: _setThemeMode,
                 ),
               ],
             ),
@@ -343,15 +316,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   onPressed: _isExporting ? null : _exportPdf,
                   icon: _isExporting
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 16,
                           height: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.rawWhiteSmoke),
+                          child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.whiteSmoke),
                         )
-                      : const Icon(Icons.download_rounded, size: 18, color: AppColors.rawWhiteSmoke),
+                      : Icon(Icons.download_rounded, size: 18, color: AppColors.whiteSmoke),
                   label: Text(
                     _isExporting ? 'Bumubuo ng PDF...' : 'I-download ang PDF Report',
-                    style: const TextStyle(color: AppColors.rawWhiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
+                    style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold, fontSize: 13),
                   ),
                 ),
               ],
@@ -532,7 +505,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'I-reset ang Lahat sa ₱0',
                   style: TextStyle(color: AppColors.warningRed, fontWeight: FontWeight.bold, fontSize: 13),
                 ),
@@ -545,7 +518,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.warningRed,
-                    side: const BorderSide(color: AppColors.warningRed),
+                    side: BorderSide(color: AppColors.warningRed),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   icon: const Icon(Icons.restart_alt_rounded, size: 16),
@@ -573,52 +546,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 20),
         ],
-      ),
-    );
-  }
-
-  Widget _buildThemeOptionCard({
-    required String label,
-    required IconData icon,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.dustyOlive : AppColors.inputFill,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: isSelected ? AppColors.drySage : AppColors.border,
-              width: isSelected ? 1.4 : 1.0,
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 16,
-                color: isSelected ? AppColors.rawWhiteSmoke : AppColors.textSecondary,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  color: isSelected ? AppColors.rawWhiteSmoke : AppColors.textSecondary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }

@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
 /// A sleek, minimalist bottom navigation bar styled to match the Kinsenas
-/// Earthy Botanical palette:
-/// 1. A solid black (#000000) rectangular base bar across the bottom.
-/// 2. A crisp U-shaped (half-capsule) active tab in Dusty Olive (#717744)
-///    dipping smoothly from the top edge around the selected icon.
-/// 3. Crisp White Smoke (#EFF1ED) outline icons on the black bar for inactive tabs.
-/// 4. Solid filled black (#000000) icon centered inside the green U-shaped tab
-///    for the active tab.
+/// Earthy Botanical palette in both Dark Mode and Light Mode:
+/// 1. Base bar: Solid black (#000000) in Dark Mode, crisp white (#FFFFFF)
+///    with a subtle botanical border in Light Mode.
+/// 2. Active tab: A well-proportioned U-shaped (half-capsule) badge in
+///    Dusty Olive dipping from the top edge with generous bottom breathing room.
+/// 3. Icons: High-contrast active and inactive icons that adapt automatically
+///    to Dark Mode and Light Mode.
 class AbstractWaveNavBar extends StatefulWidget {
   final int selectedIndex;
   final ValueChanged<int> onItemSelected;
@@ -25,7 +25,6 @@ class AbstractWaveNavBar extends StatefulWidget {
 }
 
 class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
-  // Navigation tabs configuration matching Kinsenas layout
   final List<_NavItemData> _items = const [
     _NavItemData(
       label: 'Home',
@@ -46,7 +45,7 @@ class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
       label: 'Utang',
       outlineIcon: Icons.swap_horiz_rounded,
       activeIcon: Icons.swap_horiz_rounded,
-      sizeOffset: 3.0,
+      sizeOffset: 2.5,
     ),
     _NavItemData(
       label: 'Mga Bayarin',
@@ -58,11 +57,27 @@ class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
-    const double barHeight = 56.0;
+    const double barHeight = 64.0;
+    final bool isDark = AppColors.isDark;
+    final Color barColor = isDark ? Colors.black : AppColors.surface;
+    final Color activeTabColor = AppColors.dustyOlive;
+    final Color activeIconColor = isDark ? Colors.black : const Color(0xFF1B2117);
+    final Color inactiveIconColor = isDark ? AppColors.rawWhiteSmoke : AppColors.textSecondary;
 
     return Container(
-      color: Colors.black,
       height: barHeight + bottomPadding,
+      decoration: BoxDecoration(
+        color: barColor,
+        boxShadow: isDark
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.06),
+                  blurRadius: 12,
+                  offset: const Offset(0, -3),
+                ),
+              ],
+      ),
       child: LayoutBuilder(
         builder: (context, constraints) {
           final totalWidth = constraints.maxWidth;
@@ -77,18 +92,21 @@ class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
               return Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  // LAYER 1: Solid black bar with Dusty Olive U-shaped active tab
+                  // LAYER 1: Base bar with balanced U-shaped active tab & bottom cushion
                   Positioned.fill(
                     child: CustomPaint(
                       painter: _UShapedCutoutNavPainter(
                         activeX: currentX,
                         tabWidth: tabWidth,
                         barHeight: barHeight,
+                        barColor: barColor,
+                        activeTabColor: activeTabColor,
+                        borderColor: isDark ? Colors.transparent : AppColors.border,
                       ),
                     ),
                   ),
 
-                  // LAYER 2: Navigation icons tightly centered with compact bottom margin
+                  // LAYER 2: Navigation icons optically centered inside the U-tab
                   Positioned(
                     top: 0,
                     left: 0,
@@ -106,17 +124,21 @@ class _AbstractWaveNavBarState extends State<AbstractWaveNavBar> {
                             child: GestureDetector(
                               behavior: HitTestBehavior.opaque,
                               onTap: () => widget.onItemSelected(index),
-                              child: Center(
+                              child: AnimatedAlign(
+                                duration: const Duration(milliseconds: 240),
+                                curve: Curves.easeOutCubic,
+                                // Active icon sits higher inside the U-capsule (which occupies the top 72% of the bar)
+                                alignment: isActive
+                                    ? const Alignment(0.0, -0.34)
+                                    : const Alignment(0.0, -0.05),
                                 child: AnimatedScale(
                                   duration: const Duration(milliseconds: 220),
-                                  scale: isActive ? 1.08 : 1.0,
+                                  scale: isActive ? 1.06 : 1.0,
                                   curve: Curves.easeOutBack,
                                   child: Icon(
                                     isActive ? item.activeIcon : item.outlineIcon,
-                                    size: (isActive ? 28.0 : 26.0) + item.sizeOffset,
-                                    color: isActive
-                                        ? Colors.black
-                                        : AppColors.rawWhiteSmoke,
+                                    size: (isActive ? 25.0 : 24.0) + item.sizeOffset,
+                                    color: isActive ? activeIconColor : inactiveIconColor,
                                   ),
                                 ),
                               ),
@@ -150,36 +172,48 @@ class _NavItemData {
   });
 }
 
-/// Custom painter that draws a solid black (#000000) bottom bar with a crisp
-/// U-shaped (half-capsule) active tab in Dusty Olive (#717744) dipping straight
-/// down from the top edge.
 class _UShapedCutoutNavPainter extends CustomPainter {
   final double activeX;
   final double tabWidth;
   final double barHeight;
+  final Color barColor;
+  final Color activeTabColor;
+  final Color borderColor;
 
   _UShapedCutoutNavPainter({
     required this.activeX,
     required this.tabWidth,
     required this.barHeight,
+    required this.barColor,
+    required this.activeTabColor,
+    required this.borderColor,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    // 1. Solid black base bar
+    // 1. Base bar fill (Black in Dark Mode, White surface in Light Mode)
     final barPaint = Paint()
-      ..color = Colors.black
+      ..color = barColor
       ..style = PaintingStyle.fill;
     canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), barPaint);
 
-    // 2. Dusty Olive (#717744) U-shaped half-capsule active tab
+    // Subtle top border line in Light Mode
+    if (borderColor != Colors.transparent) {
+      final borderPaint = Paint()
+        ..color = borderColor
+        ..strokeWidth = 1.0
+        ..style = PaintingStyle.stroke;
+      canvas.drawLine(const Offset(0, 0.5), Offset(size.width, 0.5), borderPaint);
+    }
+
+    // 2. Balanced U-shaped half-capsule active tab with generous bottom margin (~28% of barHeight)
     final activeTabPaint = Paint()
-      ..color = AppColors.dustyOlive
+      ..color = activeTabColor
       ..style = PaintingStyle.fill
       ..isAntiAlias = true;
 
-    final double tabDepth = barHeight * 0.89;
-    final double tabRadius = math.min(barHeight * 0.56, tabWidth * 0.44);
+    final double tabDepth = barHeight * 0.72;
+    final double tabRadius = math.min(barHeight * 0.37, tabWidth * 0.35);
     final double straightDepth = math.max(0.0, tabDepth - tabRadius);
 
     final double leftX = (activeX - tabRadius).clamp(0.0, size.width);
@@ -207,6 +241,8 @@ class _UShapedCutoutNavPainter extends CustomPainter {
   bool shouldRepaint(covariant _UShapedCutoutNavPainter oldDelegate) {
     return oldDelegate.activeX != activeX ||
         oldDelegate.tabWidth != tabWidth ||
-        oldDelegate.barHeight != barHeight;
+        oldDelegate.barHeight != barHeight ||
+        oldDelegate.barColor != barColor ||
+        oldDelegate.activeTabColor != activeTabColor;
   }
 }

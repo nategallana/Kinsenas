@@ -175,7 +175,7 @@ class _BackdatedPaymentModalState extends State<BackdatedPaymentModal> {
               hintText: '0.00',
               hintStyle: TextStyle(color: AppColors.textMuted),
               errorText: _errorMessage,
-              errorStyle: const TextStyle(color: AppColors.warningRed, fontSize: 11, fontWeight: FontWeight.bold),
+              errorStyle: TextStyle(color: AppColors.warningRed, fontSize: 11, fontWeight: FontWeight.bold),
               filled: true,
               fillColor: AppColors.inputFill,
               contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

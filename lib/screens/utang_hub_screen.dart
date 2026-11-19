@@ -602,7 +602,7 @@ class _UtangHubScreenState extends State<UtangHubScreen> {
                                             borderRadius: BorderRadius.circular(10),
                                             border: Border.all(color: const Color(0x60E07A5F), width: 1.2),
                                           ),
-                                          child: const Center(
+                                          child: Center(
                                             child: Icon(Icons.delete_outline_rounded, color: AppColors.warningRed, size: 17),
                                           ),
                                         ),

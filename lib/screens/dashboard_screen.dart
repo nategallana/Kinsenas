@@ -54,14 +54,14 @@ class DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> loadDashboardData() => _loadDashboardData();
 
-  final List<Map<String, dynamic>> _tipidHacks = const [
+  List<Map<String, dynamic>> get _tipidHacks => [
     {
       'id': 'baon',
       'title': 'Magbaon ng Pagkain / Mag-saing',
       'desc': 'Magbaon ng lunch o itlog imbes na mag-Grab o kumain sa labas.',
       'savings': 180.0,
       'icon': Icons.lunch_dining_rounded,
-      'color': Color(0xFFE09F3E),
+      'color': const Color(0xFFE09F3E),
     },
     {
       'id': 'water',
@@ -69,7 +69,7 @@ class DashboardScreenState extends State<DashboardScreen> {
       'desc': 'Mag-refill ng tubig at iwas muna sa milk tea at iced coffee.',
       'savings': 120.0,
       'icon': Icons.local_drink_rounded,
-      'color': Color(0xFF4A90E2),
+      'color': const Color(0xFF4A90E2),
     },
     {
       'id': 'commute',
@@ -77,7 +77,7 @@ class DashboardScreenState extends State<DashboardScreen> {
       'desc': 'Sumakay sa MRT/LRT o jeep kapag may regular na biyahe.',
       'savings': 150.0,
       'icon': Icons.directions_bus_rounded,
-      'color': AppColors.rawDrySage,
+      'color': AppColors.drySage,
     },
     {
       'id': 'cart_freeze',
@@ -668,12 +668,12 @@ class DashboardScreenState extends State<DashboardScreen> {
                   ],
                 ),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'reset',
                 child: Row(
                   children: [
                     Icon(Icons.restart_alt_rounded, color: AppColors.warningRed, size: 18),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Text('Reset all to ₱0', style: TextStyle(color: AppColors.warningRed, fontWeight: FontWeight.bold, fontSize: 13)),
                   ],
                 ),
@@ -797,7 +797,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                                             color: const Color(0x30E07A5F),
                                             borderRadius: BorderRadius.circular(6),
                                           ),
-                                          child: const Text(
+                                          child: Text(
                                             'DELAYED',
                                             style: TextStyle(color: AppColors.warningRed, fontSize: 9, fontWeight: FontWeight.bold),
                                           ),
@@ -954,7 +954,7 @@ class DashboardScreenState extends State<DashboardScreen> {
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                         ),
                                         onPressed: () => _openAdjustModal(cycleInfo, initialMode: PaydayAdjustMode.delayed),
-                                        icon: const Icon(Icons.hourglass_bottom_rounded, color: AppColors.warningRed, size: 15),
+                                        icon: Icon(Icons.hourglass_bottom_rounded, color: AppColors.warningRed, size: 15),
                                         label: Text(
                                           'Hindi Pa / Na-delay',
                                           style: TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.bold, fontSize: 11),

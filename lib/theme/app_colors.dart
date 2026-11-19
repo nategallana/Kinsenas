@@ -30,18 +30,21 @@ class AppColors {
     await prefs.setBool(_prefKeyDarkMode, isDarkMode);
   }
 
-  // Raw Palette Swatches (Constant brand colors for dark-surface elements)
+  // Raw Palette Swatches
   static const Color rawWhiteSmoke = Color(0xFFEFF1ED);
   static const Color rawDrySage = Color(0xFFBCBD8B);
-  static const Color darkKhaki = Color(0xFF373D20);
-  static const Color dustyOlive = Color(0xFF717744);
-  static const Color ashBrown = Color(0xFF766153);
 
-  // Adaptive Palette Swatches
+  // Adaptive Palette Swatches (Automatically adapt for Dark & Light mode)
   static Color get whiteSmoke =>
       isDark ? const Color(0xFFEFF1ED) : const Color(0xFF1B2117);
   static Color get drySage =>
       isDark ? const Color(0xFFBCBD8B) : const Color(0xFF555B30);
+  static Color get darkKhaki =>
+      isDark ? const Color(0xFF373D20) : const Color(0xFFDDE3CA);
+  static Color get dustyOlive =>
+      isDark ? const Color(0xFF717744) : const Color(0xFFB5BC84);
+  static Color get ashBrown =>
+      isDark ? const Color(0xFF766153) : const Color(0xFFC2AFA1);
 
   // Semantic Design Tokens
   static Color get background =>
@@ -50,7 +53,7 @@ class AppColors {
       isDark ? const Color(0xFF1B2117) : const Color(0xFFFFFFFF);
   static Color get surfaceElevated =>
       isDark ? const Color(0xFF252D20) : const Color(0xFFE7EBE0);
-  static const Color surfaceDarkKhaki = Color(0xFF373D20);
+  static Color get surfaceDarkKhaki => darkKhaki;
   static Color get inputFill =>
       isDark ? const Color(0xFF141811) : const Color(0xFFECF0E6);
 
@@ -72,8 +75,9 @@ class AppColors {
   static const Color textOnAccent = Color(0xFF11140E);
 
   // Accents & Actions
-  static const Color primary = Color(0xFF717744); // Dusty Olive
+  static Color get primary => dustyOlive;
   static Color get accent => drySage;
-  static const Color secondary = Color(0xFF766153); // Ash Brown
-  static const Color warningRed = Color(0xFFA65858); // Muted terracotta rose
+  static Color get secondary => ashBrown;
+  static Color get warningRed =>
+      isDark ? const Color(0xFFA65858) : const Color(0xFFD98282);
 }

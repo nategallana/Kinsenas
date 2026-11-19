@@ -383,7 +383,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                     padding: const EdgeInsets.only(right: 8),
                     child: ChoiceChip(
                       avatar: isSelected
-                          ? const Icon(Icons.check_rounded, size: 14, color: AppColors.darkKhaki)
+                          ? Icon(Icons.check_rounded, size: 14, color: AppColors.darkKhaki)
                           : null,
                       label: Text(g.title),
                       selected: isSelected,
@@ -440,7 +440,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
                 child: OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.ashBrown,
-                    side: const BorderSide(color: AppColors.ashBrown),
+                    side: BorderSide(color: AppColors.ashBrown),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),

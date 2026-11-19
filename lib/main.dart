@@ -18,17 +18,23 @@ class KinsenasApp extends StatelessWidget {
     final textColor = isDark ? const Color(0xFFEFF1ED) : const Color(0xFF1B2117);
     final surfaceColor = isDark ? const Color(0xFF1B2117) : const Color(0xFFFFFFFF);
     final bgColor = isDark ? const Color(0xFF11140E) : const Color(0xFFF3F5EF);
+    final primaryColor = isDark ? const Color(0xFF717744) : const Color(0xFFB5BC84);
     final accentColor = isDark ? const Color(0xFFBCBD8B) : const Color(0xFF555B30);
 
     return baseTheme.copyWith(
       scaffoldBackgroundColor: bgColor,
-      primaryColor: AppColors.dustyOlive,
+      primaryColor: primaryColor,
       colorScheme: (isDark ? const ColorScheme.dark() : const ColorScheme.light()).copyWith(
-        primary: AppColors.dustyOlive,
+        primary: primaryColor,
         secondary: accentColor,
         surface: surfaceColor,
-        onPrimary: AppColors.rawWhiteSmoke,
+        onPrimary: textColor,
         onSurface: textColor,
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          foregroundColor: textColor,
+        ),
       ),
       textTheme: GoogleFonts.plusJakartaSansTextTheme(
         baseTheme.textTheme,

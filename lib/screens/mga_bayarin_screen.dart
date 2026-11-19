@@ -623,7 +623,7 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                             value: paidPct,
                             minHeight: 6,
                             backgroundColor: AppColors.inputFill,
-                            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.dustyOlive),
+                            valueColor: AlwaysStoppedAnimation<Color>(AppColors.dustyOlive),
                           ),
                         ),
                       ],
@@ -894,7 +894,7 @@ class _MgaBayarinScreenState extends State<MgaBayarinScreen> {
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: const Color(0x60E07A5F)),
                         ),
-                        child: const Center(
+                        child: Center(
                           child: Icon(Icons.delete_outline_rounded, color: AppColors.warningRed, size: 14),
                         ),
                       ),

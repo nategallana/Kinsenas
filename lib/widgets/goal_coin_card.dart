@@ -91,7 +91,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
               }
               Navigator.pop(ctx);
             },
-            child: const Text('Save', style: TextStyle(color: AppColors.rawWhiteSmoke, fontWeight: FontWeight.bold)),
+            child: Text('Save', style: TextStyle(color: AppColors.whiteSmoke, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -101,18 +101,19 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
   @override
   Widget build(BuildContext context) {
     final double progress = widget.goal.progressRatio;
+    final bool isDark = AppColors.isDark;
 
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.darkKhaki,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: AppColors.rawDrySage.withValues(alpha: 0.35)),
-        boxShadow: const [
+        border: Border.all(color: AppColors.drySage.withValues(alpha: 0.35)),
+        boxShadow: [
           BoxShadow(
-            color: Color(0x60000000),
+            color: isDark ? const Color(0x60000000) : const Color(0x18373D20),
             blurRadius: 24,
-            offset: Offset(0, 12),
+            offset: const Offset(0, 12),
           ),
         ],
       ),
@@ -127,17 +128,17 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                       child: TextField(
                         controller: _titleController,
                         autofocus: true,
-                        style: const TextStyle(
-                          color: AppColors.rawWhiteSmoke,
+                        style: TextStyle(
+                          color: AppColors.whiteSmoke,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                           letterSpacing: 1,
                         ),
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           isDense: true,
-                          contentPadding: EdgeInsets.symmetric(vertical: 4),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 4),
                           border: UnderlineInputBorder(
-                            borderSide: BorderSide(color: AppColors.rawDrySage),
+                            borderSide: BorderSide(color: AppColors.drySage),
                           ),
                         ),
                         onSubmitted: (val) {
@@ -152,22 +153,22 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                         children: [
                           Text(
                             _titleController.text.toUpperCase(),
-                            style: const TextStyle(
-                              color: AppColors.rawWhiteSmoke,
+                            style: TextStyle(
+                              color: AppColors.whiteSmoke,
                               fontWeight: FontWeight.w800,
                               fontSize: 15,
                               letterSpacing: 1,
                             ),
                           ),
                           const SizedBox(width: 6),
-                          const Icon(Icons.edit_rounded, color: AppColors.rawDrySage, size: 15),
+                          Icon(Icons.edit_rounded, color: AppColors.drySage, size: 15),
                         ],
                       ),
                     ),
               Text(
                 '${(progress * 100).toStringAsFixed(0)}%',
-                style: const TextStyle(
-                  color: AppColors.rawDrySage,
+                style: TextStyle(
+                  color: AppColors.drySage,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),
@@ -187,8 +188,10 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                 CircularProgressIndicator(
                   value: progress,
                   strokeWidth: 8,
-                  backgroundColor: Colors.black.withValues(alpha: 0.25),
-                  valueColor: const AlwaysStoppedAnimation<Color>(AppColors.rawDrySage),
+                  backgroundColor: isDark
+                      ? Colors.black.withValues(alpha: 0.25)
+                      : Colors.black.withValues(alpha: 0.1),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.drySage),
                 ),
                 Container(
                   width: 86,
@@ -202,7 +205,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.3),
+                        color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.12),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -214,7 +217,7 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
                       style: TextStyle(
                         fontSize: 38,
                         fontWeight: FontWeight.w900,
-                        color: AppColors.darkKhaki,
+                        color: Color(0xFF373D20),
                       ),
                     ),
                   ),
@@ -229,21 +232,21 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Saved', style: TextStyle(color: Color(0xFFA5AD9F), fontSize: 13, fontWeight: FontWeight.bold)),
+              Text('Saved', style: TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.bold)),
               GestureDetector(
                 onTap: _showEditTargetDialog,
                 child: Row(
                   children: [
                     Text(
                       '₱${widget.goal.currentAmount.toStringAsFixed(0)} / ₱${widget.goal.targetAmount.toStringAsFixed(0)}',
-                      style: const TextStyle(
-                        color: AppColors.rawWhiteSmoke,
+                      style: TextStyle(
+                        color: AppColors.whiteSmoke,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
                       ),
                     ),
                     const SizedBox(width: 5),
-                    const Icon(Icons.edit_outlined, color: AppColors.rawDrySage, size: 14),
+                    Icon(Icons.edit_outlined, color: AppColors.drySage, size: 14),
                   ],
                 ),
               ),
@@ -252,8 +255,10 @@ class _GoalCoinCardState extends State<GoalCoinCard> {
           const SizedBox(height: 8),
           LinearProgressIndicator(
             value: progress,
-            backgroundColor: Colors.black.withValues(alpha: 0.3),
-            valueColor: const AlwaysStoppedAnimation<Color>(AppColors.rawDrySage),
+            backgroundColor: isDark
+                ? Colors.black.withValues(alpha: 0.3)
+                : Colors.black.withValues(alpha: 0.1),
+            valueColor: AlwaysStoppedAnimation<Color>(AppColors.drySage),
             minHeight: 6,
             borderRadius: BorderRadius.circular(4),
           ),

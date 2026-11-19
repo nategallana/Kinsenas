@@ -516,8 +516,8 @@ class _DelayPaydayModalState extends State<DelayPaydayModal> {
                   widget.onResetToRegular();
                   Navigator.pop(context);
                 },
-                icon: const Icon(Icons.restart_alt_rounded, color: AppColors.warningRed, size: 16),
-                label: const Text(
+                icon: Icon(Icons.restart_alt_rounded, color: AppColors.warningRed, size: 16),
+                label: Text(
                   'Ibalik sa Regular Schedule',
                   style: TextStyle(color: AppColors.warningRed, fontSize: 12, fontWeight: FontWeight.bold),
                 ),
